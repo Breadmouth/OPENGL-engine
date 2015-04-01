@@ -1,0 +1,20 @@
+#version 410
+
+in vec2 frag_texcoord;
+in vec4 vPosition;
+
+out vec4 out_color;
+
+uniform sampler2D rock_texture;
+uniform sampler2D grass_texture;
+uniform sampler2D snow_texture;
+
+void main()
+{
+	vec4 grass = (texture(grass_texture, frag_texcoord) * (1.0f - pow(90,(vPosition.y / 500.0f) - 1)));
+	//vec4 rock = (texture(rock_texture, frag_texcoord) * (0.5f - (vPosition.y / 500.0f)));
+	vec4 snow = (texture(snow_texture, frag_texcoord) * (pow(90, (vPosition.y / 500.0f) - 1)));
+	
+	out_color = snow + grass;
+
+}
