@@ -35,11 +35,11 @@ void Tutorial7::Create()
 	TwAddVarRW(m_bar, "camera speed", TW_TYPE_FLOAT, &cameraSpeed, "group=camera");
 	TwAddVarRW(m_bar, "animate", TW_TYPE_BOOLCPP, &animate, "group=animation");
 
-	m_renderer.LoadShader("../data/shaders/fbxShader.glvs", "../data/shaders/fbxShader.glfs");
+	m_renderer.LoadShader("m_programID", "../data/shaders/fbxShader.glvs", "../data/shaders/fbxShader.glfs");
 
 	m_renderer.LoadFBX("../data/fbx/characters/Enemytank/EnemyTank.fbx");
 
-	m_renderer.LoadTexture("../data/fbx/characters/Enemytank/EnemyTank_D.tga", GL_RGBA);
+	m_renderer.LoadTexture("m_texture", "../data/fbx/characters/Enemytank/EnemyTank_D.tga", GL_RGBA);
 	m_renderer.LoadNormal("../data/fbx/characters/Enemytank/EnemyTank_N.tga");
 
 }

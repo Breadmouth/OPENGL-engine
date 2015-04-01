@@ -31,7 +31,7 @@ void Tutorial6::Create()
 	TwAddVarRW(m_bar, "light spec", TW_TYPE_FLOAT, &specPow, "group=light");
 	TwAddVarRW(m_bar, "camera speed", TW_TYPE_FLOAT, &cameraSpeed, "group=camera");
 
-	m_renderer.LoadShader("../data/shaders/tinyShader.glvs", "../data/shaders/tinyShader.glfs");
+	m_renderer.LoadShader("m_programID", "../data/shaders/tinyShader.glvs", "../data/shaders/tinyShader.glfs");
 
 	//m_renderer.LoadTexture("../objects/Raptor/Texture/raptor.jpg");
 	m_renderer.LoadObject("../objects/Raptor/Raptor.obj");

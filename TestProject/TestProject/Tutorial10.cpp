@@ -37,11 +37,11 @@ void Tutorial10::Create()
 	TwAddVarRW(m_bar, "camera speed", TW_TYPE_FLOAT, &cameraSpeed, "group=camera");
 	TwAddVarRW(m_bar, "animate", TW_TYPE_BOOLCPP, &animate, "group=animation");
 
-	m_renderer.LoadShader("../data/shaders/fbxShader.glvs", "../data/shaders/fbxShader.glfs");
+	m_renderer.LoadShader("m_programID", "../data/shaders/fbxShader.glvs", "../data/shaders/fbxShader.glfs");
 
 	m_renderer.LoadFBX("../data/fbx/characters/Enemytank/EnemyTank.fbx");
 
-	m_renderer.LoadTexture("../data/fbx/characters/Enemytank/EnemyTank_D.tga", GL_RGBA);
+	m_renderer.LoadTexture("m_texture", "../data/fbx/characters/Enemytank/EnemyTank_D.tga", GL_RGBA);
 	m_renderer.LoadNormal("../data/fbx/characters/Enemytank/EnemyTank_N.tga");
 
 	LoadShader();
@@ -79,17 +79,14 @@ void Tutorial10::Draw()
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 	glViewport(0, 0, 1028, 720);
 
-	//glClearColor(0.75f, 0.75f, 0.75f, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	m_renderer.DrawFBX(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
 	m_emitter->Draw((float)glfwGetTime(), camera.GetWorldTransform(), camera.GetProjectionView());
-	//Gizmos::draw(camera.GetProjectionView());
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, 1280, 720);
 
-	//glClearColor(0.25f, 0.25f, 0.25f, 1);
 	glClear(GL_DEPTH_BUFFER_BIT);
 
 	glUseProgram(m_program);
@@ -103,8 +100,6 @@ void Tutorial10::Draw()
 
 	glBindVertexArray(m_vao);
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
-
-	//m_renderer.DrawFBX(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
 
 }
 

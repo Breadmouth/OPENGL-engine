@@ -103,7 +103,7 @@ float IsEdge(in vec2 coords)
 			abs(pix[2]-pix[6])
 			)/4.;
 	
-	return threshold(0.25,0.4,clamp(1.8*delta,0.0,1.0));
+	return threshold(0.15,0.3,clamp(1.8*delta,0.0,1.0));
 }
 
 vec4 EdgeDetect()
@@ -135,7 +135,19 @@ vec4 Sharpen()
 	return colour;
 }
 
+vec4 Posterize()
+{
+	vec4 colour = texture(diffuse, vTexCoord);
+	colour = pow(colour, vec4(0.6));
+	colour *= 8;
+	colour = floor(colour);
+	colour /= 8;
+	colour = pow(colour, vec4(1.0/0.6));
+	colour.a = 1.0;
+	return colour;
+}
+
 void main()
 {
-	FragColor = Sharpen();
+	FragColor = Simple();
 }

@@ -31,18 +31,16 @@ void main() {
 	vec3 newVel = Velocity;
 	vec3 target;
 	
-	float a = Lifetime;
-	float b = Lifespan;
+	newVel.x = cos(tan(Lifespan)); 
+	newVel.y = sin(tan(Lifespan));
+	newVel.z = cos(tan(Lifetime));
 	
-	newVel.x += (a - b) * cos(time) + b * cos(time * ((a / b) - 1)); 
-	newVel.y += (a - b) * sin(time) - b * sin(time * ((a / b) - 1));
-	newVel.z += 0;
 	//vec3 dir = normalize(Position - target);
 	//newVel += dir;
 	
-	newVel.x -= (10 * sin(time) * sin(deltaTime));
-	newVel.y -= (10 * cos(time) * cos(deltaTime));
-	newVel.z -= (10 * sin(time) * cos(deltaTime));
+	newVel.x -= (10 * sin(time) * cos(Lifespan));
+	newVel.y -= (10 * cos(time) * sin(Lifespan));
+	newVel.z -= (1 * cos(time) * cos(Lifespan));
 
 	position = Position + newVel * deltaTime;
 	//position = clamp(position, -10, 10);

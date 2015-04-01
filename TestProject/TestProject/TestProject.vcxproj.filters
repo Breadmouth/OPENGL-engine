@@ -84,6 +84,12 @@
     <ClCompile Include="Tutorial10.cpp">
       <Filter>Source Files\Tutorials</Filter>
     </ClCompile>
+    <ClCompile Include="Tutorial11.cpp">
+      <Filter>Source Files\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="Tutorial13.cpp">
+      <Filter>Source Files\Tutorials</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\gl_core_4_4.h">
@@ -147,6 +153,12 @@
       <Filter>Header Files\Tutorials</Filter>
     </ClInclude>
     <ClInclude Include="Tutorial10.h">
+      <Filter>Header Files\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="Tutorial11.h">
+      <Filter>Header Files\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="Tutorial13.h">
       <Filter>Header Files\Tutorials</Filter>
     </ClInclude>
   </ItemGroup>
