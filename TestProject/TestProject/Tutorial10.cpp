@@ -81,7 +81,7 @@ void Tutorial10::Draw()
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	m_renderer.DrawFBX(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
+//	m_renderer.DrawFBX(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
 	m_emitter->Draw((float)glfwGetTime(), camera.GetWorldTransform(), camera.GetProjectionView());
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

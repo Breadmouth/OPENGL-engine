@@ -34,5 +34,7 @@ protected:
 	float cameraSpeed;
 	bool animate;
 
+	bool generate;
+
 	float m_timer;
 };

@@ -35,13 +35,16 @@ void Tutorial11::Create()
 	TwAddVarRW(m_bar, "camera speed", TW_TYPE_FLOAT, &cameraSpeed, "group=camera");
 	TwAddVarRW(m_bar, "animate", TW_TYPE_BOOLCPP, &animate, "group=animation");
 
-	m_renderer.LoadShader("m_programID", "../data/shaders/fbxShader.glvs", "../data/shaders/fbxShader.glfs");
-	m_renderer.LoadShader("m_shadowProgram", "../data/shaders/shadowShader.glvs", "../data/shaders/shadowShader.glfs");
+	m_renderer.LoadShader("m_programID", "../data/shaders/modelShader.glvs", "../data/shaders/modelShader.glfs");
+	m_renderer.LoadShader("m_shadowProgram", "../data/shaders/modelShaderShadow.glvs", "../data/shaders/modelShaderShadow.glfs");
+	m_renderer.LoadShader("m_shadowProgramAnim", "../data/shaders/modelShaderShadowAnim.glvs", "../data/shaders/modelShaderShadowAnim.glfs");
 	m_renderer.LoadShader("m_shadowGenProgram", "../data/shaders/shadowMap.glvs", "../data/shaders/shadowMap.glfs");
+	m_renderer.LoadShader("m_shadowGenProgramAnim", "../data/shaders/shadowMapAnim.glvs", "../data/shaders/shadowMapAnim.glfs");
 
 	m_renderer.LoadFBX("../data/fbx/characters/EnemyTank/EnemyTank.fbx");
 	m_renderer.LoadTexture("m_texture" ,"../data/fbx/characters/Enemytank/EnemyTank_D.tga", GL_RGBA);
 	m_renderer.LoadNormal("../data/fbx/characters/Enemytank/EnemyTank_N.tga");
+	m_renderer.LoadSpecular("../data/fbx/characters/Enemytank/EnemyTank_S.tga");
 
 	m_renderer.CreateShadowPlane();
 
@@ -63,7 +66,7 @@ void Tutorial11::Update(float dt)
 	if (animate)
 		m_timer += dt;
 
-	m_renderer.UpdateFBX(m_timer);
+	m_renderer.Update(m_timer, dt, &camera.GetWorldTransform());
 
 	camera.SetSpeed(cameraSpeed);
 	m_renderer.SetAnimateFBX(animate);
@@ -73,17 +76,5 @@ void Tutorial11::Update(float dt)
 
 void Tutorial11::Draw()
 {
-	m_renderer.RenderShadowMap(&light, &m_lightMatrix);
-
-	m_renderer.BindFrameBuffer(true);
-
-	m_renderer.DrawShadowMap(&camera.GetProjectionView(), &m_lightMatrix, &light);
-	m_renderer.DrawFBX(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
-
-	//m_renderer.DrawFBX(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
-
-	m_renderer.BindFrameBuffer(false);
-
-	m_renderer.DrawViewPlane(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
-
+	m_renderer.Draw(&light, &lightColour, &m_lightMatrix, &camera.GetProjectionView(), &camera.GetPosition(), &specPow);
 }

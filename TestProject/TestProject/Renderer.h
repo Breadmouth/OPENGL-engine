@@ -22,45 +22,56 @@ public:
 
 	void Destroy();
 
+	//contains updates for all objects handles by renderer
+	void Update(float timer, float dt, mat4 *cameraTransform);
+	//contains draw for all objects handled by renderer
+	void Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix, 
+			  mat4* projectionView, vec3* cameraPos, float* specPow);
+
+	//load vertex and fragment shader into a program
 	bool LoadShader(std::string program, std::string vertex, std::string fragment);
 	static GLuint LoadShaderFromFile(std::string path, GLenum shaderType);
 
-	//for obj
+	//create buffers for obj
 	void CreateOpenGLBuffers(std::vector<tinyobj::shape_t>& shapes);
-	//for FBX
+	//create buffers for FBX
 	void CreateOpenGLBuffers(FBXFile* fbx);
 	void CleanupOpenGLBuffers(FBXFile* fbx);
 
+	//load obj file
 	void LoadObject(std::string path);
 
+	//load fbx file
 	void LoadFBX(const char* path);
 	void UpdateFBX(float timer);
 
+	//create a cpu particle emmitter
 	void CreateParticleEmitter();
 	void UpdateParticles(float dt, mat4 cameraTransform);
-	void DrawParticles(mat4 cameraProjectionView);
 
+	//create frame buffer & plane for postproccesing effects
 	void CreateFB();
 	void CreateViewPlane();
 
+	//create frame buffer for shadow map
 	void CreateSB();
+	//create plane to draw shadow on
 	void CreateShadowPlane();
-	void RenderShadowMap(vec3 *light, mat4 *lightMatrix);
-	void DrawShadowMap(mat4* projectionView, mat4 *lightMatrix, vec3 *light);
 
-	void CreatePlane();
-	void DrawPlane(mat4* projectionView);
-	void CreatePerlin();
+	//create plane to use for terrain gen
+	void CreateTerrainPlane(int width, int height);
+	//generate a perlin noise
+	void CreatePerlin(int dims);
+	//generate a diamond square terrain
+	void CreateDiamondSquare(int dims);
+	//create plane to use as water
+	void CreateWaterPlane(int dims);
 
 	void LoadTexture(std::string texture, std::string path, GLint type);
 	void LoadNormal(std::string path);
-
-	void DrawOBJ(mat4* projectionView, vec3* light, vec3* cameraPos, vec3* lightColour, float* specPow);
-	void DrawFBX(mat4* projectionView, vec3* light, vec3* cameraPos, vec3* lightColour, float* specPow);
-	void DrawFBXGeometry();
+	void LoadSpecular(std::string path);
 
 	void BindFrameBuffer(bool bind);
-	void DrawViewPlane(mat4* projectionView, vec3* light, vec3* cameraPos, vec3* lightColour, float* specPow);
 
 	bool GetAnimateFBX();
 	void SetAnimateFBX(bool animate);
@@ -75,7 +86,9 @@ public:
 	};
 
 private:
-	unsigned int m_texture, m_normal;
+	unsigned int m_texture;
+	unsigned int m_normal;
+	unsigned int m_specular;
 
 	struct GLInfo
 	{
@@ -97,7 +110,8 @@ private:
 
 	std::vector<GLInfo> m_glInfo;
 	GLInfo m_viewPlane;
-	GLInfo m_plane;
+	GLInfo m_terrainPlane;
+	GLInfo m_waterPlane;
 	GLInfo m_shadowPlane;
 
 	unsigned int m_perlin_texture;
@@ -111,8 +125,11 @@ private:
 	unsigned int m_programID;
 	unsigned int m_postProcessProgram;
 	unsigned int m_shadowProgram;
+	unsigned int m_shadowProgramAnim;
 	unsigned int m_shadowGenProgram;
+	unsigned int m_shadowGenProgramAnim;
 	unsigned int m_perlinProgram;
+	unsigned int m_waterProgram;
 
 	unsigned int m_objects;
 

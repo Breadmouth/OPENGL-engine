@@ -13,7 +13,7 @@ uniform sampler2D perlin_texture;
 void main()
 {
 	vec4 pos = position;
-	pos.y += texture(perlin_texture, texcoord).r * 500;
+	pos.y += texture(perlin_texture, texcoord).r * 5;
 	vPosition = pos;
 
 	frag_texcoord = texcoord;

@@ -52,7 +52,7 @@ void Tutorial6::Update(float dt)
 
 void Tutorial6::Draw()
 {
-	m_renderer.DrawOBJ(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
+//	m_renderer.DrawOBJ(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
 
 	Gizmos::draw(camera.GetProjectionView());
 

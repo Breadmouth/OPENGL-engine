@@ -66,7 +66,7 @@ void Tutorial7::Draw()
 {
 	//m_renderer.Draw(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
 
-	m_renderer.DrawFBX(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
+	//m_renderer.DrawFBX(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
 
 	Gizmos::draw(camera.GetProjectionView());
 

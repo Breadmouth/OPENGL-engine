@@ -18,6 +18,7 @@ Tutorial13::Tutorial13()
 	specPow = 16.0f;
 	cameraSpeed = camera.GetSpeed();
 	animate = false;
+	generate = false;
 
 	m_timer = 0.0f;
 }
@@ -28,6 +29,9 @@ void Tutorial13::Create()
 
 	//AntTweakBar
 	m_bar = TwNewBar("my bar");
+
+	TwAddVarRW(m_bar, "generate terrain", TW_TYPE_BOOLCPP, &generate, "group=generation");
+
 	TwAddVarRW(m_bar, "clear colour", TW_TYPE_COLOR4F, &m_clearColour[0], "");
 	TwAddVarRW(m_bar, "light dir", TW_TYPE_DIR3F, &light, "group=light");
 	TwAddVarRW(m_bar, "light colour", TW_TYPE_COLOR3F, &lightColour, "group=light");
@@ -36,17 +40,21 @@ void Tutorial13::Create()
 	TwAddVarRW(m_bar, "animate", TW_TYPE_BOOLCPP, &animate, "group=animation");
 
 	m_renderer.LoadShader("m_perlinProgram", "../data/shaders/perlin.glvs", "../data/shaders/perlin.glfs");
+	m_renderer.LoadShader("m_waterProgram", "../data/shaders/water.glvs", "../data/shaders/water.glfs");
 
 	m_renderer.LoadTexture("m_snow_texture", "../data/snow.jpg", GL_RGB);
 	m_renderer.LoadTexture("m_grass_texture", "../data/grass.jpg", GL_RGB);
-	m_renderer.LoadTexture("m_rock_texture", "../data/rock.jpg", GL_RGB);
+	m_renderer.LoadTexture("m_rock_texture", "../data/water.jpg", GL_RGB);
 
 	m_renderer.LoadShader("m_postProcessProgram", "../data/shaders/tut10.glvs", "../data/shaders/tut10.glfs");
 	m_renderer.CreateFB();
 	m_renderer.CreateViewPlane();
 
-	m_renderer.CreatePlane();
-	m_renderer.CreatePerlin();
+	m_renderer.CreateTerrainPlane(65, 65);
+	m_renderer.CreateDiamondSquare(65);
+
+	m_renderer.CreateWaterPlane(65);
+	//m_renderer.CreatePerlin(5);
 }
 
 void Tutorial13::Destroy()
@@ -56,18 +64,19 @@ void Tutorial13::Destroy()
 
 void Tutorial13::Update(float dt)
 {
+	if (generate)
+	{
+		m_renderer.CreateDiamondSquare(65);
+		generate = false;
+	}
+
+	m_renderer.Update(dt, dt, &camera.GetWorldTransform());
 	camera.SetSpeed(cameraSpeed);
 	camera.Update(dt);
 }
 
 void Tutorial13::Draw()
 {
-	m_renderer.BindFrameBuffer(true);
-
-	m_renderer.DrawPlane(&camera.GetProjectionView());
-
-	m_renderer.BindFrameBuffer(false);
-
-	m_renderer.DrawViewPlane(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
-
+	//m_renderer.DrawPlane(&camera.GetProjectionView());
+	m_renderer.Draw(&light, &lightColour, &mat4(), &camera.GetProjectionView(), &camera.GetPosition(), &specPow);
 }
