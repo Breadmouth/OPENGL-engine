@@ -98,6 +98,13 @@ private:
 		unsigned int m_indexCount;
 	};
 
+	struct Model
+	{
+		FBXFile* m_fbx;
+		glm::vec4 m_position;
+		mat4 m_rotation;
+	};
+
 	std::map<std::string, unsigned int*> m_programs;
 	std::map<std::string, unsigned int*> m_textures;
 
@@ -118,8 +125,10 @@ private:
 	unsigned int m_rock_texture;
 	unsigned int m_grass_texture;
 	unsigned int m_snow_texture;
+	unsigned int m_water_texture;
 
-	FBXFile* m_fbx;
+	//FBXFile* m_fbx;
+	Model m_models[2];
 	ParticleEmitter* m_emitter;
 
 	unsigned int m_programID;

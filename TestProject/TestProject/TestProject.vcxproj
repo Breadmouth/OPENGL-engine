@@ -73,6 +73,7 @@
     <ClCompile Include="..\src\gl_core_4_4.c" />
     <ClCompile Include="..\src\tiny_obj_loader.cc" />
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="Assessment.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="FlyCamera.cpp" />
     <ClCompile Include="GPUParticleEmitter.cpp" />
@@ -99,6 +100,7 @@
     <ClInclude Include="..\src\gl_core_4_4.h" />
     <ClInclude Include="..\src\tiny_obj_loader.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="Assessment.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="FlyCamera.h" />
     <ClInclude Include="GPUParticleEmitter.h" />

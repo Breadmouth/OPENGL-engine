@@ -41,10 +41,10 @@ void Tutorial11::Create()
 	m_renderer.LoadShader("m_shadowGenProgram", "../data/shaders/shadowMap.glvs", "../data/shaders/shadowMap.glfs");
 	m_renderer.LoadShader("m_shadowGenProgramAnim", "../data/shaders/shadowMapAnim.glvs", "../data/shaders/shadowMapAnim.glfs");
 
-	m_renderer.LoadFBX("../data/fbx/characters/EnemyTank/EnemyTank.fbx");
+	m_renderer.LoadFBX("../data/fbx/characters/Enemytank/EnemyTank.fbx");
 	m_renderer.LoadTexture("m_texture" ,"../data/fbx/characters/Enemytank/EnemyTank_D.tga", GL_RGBA);
-	m_renderer.LoadNormal("../data/fbx/characters/Enemytank/EnemyTank_N.tga");
-	m_renderer.LoadSpecular("../data/fbx/characters/Enemytank/EnemyTank_S.tga");
+	//m_renderer.LoadNormal("../data/fbx/characters/Enemytank/EnemyTank_N.tga");
+	//m_renderer.LoadSpecular("../data/fbx/characters/Enemytank/EnemyTank_S.tga");
 
 	m_renderer.CreateShadowPlane();
 

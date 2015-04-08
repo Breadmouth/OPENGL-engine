@@ -26,6 +26,7 @@ Renderer::Renderer()
 	m_textures["m_snow_texture"] = &m_snow_texture;
 	m_textures["m_grass_texture"] = &m_grass_texture;
 	m_textures["m_rock_texture"] = &m_rock_texture;
+	m_textures["m_water_texture"] = &m_water_texture;
 
 }
 
@@ -36,10 +37,20 @@ Renderer::~Renderer()
 
 void Renderer::Destroy()
 {
-	if (m_fbx != NULL)
-		CleanupOpenGLBuffers(m_fbx);
+	for (int i = 0; i < 2; ++i)
+	{
+		if (m_models[i].m_fbx != NULL)
+			CleanupOpenGLBuffers(m_models[i].m_fbx);
+	}
 
 	glDeleteProgram(m_programID);
+	glDeleteProgram(m_postProcessProgram);
+	glDeleteProgram(m_shadowProgram);
+	glDeleteProgram(m_shadowProgramAnim);
+	glDeleteProgram(m_shadowGenProgram);
+	glDeleteProgram(m_shadowGenProgramAnim);
+	glDeleteProgram(m_perlinProgram);
+	glDeleteProgram(m_waterProgram);
 }
 
 void Renderer::LoadObject(std::string path)
@@ -54,23 +65,33 @@ void Renderer::LoadObject(std::string path)
 
 void Renderer::LoadFBX(const char* path)
 {
-	m_fbx = new FBXFile();
-	m_fbx->load(path);
-	CreateOpenGLBuffers(m_fbx);
+	for (int i = 0; i < 2; ++i)
+	{
+		if (m_models[i].m_fbx == NULL)
+		{
+			m_models[i].m_fbx = new FBXFile();
+			m_models[i].m_fbx->load(path);
+			CreateOpenGLBuffers(m_models[i].m_fbx);
+			return;
+		}
+	}
 }
 
 void Renderer::UpdateFBX(float timer)
 {
-	if (m_animateFBX)
+	for (int i = 0; i < 2; ++i)
 	{
-		FBXSkeleton* skeleton = m_fbx->getSkeletonByIndex(0);
-		FBXAnimation* animation = m_fbx->getAnimationByIndex(0);
-
-		skeleton->evaluate(animation, timer);
-
-		for (unsigned int bone_index = 0; bone_index < skeleton->m_boneCount; ++bone_index)
+		if (m_animateFBX)
 		{
-			skeleton->m_nodes[bone_index]->updateGlobalTransform();
+			FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
+			FBXAnimation* animation = m_models[i].m_fbx->getAnimationByIndex(0);
+
+			skeleton->evaluate(animation, timer);
+
+			for (unsigned int bone_index = 0; bone_index < skeleton->m_boneCount; ++bone_index)
+			{
+				skeleton->m_nodes[bone_index]->updateGlobalTransform();
+			}
 		}
 	}
 }
@@ -546,9 +567,9 @@ void Renderer::CreateTerrainPlane(int width, int height)
 		for (int j = 0; j < height; ++j)
 		{
 			Vertex point;
-			point.v_x = (float)(-(width * 10) / 2) + (i * 10);
+			point.v_x = (float)(-(width * 100) / 2) + (i * 100);
 			point.v_y = 0;
-			point.v_z = (float)(-(height * 10) / 2) + (j * 10);
+			point.v_z = (float)(-(height * 100) / 2) + (j * 100);
 			point.v_w = 1;
 			point.t_x = 1.0f / width * i;
 			point.t_y = 1.0f / height * j;
@@ -619,9 +640,9 @@ void Renderer::CreateWaterPlane(int dims)
 		for (int j = 0; j < dims; ++j)
 		{
 			Vertex point;
-			point.v_x = (float)(-(dims * 10) / 2) + (i * 10);
+			point.v_x = (float)(-(dims * 100) / 2) + (i * 100);
 			point.v_y = 0;
-			point.v_z = (float)(-(dims * 10) / 2) + (j * 10);
+			point.v_z = (float)(-(dims * 100) / 2) + (j * 100);
 			point.v_w = 1;
 			point.t_x = 1.0f / dims * i;
 			point.t_y = 1.0f / dims * j;
@@ -821,18 +842,21 @@ void Renderer::CreateDiamondSquare(int dims)
 
 void Renderer::Update(float timer, float dt, mat4 *cameraTransform)
 {
-	if (m_fbx != NULL)
+	for (int i = 0; i < 2; ++i)
 	{
-		if (m_animateFBX)
+		if (m_models[i].m_fbx != NULL)
 		{
-			FBXSkeleton* skeleton = m_fbx->getSkeletonByIndex(0);
-			FBXAnimation* animation = m_fbx->getAnimationByIndex(0);
-
-			skeleton->evaluate(animation, timer);
-
-			for (unsigned int bone_index = 0; bone_index < skeleton->m_boneCount; ++bone_index)
+			if (m_animateFBX)
 			{
-				skeleton->m_nodes[bone_index]->updateGlobalTransform();
+				FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
+				FBXAnimation* animation = m_models[i].m_fbx->getAnimationByIndex(0);
+
+				skeleton->evaluate(animation, timer);
+
+				for (unsigned int bone_index = 0; bone_index < skeleton->m_boneCount; ++bone_index)
+				{
+					skeleton->m_nodes[bone_index]->updateGlobalTransform();
+				}
 			}
 		}
 	}
@@ -876,27 +900,52 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			}
 		}
 
+		for (int i = 0; i < 2; ++i)
+		{
+			if (m_models[i].m_fbx != NULL)
+			{
+				if (m_models[i].m_fbx->getSkeletonCount() == 0)
+				{
+					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
+					{
+						FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
+
+						unsigned int* glData = (unsigned int*)mesh->m_userData;
+
+						glBindVertexArray(glData[0]);
+						glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+					}
+				}
+			}
+		}
+
 		glUseProgram(m_shadowGenProgramAnim);
 
 		loc = glGetUniformLocation(m_shadowGenProgramAnim, "LightMatrix");
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*lightMatrix));
 
-		if (m_fbx != NULL)
+		for (int i = 0; i < 2; ++i)
 		{
-			FBXSkeleton* skeleton = m_fbx->getSkeletonByIndex(0);
-			skeleton->updateBones();
-
-			loc = glGetUniformLocation(m_shadowGenProgramAnim, "bones");
-			glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
-
-			for (unsigned int i = 0; i < m_fbx->getMeshCount(); ++i)
+			if (m_models[i].m_fbx != NULL)
 			{
-				FBXMeshNode* mesh = m_fbx->getMeshByIndex(i);
+				if (m_models[i].m_fbx->getSkeletonCount() > 0)
+				{
+					FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
+					skeleton->updateBones();
 
-				unsigned int* glData = (unsigned int*)mesh->m_userData;
+					loc = glGetUniformLocation(m_shadowGenProgramAnim, "bones");
+					glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
 
-				glBindVertexArray(glData[0]);
-				glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
+					{
+						FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
+
+						unsigned int* glData = (unsigned int*)mesh->m_userData;
+
+						glBindVertexArray(glData[0]);
+						glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+					}
+				}
 			}
 		}
 
@@ -914,74 +963,101 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 		mat4 newLightMatrix = textureSpaceOffset * (*lightMatrix);
 
-		if (m_fbx != NULL)
+		for (int i = 0; i < 2; ++i)
 		{
-			FBXSkeleton* skeleton = m_fbx->getSkeletonByIndex(0);
-			skeleton->updateBones();
-
-			loc = glGetUniformLocation(m_shadowProgramAnim, "ProjectionView");
-			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
-
-			loc = glGetUniformLocation(m_shadowProgramAnim, "LightMatrix");
-			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(newLightMatrix));
-
-			loc = glGetUniformLocation(m_shadowProgramAnim, "light");
-			glUniform3fv(loc, 1, glm::value_ptr(*light));
-
-			loc = glGetUniformLocation(m_shadowProgramAnim, "cameraPos");
-			glUniform3fv(loc, 1, glm::value_ptr(*cameraPos));
-
-			loc = glGetUniformLocation(m_shadowProgramAnim, "lightColor");
-			glUniform3fv(loc, 1, glm::value_ptr(*lightColour));
-
-			loc = glGetUniformLocation(m_shadowProgramAnim, "specPow");
-			glUniform1fv(loc, 1, specPow);
-
-			loc = glGetUniformLocation(m_shadowProgramAnim, "shadowBias");
-			glUniform1f(loc, 0.01f);
-
-			loc = glGetUniformLocation(m_shadowProgramAnim, "bones");
-			glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
-
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, m_texture);
-
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, m_normal);
-
-			glActiveTexture(GL_TEXTURE3);
-			glBindTexture(GL_TEXTURE_2D, m_sboDepth);
-
-			loc = glGetUniformLocation(m_shadowProgramAnim, "diffuse");
-			glUniform1i(loc, 0);
-
-			loc = glGetUniformLocation(m_shadowProgramAnim, "normal");
-			glUniform1i(loc, 1);
-
-			loc = glGetUniformLocation(m_shadowProgramAnim, "specular");
-			glUniform1i(loc, 2);
-
-			loc = glGetUniformLocation(m_shadowProgramAnim, "shadowMap");
-			glUniform1i(loc, 3);
-
-			for (unsigned int i = 0; i < m_fbx->getMeshCount(); ++i)
+			if (m_models[i].m_fbx != NULL)
 			{
-				FBXMeshNode* mesh = m_fbx->getMeshByIndex(i);
+				if (m_models[i].m_fbx->getSkeletonCount() > 0)
+				{
+					FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
+					skeleton->updateBones();
 
-				unsigned int* glData = (unsigned int*)mesh->m_userData;
+					loc = glGetUniformLocation(m_shadowProgramAnim, "ProjectionView");
+					glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
 
-				glBindVertexArray(glData[0]);
-				glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+					loc = glGetUniformLocation(m_shadowProgramAnim, "LightMatrix");
+					glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(newLightMatrix));
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "light");
+					glUniform3fv(loc, 1, glm::value_ptr(*light));
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "cameraPos");
+					glUniform3fv(loc, 1, glm::value_ptr(*cameraPos));
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "lightColor");
+					glUniform3fv(loc, 1, glm::value_ptr(*lightColour));
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "specPow");
+					glUniform1fv(loc, 1, specPow);
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "shadowBias");
+					glUniform1f(loc, 0.01f);
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "bones");
+					glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
+
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, m_texture);
+
+					glActiveTexture(GL_TEXTURE1);
+					glBindTexture(GL_TEXTURE_2D, m_normal);
+
+					glActiveTexture(GL_TEXTURE3);
+					glBindTexture(GL_TEXTURE_2D, m_sboDepth);
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "diffuse");
+					glUniform1i(loc, 0);
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "normal");
+					glUniform1i(loc, 1);
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "specular");
+					glUniform1i(loc, 2);
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "shadowMap");
+					glUniform1i(loc, 3);
+
+					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
+					{
+						FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
+
+						unsigned int* glData = (unsigned int*)mesh->m_userData;
+
+						glBindVertexArray(glData[0]);
+						glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+					}
+				}
 			}
 		}
 
 		glUseProgram(m_shadowProgram);
+
+		//z rotation
+		//mat4 rotation{ cosf(90), -sinf(90), 0.f, 0.f,
+		//			   sinf(90),  cosf(90), 0.f, 0.f,
+		//					0.f,	   0.f, 1.f, 0.f,
+		//					0.f,	   0.f, 0.f, 1.f};
+
+		//y rotation
+		//mat4 rotation{ cosf(90), 0.f,  sinf(90), 0.f,
+		//	0.f, 1.f, 0.f, 0.f,
+		//	-sinf(90), 0.f, cosf(90), 0.f,
+		//	0.f, 0.f, 0.f, 1.f };
+
+		//x rotation
+		mat4 rotation{ 1.f,            0.f,			    0.f, 0.f,
+					   0.f, cosf(1.57079f), -sinf(1.57079f), 0.f,
+				       0.f, sinf(1.57079f),  cosf(1.57079f), 0.f,
+					   0.f,			   0.f,			    0.f, 1.f };
 
 		loc = glGetUniformLocation(m_shadowProgram, "ProjectionView");
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
 
 		loc = glGetUniformLocation(m_shadowProgram, "LightMatrix");
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(newLightMatrix));
+
+		loc = glGetUniformLocation(m_shadowProgram, "Rotation");
+		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(rotation));
 
 		loc = glGetUniformLocation(m_shadowProgram, "light");
 		glUniform3fv(loc, 1, glm::value_ptr(*light));
@@ -998,6 +1074,15 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		loc = glGetUniformLocation(m_shadowProgram, "shadowBias");
 		glUniform1f(loc, 0.01f);
 
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_texture);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_normal);
+
+		glActiveTexture(GL_TEXTURE3);
+		glBindTexture(GL_TEXTURE_2D, m_sboDepth);
+
 		loc = glGetUniformLocation(m_shadowProgram, "diffuse");
 		glUniform1i(loc, 0);
 
@@ -1009,19 +1094,36 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 		if (m_glInfo.size() != 0)
 		{
-			unsigned int diffuse = glGetUniformLocation(m_shadowProgram, "diffuse");
-			glUniform1i(diffuse, 0);
-
-			//set texture slot
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, m_texture);
-
 			for (unsigned int i = 0; i < m_glInfo.size(); ++i)
 			{
 				glBindVertexArray(m_glInfo[i].m_VAO);
 				glDrawElements(GL_TRIANGLES, m_glInfo[i].m_indexCount, GL_UNSIGNED_INT, 0);
 			}
 		}
+
+		for (int i = 0; i < 2; i++)
+		{
+			if (m_models[i].m_fbx != NULL)
+			{
+				if (m_models[i].m_fbx->getSkeletonCount() == 0)
+				{
+					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
+					{
+						FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
+
+						unsigned int* glData = (unsigned int*)mesh->m_userData;
+
+						glBindVertexArray(glData[0]);
+						glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+					}
+				}
+			}
+		}
+
+		rotation = mat4(1.f);
+
+		loc = glGetUniformLocation(m_shadowProgram, "Rotation");
+		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(rotation));
 
 		glBindVertexArray(m_shadowPlane.m_VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
@@ -1063,51 +1165,54 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			}
 		}
 
-		if (m_fbx != NULL)
+		for (int i = 0; i < 2; ++i)
 		{
-			FBXSkeleton* skeleton = m_fbx->getSkeletonByIndex(0);
-			skeleton->updateBones();
-
-			glUseProgram(m_programID);
-
-			loc = glGetUniformLocation(m_programID, "ProjectionView");
-			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
-
-			loc = glGetUniformLocation(m_programID, "bones");
-			glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
-
-			loc = glGetUniformLocation(m_programID, "light");
-			glUniform3fv(loc, 1, glm::value_ptr(*light));
-
-			loc = glGetUniformLocation(m_programID, "cameraPos");
-			glUniform3fv(loc, 1, glm::value_ptr(*cameraPos));
-
-			loc = glGetUniformLocation(m_programID, "lightColor");
-			glUniform3fv(loc, 1, glm::value_ptr(*lightColour));
-
-			loc = glGetUniformLocation(m_programID, "specPow");
-			glUniform1fv(loc, 1, specPow);
-
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, m_texture);
-
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, m_normal);
-
-			loc = glGetUniformLocation(m_programID, "diffuse");
-			glUniform1i(loc, 0);
-
-			loc = glGetUniformLocation(m_programID, "normal");
-			glUniform1i(loc, 1);
-
-			for (unsigned int i = 0; i < m_fbx->getMeshCount(); ++i)
+			if (m_models[i].m_fbx != NULL)
 			{
-				FBXMeshNode* mesh = m_fbx->getMeshByIndex(i);
+				FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
+				skeleton->updateBones();
 
-				unsigned int* glData = (unsigned int*)mesh->m_userData;
+				glUseProgram(m_programID);
 
-				glBindVertexArray(glData[0]);
-				glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+				loc = glGetUniformLocation(m_programID, "ProjectionView");
+				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
+
+				loc = glGetUniformLocation(m_programID, "bones");
+				glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
+
+				loc = glGetUniformLocation(m_programID, "light");
+				glUniform3fv(loc, 1, glm::value_ptr(*light));
+
+				loc = glGetUniformLocation(m_programID, "cameraPos");
+				glUniform3fv(loc, 1, glm::value_ptr(*cameraPos));
+
+				loc = glGetUniformLocation(m_programID, "lightColor");
+				glUniform3fv(loc, 1, glm::value_ptr(*lightColour));
+
+				loc = glGetUniformLocation(m_programID, "specPow");
+				glUniform1fv(loc, 1, specPow);
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, m_texture);
+
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, m_normal);
+
+				loc = glGetUniformLocation(m_programID, "diffuse");
+				glUniform1i(loc, 0);
+
+				loc = glGetUniformLocation(m_programID, "normal");
+				glUniform1i(loc, 1);
+
+				for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
+				{
+					FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
+
+					unsigned int* glData = (unsigned int*)mesh->m_userData;
+
+					glBindVertexArray(glData[0]);
+					glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+				}
 			}
 		}
 	}
@@ -1162,7 +1267,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			glm::value_ptr(*projectionView));
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_rock_texture);
+		glBindTexture(GL_TEXTURE_2D, m_water_texture);
 		loc = glGetUniformLocation(m_waterProgram, "water_texture");
 		glUniform1i(loc, 0);
 

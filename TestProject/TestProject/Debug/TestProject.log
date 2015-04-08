@@ -1,13 +1,13 @@
-﻿Build started 6/04/2015 1:19:41 PM.
+﻿Build started 8/04/2015 2:29:46 PM.
      1>Project "C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\TestProject\TestProject.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glm" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\aieutilities" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\src\\" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\stb" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\include" /ZI /W3 /WX- /sdl /Od /Oy- /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Tutorial13.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glm" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\aieutilities" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\src\\" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\stb" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\include" /ZI /W3 /WX- /sdl /Od /Oy- /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Assessment.cpp
          Microsoft (R) C/C++ Optimizing Compiler Version 18.00.31101 for x86
          Copyright (C) Microsoft Corporation.  All rights reserved.
          
-         cl /c /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glm" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\aieutilities" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\src\\" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\stb" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\include" /ZI /W3 /WX- /sdl /Od /Oy- /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Tutorial13.cpp
+         cl /c /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glm" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\aieutilities" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\src\\" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\stb" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\include" /ZI /W3 /WX- /sdl /Od /Oy- /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Assessment.cpp
          
-         Tutorial13.cpp
+         Assessment.cpp
      1>c:\users\iain\documents\visual studio 2013\projects\testproject\src\fbxfile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
                  command-line arguments :  see previous definition of 'GLM_SWIZZLE'
      1>c:\users\iain\documents\visual studio 2013\projects\testproject\src\fbxfile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
@@ -17,6 +17,7 @@
          Debug\gl_core_4_4.obj
          Debug\tiny_obj_loader.obj
          Debug\Application.obj
+         Debug\Assessment.obj
          Debug\Camera.obj
          Debug\FlyCamera.obj
          Debug\GPUParticleEmitter.obj
@@ -41,4 +42,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.96
+Time Elapsed 00:00:05.02

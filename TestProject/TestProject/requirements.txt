@@ -1,0 +1,36 @@
+use perlin or diamond-square
+to generate a random terrain. 		DONE
+
+Must have 3D lighting. 			DONE
+
+Must be fully textured. 		CAN DO
+
+Uses at least 2 geometric models
+created by artists or from web.		CAN DO
+
+Have a model walking around the
+terrain.				MAYBE
+
+use particle effect or water 
+effect as animation.			MAYBE
+
+use antweak to alter procedural
+gen or create gen based on user
+choices.				CAN DO
+
+use antweak to allow user to 
+modify at least 2 other 
+aspects of the environment.		CAN DO
+
+document detailing how to use 
+the GUI. 				MAYBE
+
+document must have detail of 
+what each GUI element does and 
+include visuals.			MAYBE
+
+Build in release			IMPORTANT
+
+Create a struct that contains an: 
+FBXFile, vec4 position, mat4 rotation
+create an array of these structs
