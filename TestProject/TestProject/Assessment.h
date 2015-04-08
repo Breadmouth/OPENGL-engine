@@ -34,4 +34,5 @@ protected:
 	bool generate;
 
 	float m_timer;
+	glm::vec2 m_anim;
 };

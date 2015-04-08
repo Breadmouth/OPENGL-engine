@@ -19,7 +19,8 @@ Renderer::Renderer()
 	m_programs["m_shadowProgramAnim"] = &m_shadowProgramAnim;
 	m_programs["m_shadowGenProgram"] = &m_shadowGenProgram;
 	m_programs["m_shadowGenProgramAnim"] = &m_shadowGenProgramAnim;
-	m_programs["m_perlinProgram"] = &m_perlinProgram;
+	m_programs["m_terrainGenProgram"] = &m_terrainGenProgram;
+	m_programs["m_terrainGenShadowProgram"] = &m_terrainGenShadowProgram;
 	m_programs["m_waterProgram"] = &m_waterProgram;
 
 	m_textures["m_texture"] = &m_texture;
@@ -49,7 +50,8 @@ void Renderer::Destroy()
 	glDeleteProgram(m_shadowProgramAnim);
 	glDeleteProgram(m_shadowGenProgram);
 	glDeleteProgram(m_shadowGenProgramAnim);
-	glDeleteProgram(m_perlinProgram);
+	glDeleteProgram(m_terrainGenProgram);
+	glDeleteProgram(m_terrainGenShadowProgram);
 	glDeleteProgram(m_waterProgram);
 }
 
@@ -1125,8 +1127,41 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		loc = glGetUniformLocation(m_shadowProgram, "Rotation");
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(rotation));
 
-		glBindVertexArray(m_shadowPlane.m_VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+		if (m_terrainPlane.m_indexCount != NULL)// needs indexcount to be set
+		{
+			glUseProgram(m_terrainGenShadowProgram);
+
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "view_proj");
+			glUniformMatrix4fv(loc, 1, GL_FALSE,
+				glm::value_ptr(*projectionView));
+
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "LightMatrix");
+			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(newLightMatrix));
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_perlin_texture);
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "perlin_texture");
+			glUniform1i(loc, 0);
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_grass_texture);
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "grass_texture");
+			glUniform1i(loc, 1);
+
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, m_sboDepth);
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "shadowMap");
+			glUniform1i(loc, 2);
+
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "shadowBias");
+			glUniform1f(loc, 0.01f);
+
+			glBindVertexArray(m_terrainPlane.m_VAO);
+			glDrawElements(GL_TRIANGLES, m_terrainPlane.m_indexCount, GL_UNSIGNED_INT, nullptr);
+		}
+
+		//glBindVertexArray(m_shadowPlane.m_VAO);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 	}
 	else
 	{
@@ -1215,6 +1250,39 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 				}
 			}
 		}
+
+		if (m_terrainPlane.m_indexCount != NULL)// needs indexcount to be set
+		{
+			glUseProgram(m_terrainGenProgram);
+
+			loc = glGetUniformLocation(m_terrainGenProgram, "view_proj");
+			glUniformMatrix4fv(loc, 1, GL_FALSE,
+				glm::value_ptr(*projectionView));
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_perlin_texture);
+			loc = glGetUniformLocation(m_terrainGenProgram, "perlin_texture");
+			glUniform1i(loc, 0);
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_rock_texture);
+			loc = glGetUniformLocation(m_terrainGenProgram, "rock_texture");
+			glUniform1i(loc, 1);
+
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, m_grass_texture);
+			loc = glGetUniformLocation(m_terrainGenProgram, "grass_texture");
+			glUniform1i(loc, 2);
+
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, m_snow_texture);
+			loc = glGetUniformLocation(m_terrainGenProgram, "snow_texture");
+			glUniform1i(loc, 3);
+
+			glBindVertexArray(m_terrainPlane.m_VAO);
+			glDrawElements(GL_TRIANGLES, m_terrainPlane.m_indexCount, GL_UNSIGNED_INT, nullptr);
+		}
+
 	}
 
 	if (m_emitter != NULL)
@@ -1224,38 +1292,6 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
 
 		m_emitter->Draw();
-	}
-
-	if (m_terrainPlane.m_indexCount != NULL)// needs indexcount to be set
-	{
-		glUseProgram(m_perlinProgram);
-
-		loc = glGetUniformLocation(m_perlinProgram, "view_proj");
-		glUniformMatrix4fv(loc, 1, GL_FALSE,
-			glm::value_ptr(*projectionView));
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_perlin_texture);
-		loc = glGetUniformLocation(m_perlinProgram, "perlin_texture");
-		glUniform1i(loc, 0);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, m_rock_texture);
-		loc = glGetUniformLocation(m_perlinProgram, "rock_texture");
-		glUniform1i(loc, 1);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, m_grass_texture);
-		loc = glGetUniformLocation(m_perlinProgram, "grass_texture");
-		glUniform1i(loc, 2);
-
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, m_snow_texture);
-		loc = glGetUniformLocation(m_perlinProgram, "snow_texture");
-		glUniform1i(loc, 3);
-
-		glBindVertexArray(m_terrainPlane.m_VAO);
-		glDrawElements(GL_TRIANGLES, m_terrainPlane.m_indexCount, GL_UNSIGNED_INT, nullptr);
 	}
 
 	if (m_waterPlane.m_indexCount != NULL)// needs indexcount to be set

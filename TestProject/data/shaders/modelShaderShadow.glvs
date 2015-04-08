@@ -11,14 +11,16 @@ out vec4 vShadowCoord;
 
 uniform mat4 ProjectionView;
 uniform mat4 LightMatrix;
+uniform mat4 Rotation;
 
 void main()
 {
 	vTexCoord = TexCoord;
 	vNormal = Normal;
-	vPosition = Position;
+	vPosition = Rotation * Position;
 	
-	gl_Position = ProjectionView * Position;
+	vec4 P = Rotation * Position;
+	gl_Position = ProjectionView * P;
 	
-	vShadowCoord = LightMatrix * Position;
+	vShadowCoord = LightMatrix * P;
 }

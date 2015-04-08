@@ -1,0 +1,25 @@
+#version 410
+
+in vec2 frag_texcoord;
+in vec4 vPosition;
+in vec4 vShadowCoord;
+
+out vec4 out_color;
+
+uniform sampler2D grass_texture;
+uniform sampler2D shadowMap;
+uniform float shadowBias;
+
+void main()
+{
+	vec4 grass = texture(grass_texture, frag_texcoord); 
+
+	float k = 1.0f;
+	
+	if (texture(shadowMap, vShadowCoord.xy).r < vShadowCoord.z - shadowBias)
+	{
+		k = 0.1f;
+	}
+	
+	out_color = grass * vec4(k, k, k, 1.0f);
+}

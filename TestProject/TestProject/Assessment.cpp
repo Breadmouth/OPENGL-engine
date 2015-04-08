@@ -20,7 +20,10 @@ Assessment::Assessment()
 	animate = false;
 	generate = false;
 
-	m_timer = 0.0f;
+	m_anim.x = 0.0f;
+	m_anim.y = 3.7f;
+
+	m_timer = m_anim.x;
 }
 
 void Assessment::Create()
@@ -40,15 +43,16 @@ void Assessment::Create()
 	TwAddVarRW(m_bar, "animate", TW_TYPE_BOOLCPP, &animate, "group=animation");
 
 	//load shaders
-	m_renderer.LoadShader("m_perlinProgram", "../data/shaders/perlin.glvs", "../data/shaders/perlin.glfs");
+	m_renderer.LoadShader("m_terrainGenProgram", "../data/shaders/terrainGen.glvs", "../data/shaders/terrainGen.glfs");
+	m_renderer.LoadShader("m_terrainGenShadowProgram", "../data/shaders/terrainGenShadow.glvs", "../data/shaders/terrainGenShadow.glfs");
 	m_renderer.LoadShader("m_waterProgram", "../data/shaders/water.glvs", "../data/shaders/water.glfs");
 	m_renderer.LoadShader("m_postProcessProgram", "../data/shaders/tut10.glvs", "../data/shaders/tut10.glfs");
 	m_renderer.LoadShader("m_programID", "../data/shaders/modelShader.glvs", "../data/shaders/modelShader.glfs");
 
-	//m_renderer.LoadShader("m_shadowProgram", "../data/shaders/modelShaderShadow.glvs", "../data/shaders/modelShaderShadow.glfs");
-	//m_renderer.LoadShader("m_shadowProgramAnim", "../data/shaders/modelShaderShadowAnim.glvs", "../data/shaders/modelShaderShadowAnim.glfs");
-	//m_renderer.LoadShader("m_shadowGenProgram", "../data/shaders/shadowMap.glvs", "../data/shaders/shadowMap.glfs");
-	//m_renderer.LoadShader("m_shadowGenProgramAnim", "../data/shaders/shadowMapAnim.glvs", "../data/shaders/shadowMapAnim.glfs");
+	m_renderer.LoadShader("m_shadowProgram", "../data/shaders/modelShaderShadow.glvs", "../data/shaders/modelShaderShadow.glfs");
+	m_renderer.LoadShader("m_shadowProgramAnim", "../data/shaders/modelShaderShadowAnim.glvs", "../data/shaders/modelShaderShadowAnim.glfs");
+	m_renderer.LoadShader("m_shadowGenProgram", "../data/shaders/shadowMap.glvs", "../data/shaders/shadowMap.glfs");
+	m_renderer.LoadShader("m_shadowGenProgramAnim", "../data/shaders/shadowMapAnim.glvs", "../data/shaders/shadowMapAnim.glfs");
 
 	//load textures
 	m_renderer.LoadTexture("m_grass_texture", "../data/grass.jpg", GL_RGBA);
@@ -62,12 +66,12 @@ void Assessment::Create()
 	m_renderer.CreateFB();
 	m_renderer.CreateViewPlane();
 
-	//m_renderer.CreateSB();
+	m_renderer.CreateSB();
 
-	//m_renderer.CreateTerrainPlane(65, 65);
-	//m_renderer.CreateDiamondSquare(65);
+	m_renderer.CreateTerrainPlane(65, 65);
+	m_renderer.CreateDiamondSquare(65);
 
-	//m_renderer.CreateWaterPlane(65);
+	m_renderer.CreateWaterPlane(65);
 }
 
 void Assessment::Destroy()
@@ -83,9 +87,16 @@ void Assessment::Update(float dt)
 		generate = false;
 	}
 
+	if (animate)
+	{
+		m_timer += dt;
+		if (m_timer > m_anim.y)
+			m_timer = m_anim.x;
+	}
+
 	m_renderer.SetAnimateFBX(animate);
 
-	m_renderer.Update(dt, dt, &camera.GetWorldTransform());
+	m_renderer.Update(m_timer, dt, &camera.GetWorldTransform());
 	camera.SetSpeed(cameraSpeed);
 	camera.Update(dt);
 }

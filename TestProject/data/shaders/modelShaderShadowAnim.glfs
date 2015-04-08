@@ -39,7 +39,7 @@ void main()
 	
 	if (texture(shadowMap, vShadowCoord.xy).r < vShadowCoord.z - shadowBias)
 	{
-		k = 0;
+		k = 0.1f;
 	}
 
 	FragColor = texture(diffuse, vTexCoord) * vec4(d * lightColor + s * lightColor, 1) * vec4(k, k, k, 1);;

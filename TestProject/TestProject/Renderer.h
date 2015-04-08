@@ -137,7 +137,8 @@ private:
 	unsigned int m_shadowProgramAnim;
 	unsigned int m_shadowGenProgram;
 	unsigned int m_shadowGenProgramAnim;
-	unsigned int m_perlinProgram;
+	unsigned int m_terrainGenProgram;
+	unsigned int m_terrainGenShadowProgram;
 	unsigned int m_waterProgram;
 
 	unsigned int m_objects;
