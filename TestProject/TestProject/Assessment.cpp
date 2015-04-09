@@ -61,6 +61,18 @@ void Assessment::Create()
 	m_renderer.LoadFBX("../data/fbx/characters/Enemytank/EnemyTank.fbx");
 	m_renderer.LoadTexture("m_texture", "../data/fbx/characters/Enemytank/EnemyTank_D.tga", GL_RGBA);
 	
+	mat4 pos = glm::translate(vec3(10000, 0, 0));
+	mat4 scale = glm::scale(vec3(0.1f, 0.1f, 0.1f));
+
+	m_renderer.FillModel(0, pos, mat4{ 1.0f }, scale);
+	m_renderer.SetModelTexture(0, "m_texture");
+
+	m_renderer.LoadFBX("../data/fbx/characters/enemynormal/EnemyNormal.fbx");
+	m_renderer.LoadTexture("m_texture", "../data/fbx/characters/enemynormal/EnemyNormal1_D.tga", GL_RGB);
+
+	m_renderer.FillModel(1, mat4{ 1.0f }, mat4{ 1.0f }, scale);
+	m_renderer.SetModelTexture(1, "m_texture");
+
 	//m_renderer.CreateShadowPlane();
 
 	m_renderer.CreateFB();

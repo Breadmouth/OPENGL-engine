@@ -74,6 +74,11 @@ void Renderer::LoadFBX(const char* path)
 			m_models[i].m_fbx = new FBXFile();
 			m_models[i].m_fbx->load(path);
 			CreateOpenGLBuffers(m_models[i].m_fbx);
+
+			m_models[i].m_position = mat4{ 1.f };
+			m_models[i].m_rotation = mat4{ 1.f };
+			m_models[i].m_scale = mat4{ 1.f };
+
 			return;
 		}
 	}
@@ -869,10 +874,13 @@ void Renderer::Update(float timer, float dt, mat4 *cameraTransform)
 	}
 }
 
+//make each model draw from their own texture
 void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 	mat4* projectionView, vec3* cameraPos, float* specPow)
 {
 	unsigned int loc;
+
+	mat4 emptyTransform(1.f);
 
 	if (m_sbo != NULL)
 	{
@@ -895,6 +903,9 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		// draw all shadow-casting geometry
 		if (m_glInfo.size() != 0)
 		{
+			loc = glGetUniformLocation(m_shadowGenProgram, "Transform");
+			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(emptyTransform));
+
 			for (unsigned int i = 0; i < m_glInfo.size(); ++i)
 			{
 				glBindVertexArray(m_glInfo[i].m_VAO);
@@ -906,6 +917,11 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		{
 			if (m_models[i].m_fbx != NULL)
 			{
+				mat4 transform = m_models[i].m_scale * m_models[i].m_position * m_models[i].m_rotation;
+
+				loc = glGetUniformLocation(m_shadowGenProgram, "Transform");
+				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+
 				if (m_models[i].m_fbx->getSkeletonCount() == 0)
 				{
 					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
@@ -930,6 +946,11 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		{
 			if (m_models[i].m_fbx != NULL)
 			{
+				mat4 transform = m_models[i].m_scale * m_models[i].m_position * m_models[i].m_rotation;
+
+				loc = glGetUniformLocation(m_shadowGenProgramAnim, "Transform");
+				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+
 				if (m_models[i].m_fbx->getSkeletonCount() > 0)
 				{
 					FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
@@ -979,6 +1000,11 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 					loc = glGetUniformLocation(m_shadowProgramAnim, "LightMatrix");
 					glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(newLightMatrix));
+
+					mat4 transform = m_models[i].m_scale * m_models[i].m_position * m_models[i].m_rotation;
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "Transform");
+					glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
 
 					loc = glGetUniformLocation(m_shadowProgramAnim, "light");
 					glUniform3fv(loc, 1, glm::value_ptr(*light));
@@ -1047,19 +1073,12 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		//	0.f, 0.f, 0.f, 1.f };
 
 		//x rotation
-		mat4 rotation{ 1.f,            0.f,			    0.f, 0.f,
-					   0.f, cosf(1.57079f), -sinf(1.57079f), 0.f,
-				       0.f, sinf(1.57079f),  cosf(1.57079f), 0.f,
-					   0.f,			   0.f,			    0.f, 1.f };
 
 		loc = glGetUniformLocation(m_shadowProgram, "ProjectionView");
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
 
 		loc = glGetUniformLocation(m_shadowProgram, "LightMatrix");
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(newLightMatrix));
-
-		loc = glGetUniformLocation(m_shadowProgram, "Rotation");
-		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(rotation));
 
 		loc = glGetUniformLocation(m_shadowProgram, "light");
 		glUniform3fv(loc, 1, glm::value_ptr(*light));
@@ -1096,6 +1115,9 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 		if (m_glInfo.size() != 0)
 		{
+			loc = glGetUniformLocation(m_shadowProgram, "Transform");
+			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(emptyTransform));
+
 			for (unsigned int i = 0; i < m_glInfo.size(); ++i)
 			{
 				glBindVertexArray(m_glInfo[i].m_VAO);
@@ -1107,6 +1129,11 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		{
 			if (m_models[i].m_fbx != NULL)
 			{
+				mat4 transform = m_models[i].m_scale * m_models[i].m_position * m_models[i].m_rotation;
+
+				loc = glGetUniformLocation(m_shadowProgram, "Transform");
+				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+
 				if (m_models[i].m_fbx->getSkeletonCount() == 0)
 				{
 					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
@@ -1121,11 +1148,6 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 				}
 			}
 		}
-
-		rotation = mat4(1.f);
-
-		loc = glGetUniformLocation(m_shadowProgram, "Rotation");
-		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(rotation));
 
 		if (m_terrainPlane.m_indexCount != NULL)// needs indexcount to be set
 		{
@@ -1174,6 +1196,9 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			loc = glGetUniformLocation(m_programID, "ProjectionView");
 			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
 
+			loc = glGetUniformLocation(m_programID, "Transform");
+			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(emptyTransform));
+
 			loc = glGetUniformLocation(m_programID, "light");
 			glUniform3fv(loc, 1, glm::value_ptr(*light));
 
@@ -1211,6 +1236,11 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 				loc = glGetUniformLocation(m_programID, "ProjectionView");
 				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
+
+				mat4 transform = m_models[i].m_scale * m_models[i].m_position * m_models[i].m_rotation;
+
+				loc = glGetUniformLocation(m_programID, "Transform");
+				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
 
 				loc = glGetUniformLocation(m_programID, "bones");
 				glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
@@ -1329,4 +1359,16 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		glDrawElements(GL_TRIANGLES, m_viewPlane.m_indexCount, GL_UNSIGNED_INT, nullptr);
 	}
 
+}
+
+void Renderer::FillModel(int i, mat4 pos, mat4 rot, mat4 scale)
+{
+	m_models[i].m_position = pos;
+	m_models[i].m_rotation = rot;
+	m_models[i].m_scale = scale;
+}
+
+void Renderer::SetModelTexture(int i, std::string name)
+{
+	m_models[i].m_texture = *m_textures[name];
 }

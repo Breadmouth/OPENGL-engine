@@ -11,7 +11,7 @@ out vec4 vShadowCoord;
 
 uniform mat4 ProjectionView;
 uniform mat4 LightMatrix;
-uniform mat4 Rotation;
+uniform mat4 Transform;
 
 void main()
 {
@@ -19,7 +19,7 @@ void main()
 	vNormal = Normal;
 	vPosition = Rotation * Position;
 	
-	vec4 P = Rotation * Position;
+	vec4 P = Transform * Position;
 	gl_Position = ProjectionView * P;
 	
 	vShadowCoord = LightMatrix * P;

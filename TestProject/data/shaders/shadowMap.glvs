@@ -3,8 +3,10 @@
 layout(location=0) in vec4 Position; 
 
 uniform mat4 LightMatrix; 
+uniform mat4 Transform;
 
 void main() 
 { 
-	gl_Position= LightMatrix * Position;
+	vec4 P = Transform * Position;
+	gl_Position= LightMatrix * P;
 }

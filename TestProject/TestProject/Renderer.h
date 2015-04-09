@@ -76,6 +76,9 @@ public:
 	bool GetAnimateFBX();
 	void SetAnimateFBX(bool animate);
 
+	void FillModel(int i, mat4 pos, mat4 rot, mat4 scale);
+	void SetModelTexture(int i, std::string name);
+
 	struct Vertex {
 		float v_x;
 		float v_y;
@@ -101,8 +104,12 @@ private:
 	struct Model
 	{
 		FBXFile* m_fbx;
-		glm::vec4 m_position;
+		unsigned int m_texture;
+		unsigned int m_normal;
+		unsigned int m_specular;
+		mat4 m_position;
 		mat4 m_rotation;
+		mat4 m_scale;
 	};
 
 	std::map<std::string, unsigned int*> m_programs;
