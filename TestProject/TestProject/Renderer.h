@@ -26,7 +26,7 @@ public:
 	void Update(float timer, float dt, mat4 *cameraTransform);
 	//contains draw for all objects handled by renderer
 	void Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix, 
-			  mat4* projectionView, vec3* cameraPos, float* specPow);
+			  mat4* projectionView, vec3* cameraPos, float* specPow, float* height);
 
 	//load vertex and fragment shader into a program
 	bool LoadShader(std::string program, std::string vertex, std::string fragment);
@@ -67,6 +67,8 @@ public:
 	//create plane to use as water
 	void CreateWaterPlane(int dims);
 
+	vec3 GetTerrainPos(int x, int y);
+
 	void LoadTexture(std::string texture, std::string path, GLint type);
 	void LoadNormal(std::string path);
 	void LoadSpecular(std::string path);
@@ -77,6 +79,7 @@ public:
 	void SetAnimateFBX(bool animate);
 
 	void FillModel(int i, mat4 pos, mat4 rot, mat4 scale);
+	void SetModelPos(int i, vec3 pos);
 	void SetModelTexture(int i, std::string name);
 
 	struct Vertex {
@@ -127,6 +130,8 @@ private:
 	GLInfo m_terrainPlane;
 	GLInfo m_waterPlane;
 	GLInfo m_shadowPlane;
+
+	vec3 **m_terrain;
 
 	unsigned int m_perlin_texture;
 	unsigned int m_rock_texture;

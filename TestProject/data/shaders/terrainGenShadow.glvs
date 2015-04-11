@@ -11,11 +11,12 @@ out vec4 vPosition;
 out vec4 vShadowCoord;
 
 uniform sampler2D perlin_texture;
+uniform float height;
 
 void main()
 {
 	vec4 pos = position;
-	pos.y += texture(perlin_texture, texcoord).r * 50;
+	pos.y += texture(perlin_texture, texcoord).r * height;
 	vPosition = pos;
 
 	frag_texcoord = texcoord;

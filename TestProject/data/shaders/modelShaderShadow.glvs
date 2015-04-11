@@ -17,7 +17,7 @@ void main()
 {
 	vTexCoord = TexCoord;
 	vNormal = Normal;
-	vPosition = Rotation * Position;
+	vPosition = Transform * Position;
 	
 	vec4 P = Transform * Position;
 	gl_Position = ProjectionView * P;

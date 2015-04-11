@@ -1,17 +1,47 @@
-﻿Build started 9/04/2015 2:14:34 PM.
+﻿Build started 11/04/2015 11:28:05 AM.
      1>Project "C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\TestProject\TestProject.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glm" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\aieutilities" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\src\\" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\stb" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\include" /ZI /W3 /WX- /sdl /Od /Oy- /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Assessment.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glm" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\aieutilities" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\src\\" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\stb" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\include" /ZI /W3 /WX- /sdl /Od /Oy- /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Assessment.cpp GPUParticleEmitter.cpp Renderer.cpp Tutorial10.cpp Tutorial11.cpp Tutorial13.cpp Tutorial6.cpp Tutorial7.cpp Tutorial8.cpp Tutorial9.cpp main.cpp
          Microsoft (R) C/C++ Optimizing Compiler Version 18.00.31101 for x86
          Copyright (C) Microsoft Corporation.  All rights reserved.
          
-         cl /c /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glm" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\aieutilities" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\src\\" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\stb" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\include" /ZI /W3 /WX- /sdl /Od /Oy- /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Assessment.cpp
+         cl /c /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glm" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\aieutilities" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\src\\" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\stb" /I"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\include" /ZI /W3 /WX- /sdl /Od /Oy- /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Assessment.cpp GPUParticleEmitter.cpp Renderer.cpp Tutorial10.cpp Tutorial11.cpp Tutorial13.cpp Tutorial6.cpp Tutorial7.cpp Tutorial8.cpp Tutorial9.cpp main.cpp
          
+         Renderer.cpp
+     1>c:\users\iain\documents\visual studio 2013\projects\testproject\src\fbxfile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>c:\users\iain\documents\visual studio 2013\projects\testproject\src\fbxfile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+     1>c:\users\iain\documents\visual studio 2013\projects\testproject\testproject\renderer.cpp(11): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>c:\users\iain\documents\visual studio 2013\projects\testproject\testproject\renderer.cpp(603): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\iain\documents\visual studio 2013\projects\testproject\testproject\renderer.cpp(675): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\iain\documents\visual studio 2013\projects\testproject\testproject\renderer.cpp(800): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\iain\documents\visual studio 2013\projects\testproject\testproject\renderer.cpp(805): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\iain\documents\visual studio 2013\projects\testproject\testproject\renderer.cpp(812): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\iain\documents\visual studio 2013\projects\testproject\testproject\renderer.cpp(817): warning C4018: '<' : signed/unsigned mismatch
          Assessment.cpp
      1>c:\users\iain\documents\visual studio 2013\projects\testproject\src\fbxfile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
                  command-line arguments :  see previous definition of 'GLM_SWIZZLE'
      1>c:\users\iain\documents\visual studio 2013\projects\testproject\src\fbxfile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
                  command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+     1>c:\users\iain\documents\visual studio 2013\projects\testproject\testproject\assessment.cpp(35): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+         Generating Code...
+         Compiling...
+         main.cpp
+     1>c:\users\iain\documents\visual studio 2013\projects\testproject\src\fbxfile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>c:\users\iain\documents\visual studio 2013\projects\testproject\src\fbxfile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+         Generating Code...
+         Skipping... (no relevant changes detected)
+         Tutorial9.cpp
+         Tutorial8.cpp
+         Tutorial7.cpp
+         Tutorial6.cpp
+         Tutorial13.cpp
+         Tutorial11.cpp
+         Tutorial10.cpp
+         GPUParticleEmitter.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\Debug\TestProject.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw\lib-vc2012" /LIBPATH:"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\lib" /LIBPATH:"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\src" opengl32.lib glfw3.lib AntTweakBar.lib FBXLoader_d.lib FBXLoader.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\Debug\TestProject.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Iain\Documents\Visual Studio 2013\Projects\TestProject\Debug\TestProject.lib" /MACHINE:X86 Debug\Gizmos.obj
          Debug\gl_core_4_4.obj
@@ -42,4 +72,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.96
+Time Elapsed 00:00:14.27

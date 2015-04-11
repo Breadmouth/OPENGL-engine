@@ -566,6 +566,11 @@ void Renderer::BindFrameBuffer(bool bind)
 
 void Renderer::CreateTerrainPlane(int width, int height)
 {
+	m_terrain = new vec3 *[width];
+	for (int i = 0; i < width; i++)
+	{
+		m_terrain[i] = new vec3[height];
+	}
 
 	std::vector<Vertex> vertexData;
 
@@ -582,6 +587,8 @@ void Renderer::CreateTerrainPlane(int width, int height)
 			point.t_y = 1.0f / height * j;
 
 			vertexData.push_back(point);
+
+			m_terrain[i][j] = vec3(point.v_x, point.v_y, point.v_z);
 
 		}
 	}
@@ -876,7 +883,7 @@ void Renderer::Update(float timer, float dt, mat4 *cameraTransform)
 
 //make each model draw from their own texture
 void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
-	mat4* projectionView, vec3* cameraPos, float* specPow)
+	mat4* projectionView, vec3* cameraPos, float* specPow, float* height)
 {
 	unsigned int loc;
 
@@ -917,7 +924,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		{
 			if (m_models[i].m_fbx != NULL)
 			{
-				mat4 transform = m_models[i].m_scale * m_models[i].m_position * m_models[i].m_rotation;
+				mat4 transform = m_models[i].m_scale * m_models[i].m_rotation * m_models[i].m_position;
 
 				loc = glGetUniformLocation(m_shadowGenProgram, "Transform");
 				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
@@ -946,7 +953,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		{
 			if (m_models[i].m_fbx != NULL)
 			{
-				mat4 transform = m_models[i].m_scale * m_models[i].m_position * m_models[i].m_rotation;
+				mat4 transform = m_models[i].m_rotation * m_models[i].m_position * m_models[i].m_scale;
 
 				loc = glGetUniformLocation(m_shadowGenProgramAnim, "Transform");
 				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
@@ -1001,7 +1008,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 					loc = glGetUniformLocation(m_shadowProgramAnim, "LightMatrix");
 					glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(newLightMatrix));
 
-					mat4 transform = m_models[i].m_scale * m_models[i].m_position * m_models[i].m_rotation;
+					mat4 transform = m_models[i].m_rotation * m_models[i].m_position * m_models[i].m_scale;
 
 					loc = glGetUniformLocation(m_shadowProgramAnim, "Transform");
 					glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
@@ -1025,7 +1032,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 					glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
 
 					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, m_texture);
+					glBindTexture(GL_TEXTURE_2D, m_models[i].m_texture);
 
 					glActiveTexture(GL_TEXTURE1);
 					glBindTexture(GL_TEXTURE_2D, m_normal);
@@ -1095,17 +1102,11 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		loc = glGetUniformLocation(m_shadowProgram, "shadowBias");
 		glUniform1f(loc, 0.01f);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, m_texture);
-
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, m_normal);
 
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, m_sboDepth);
-
-		loc = glGetUniformLocation(m_shadowProgram, "diffuse");
-		glUniform1i(loc, 0);
 
 		loc = glGetUniformLocation(m_shadowProgram, "normal");
 		glUniform1i(loc, 1);
@@ -1115,6 +1116,12 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 		if (m_glInfo.size() != 0)
 		{
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, m_texture);
+
+			loc = glGetUniformLocation(m_shadowProgram, "diffuse");
+			glUniform1i(loc, 0);
+
 			loc = glGetUniformLocation(m_shadowProgram, "Transform");
 			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(emptyTransform));
 
@@ -1129,7 +1136,13 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		{
 			if (m_models[i].m_fbx != NULL)
 			{
-				mat4 transform = m_models[i].m_scale * m_models[i].m_position * m_models[i].m_rotation;
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, m_models[i].m_texture);
+
+				loc = glGetUniformLocation(m_shadowProgram, "diffuse");
+				glUniform1i(loc, 0);
+
+				mat4 transform = m_models[i].m_rotation * m_models[i].m_position * m_models[i].m_scale;
 
 				loc = glGetUniformLocation(m_shadowProgram, "Transform");
 				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
@@ -1164,6 +1177,9 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			glBindTexture(GL_TEXTURE_2D, m_perlin_texture);
 			loc = glGetUniformLocation(m_terrainGenShadowProgram, "perlin_texture");
 			glUniform1i(loc, 0);
+
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "height");
+			glUniform1f(loc, *height);
 
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_grass_texture);
@@ -1237,7 +1253,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 				loc = glGetUniformLocation(m_programID, "ProjectionView");
 				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
 
-				mat4 transform = m_models[i].m_scale * m_models[i].m_position * m_models[i].m_rotation;
+				mat4 transform = m_models[i].m_rotation * m_models[i].m_position * m_models[i].m_scale;
 
 				loc = glGetUniformLocation(m_programID, "Transform");
 				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
@@ -1258,7 +1274,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 				glUniform1fv(loc, 1, specPow);
 
 				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, m_texture);
+				glBindTexture(GL_TEXTURE_2D, m_models[i].m_texture);
 
 				glActiveTexture(GL_TEXTURE1);
 				glBindTexture(GL_TEXTURE_2D, m_normal);
@@ -1293,6 +1309,9 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			glBindTexture(GL_TEXTURE_2D, m_perlin_texture);
 			loc = glGetUniformLocation(m_terrainGenProgram, "perlin_texture");
 			glUniform1i(loc, 0);
+
+			loc = glGetUniformLocation(m_terrainGenProgram, "height");
+			glUniform1f(loc, *height);
 
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_rock_texture);
@@ -1371,4 +1390,14 @@ void Renderer::FillModel(int i, mat4 pos, mat4 rot, mat4 scale)
 void Renderer::SetModelTexture(int i, std::string name)
 {
 	m_models[i].m_texture = *m_textures[name];
+}
+
+vec3 Renderer::GetTerrainPos(int x, int y)
+{
+	return m_terrain[x][y];
+}
+
+void Renderer::SetModelPos(int i, vec3 pos)
+{
+	m_models[i].m_position = glm::translate(pos);
 }

@@ -25,7 +25,7 @@ void main()
 {
 	vTexCoord = TexCoord;
 	vNormal = Normal;
-	vPosition = Position;
+	vPosition = Transform * Position;
 	vTangent = Tangent;
 	vBiTangent = vec4(cross(Normal.xyz, Tangent.xyz), 1);
 	

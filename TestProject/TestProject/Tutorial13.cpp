@@ -78,5 +78,6 @@ void Tutorial13::Update(float dt)
 void Tutorial13::Draw()
 {
 	//m_renderer.DrawPlane(&camera.GetProjectionView());
-	m_renderer.Draw(&light, &lightColour, &mat4(), &camera.GetProjectionView(), &camera.GetPosition(), &specPow);
+	float height = 50;
+	m_renderer.Draw(&light, &lightColour, &mat4(), &camera.GetProjectionView(), &camera.GetPosition(), &specPow, &height);
 }

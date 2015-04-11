@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <string>
+#include <cstdlib>
 
 #include <stb_image.h>
 
@@ -19,6 +20,7 @@ Assessment::Assessment()
 	cameraSpeed = camera.GetSpeed();
 	animate = false;
 	generate = false;
+	height = 50;
 
 	m_anim.x = 0.0f;
 	m_anim.y = 3.7f;
@@ -30,10 +32,15 @@ void Assessment::Create()
 {
 	camera.SetInputWindow(glfwGetCurrentContext());
 
+	srand(time(NULL));
+
 	//AntTweakBar
 	m_bar = TwNewBar("my bar");
 
 	TwAddVarRW(m_bar, "generate terrain", TW_TYPE_BOOLCPP, &generate, "group=generation");
+	TwAddVarRW(m_bar, "height", TW_TYPE_FLOAT, &height, "group=generation");
+
+	TwAddVarRW(m_bar, "model2 pos", TW_TYPE_DIR3F, &modelPos, "group=models");
 
 	TwAddVarRW(m_bar, "clear colour", TW_TYPE_COLOR4F, &m_clearColour[0], "");
 	TwAddVarRW(m_bar, "light dir", TW_TYPE_DIR3F, &light, "group=light");
@@ -60,21 +67,12 @@ void Assessment::Create()
 
 	m_renderer.LoadFBX("../data/fbx/characters/Enemytank/EnemyTank.fbx");
 	m_renderer.LoadTexture("m_texture", "../data/fbx/characters/Enemytank/EnemyTank_D.tga", GL_RGBA);
-	
-	mat4 pos = glm::translate(vec3(10000, 0, 0));
-	mat4 scale = glm::scale(vec3(0.1f, 0.1f, 0.1f));
-
-	m_renderer.FillModel(0, pos, mat4{ 1.0f }, scale);
 	m_renderer.SetModelTexture(0, "m_texture");
 
 	m_renderer.LoadFBX("../data/fbx/characters/enemynormal/EnemyNormal.fbx");
 	m_renderer.LoadTexture("m_texture", "../data/fbx/characters/enemynormal/EnemyNormal1_D.tga", GL_RGB);
-
-	m_renderer.FillModel(1, mat4{ 1.0f }, mat4{ 1.0f }, scale);
 	m_renderer.SetModelTexture(1, "m_texture");
-
-	//m_renderer.CreateShadowPlane();
-
+	
 	m_renderer.CreateFB();
 	m_renderer.CreateViewPlane();
 
@@ -84,6 +82,14 @@ void Assessment::Create()
 	m_renderer.CreateDiamondSquare(65);
 
 	m_renderer.CreateWaterPlane(65);
+
+	mat4 pos = glm::translate(m_renderer.GetTerrainPos(rand() % 65, rand() % 65));
+	mat4 scale = glm::scale(vec3(0.1f, 0.1f, 0.1f));
+
+	m_renderer.FillModel(0, pos, mat4{ 1.0f }, scale);
+
+	m_renderer.FillModel(1, mat4{ 1.0f }, mat4{ 1.0f }, scale);
+
 }
 
 void Assessment::Destroy()
@@ -106,6 +112,7 @@ void Assessment::Update(float dt)
 			m_timer = m_anim.x;
 	}
 
+	m_renderer.SetModelPos(1, modelPos);
 	m_renderer.SetAnimateFBX(animate);
 
 	m_renderer.Update(m_timer, dt, &camera.GetWorldTransform());
@@ -115,6 +122,5 @@ void Assessment::Update(float dt)
 
 void Assessment::Draw()
 {
-	//m_renderer.DrawPlane(&camera.GetProjectionView());
-	m_renderer.Draw(&light, &lightColour, &mat4(), &camera.GetProjectionView(), &camera.GetPosition(), &specPow);
+	m_renderer.Draw(&light, &lightColour, &mat4(), &camera.GetProjectionView(), &camera.GetPosition(), &specPow, &height);
 }

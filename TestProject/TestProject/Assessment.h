@@ -32,6 +32,8 @@ protected:
 	bool animate;
 
 	bool generate;
+	float height;
+	vec3 modelPos;
 
 	float m_timer;
 	glm::vec2 m_anim;
