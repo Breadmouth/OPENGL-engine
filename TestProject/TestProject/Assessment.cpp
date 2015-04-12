@@ -8,6 +8,7 @@
 
 #include <stb_image.h>
 
+using glm::vec2;
 using glm::vec3;
 using glm::vec4;
 using glm::mat4;
@@ -21,6 +22,9 @@ Assessment::Assessment()
 	animate = false;
 	generate = false;
 	height = 50;
+
+	modelScale = 0.1;
+	modelPos = vec3(0, 0, 0);
 
 	m_anim.x = 0.0f;
 	m_anim.y = 3.7f;
@@ -39,8 +43,10 @@ void Assessment::Create()
 
 	TwAddVarRW(m_bar, "generate terrain", TW_TYPE_BOOLCPP, &generate, "group=generation");
 	TwAddVarRW(m_bar, "height", TW_TYPE_FLOAT, &height, "group=generation");
+	TwAddVarRW(m_bar, "water height", TW_TYPE_FLOAT, &waterHeight, "group=generation");
 
 	TwAddVarRW(m_bar, "model2 pos", TW_TYPE_DIR3F, &modelPos, "group=models");
+	TwAddVarRW(m_bar, "model2 scale", TW_TYPE_FLOAT, &modelScale, "group=models");
 
 	TwAddVarRW(m_bar, "clear colour", TW_TYPE_COLOR4F, &m_clearColour[0], "");
 	TwAddVarRW(m_bar, "light dir", TW_TYPE_DIR3F, &light, "group=light");
@@ -83,12 +89,18 @@ void Assessment::Create()
 
 	m_renderer.CreateWaterPlane(65);
 
-	mat4 pos = glm::translate(m_renderer.GetTerrainPos(rand() % 65, rand() % 65));
+	int rand1 = rand() % 65;
+	int rand2 = rand() % 65;
+
+	mat4 pos = glm::translate(m_renderer.GetTerrainPos(rand1, rand2));
 	mat4 scale = glm::scale(vec3(0.1f, 0.1f, 0.1f));
 
 	m_renderer.FillModel(0, pos, mat4{ 1.0f }, scale);
+	vec2 texcoord = m_renderer.GetTerrainTexCoord(rand1, rand2);
+	m_renderer.SetModelHeightTexCoord(0, texcoord);
 
-	m_renderer.FillModel(1, mat4{ 1.0f }, mat4{ 1.0f }, scale);
+	m_renderer.FillModel(1, mat4{1.0f}, mat4{ 1.0f }, scale);
+	m_renderer.SetModelHeightTexCoord(1, texcoord);
 
 }
 
@@ -113,6 +125,11 @@ void Assessment::Update(float dt)
 	}
 
 	m_renderer.SetModelPos(1, modelPos);
+
+	vec2 texcoord = vec2((modelPos.x + (64 * 50)) / (64 * 100), (modelPos.z + (64 * 50)) / (64 * 100));
+	m_renderer.SetModelHeightTexCoord(1, texcoord);
+
+	m_renderer.SetModelScale(1, modelScale);
 	m_renderer.SetAnimateFBX(animate);
 
 	m_renderer.Update(m_timer, dt, &camera.GetWorldTransform());
@@ -122,5 +139,5 @@ void Assessment::Update(float dt)
 
 void Assessment::Draw()
 {
-	m_renderer.Draw(&light, &lightColour, &mat4(), &camera.GetProjectionView(), &camera.GetPosition(), &specPow, &height);
+	m_renderer.Draw(&light, &lightColour, &mat4(), &camera.GetProjectionView(), &camera.GetPosition(), &specPow, &height, &waterHeight);
 }

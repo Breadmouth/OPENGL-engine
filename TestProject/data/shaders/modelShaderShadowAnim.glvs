@@ -21,6 +21,11 @@ uniform mat4 Transform;
 const int MAX_BONES = 128;
 uniform mat4 bones[MAX_BONES];
 
+uniform sampler2D perlin_texture;
+uniform float height;
+uniform vec2 texcoord;
+//uniform float waterHeight;
+
 void main()
 {
 	vTexCoord = TexCoord;
@@ -37,6 +42,7 @@ void main()
 	P += bones[index.w] * Position * Weights.w;
 	
 	P = Transform * P;
+	P.y += texture(perlin_texture, texcoord).r * height;
 	
 	gl_Position = ProjectionView * P;
 	

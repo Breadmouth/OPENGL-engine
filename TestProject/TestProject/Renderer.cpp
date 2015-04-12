@@ -567,9 +567,11 @@ void Renderer::BindFrameBuffer(bool bind)
 void Renderer::CreateTerrainPlane(int width, int height)
 {
 	m_terrain = new vec3 *[width];
+	m_terrainTexCoords = new glm::vec2 *[width];
 	for (int i = 0; i < width; i++)
 	{
 		m_terrain[i] = new vec3[height];
+		m_terrainTexCoords[i] = new glm::vec2[height];
 	}
 
 	std::vector<Vertex> vertexData;
@@ -589,6 +591,7 @@ void Renderer::CreateTerrainPlane(int width, int height)
 			vertexData.push_back(point);
 
 			m_terrain[i][j] = vec3(point.v_x, point.v_y, point.v_z);
+			m_terrainTexCoords[i][j] = glm::vec2(point.t_x, point.t_y);
 
 		}
 	}
@@ -881,9 +884,8 @@ void Renderer::Update(float timer, float dt, mat4 *cameraTransform)
 	}
 }
 
-//make each model draw from their own texture
 void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
-	mat4* projectionView, vec3* cameraPos, float* specPow, float* height)
+	mat4* projectionView, vec3* cameraPos, float* specPow, float* height, float* waterHeight)
 {
 	unsigned int loc;
 
@@ -907,9 +909,20 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		loc = glGetUniformLocation(m_shadowGenProgram, "LightMatrix");
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*lightMatrix));
 
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_perlin_texture);
+		loc = glGetUniformLocation(m_shadowGenProgram, "perlin_texture");
+		glUniform1i(loc, 0);
+
+		loc = glGetUniformLocation(m_shadowGenProgram, "height");
+		glUniform1f(loc, *height);
+
 		// draw all shadow-casting geometry
 		if (m_glInfo.size() != 0)
 		{
+			loc = glGetUniformLocation(m_shadowGenProgram, "texcoord");
+			glUniform2f(loc, 0, 0);
+
 			loc = glGetUniformLocation(m_shadowGenProgram, "Transform");
 			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(emptyTransform));
 
@@ -928,6 +941,9 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 				loc = glGetUniformLocation(m_shadowGenProgram, "Transform");
 				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+
+				loc = glGetUniformLocation(m_shadowGenProgram, "texcoord");
+				glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
 
 				if (m_models[i].m_fbx->getSkeletonCount() == 0)
 				{
@@ -949,6 +965,14 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		loc = glGetUniformLocation(m_shadowGenProgramAnim, "LightMatrix");
 		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*lightMatrix));
 
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_perlin_texture);
+		loc = glGetUniformLocation(m_shadowGenProgramAnim, "perlin_texture");
+		glUniform1i(loc, 0);
+
+		loc = glGetUniformLocation(m_shadowGenProgramAnim, "height");
+		glUniform1f(loc, *height);
+
 		for (int i = 0; i < 2; ++i)
 		{
 			if (m_models[i].m_fbx != NULL)
@@ -957,6 +981,9 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 				loc = glGetUniformLocation(m_shadowGenProgramAnim, "Transform");
 				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+
+				loc = glGetUniformLocation(m_shadowGenProgramAnim, "texcoord");
+				glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
 
 				if (m_models[i].m_fbx->getSkeletonCount() > 0)
 				{
@@ -1037,8 +1064,11 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 					glActiveTexture(GL_TEXTURE1);
 					glBindTexture(GL_TEXTURE_2D, m_normal);
 
-					glActiveTexture(GL_TEXTURE3);
+					glActiveTexture(GL_TEXTURE2);
 					glBindTexture(GL_TEXTURE_2D, m_sboDepth);
+
+					glActiveTexture(GL_TEXTURE3);
+					glBindTexture(GL_TEXTURE_2D, m_perlin_texture);
 
 					loc = glGetUniformLocation(m_shadowProgramAnim, "diffuse");
 					glUniform1i(loc, 0);
@@ -1046,11 +1076,17 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 					loc = glGetUniformLocation(m_shadowProgramAnim, "normal");
 					glUniform1i(loc, 1);
 
-					loc = glGetUniformLocation(m_shadowProgramAnim, "specular");
+					loc = glGetUniformLocation(m_shadowProgramAnim, "shadowMap");
 					glUniform1i(loc, 2);
 
-					loc = glGetUniformLocation(m_shadowProgramAnim, "shadowMap");
+					loc = glGetUniformLocation(m_shadowProgramAnim, "perlin_texture");
 					glUniform1i(loc, 3);
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "height");
+					glUniform1f(loc, *height);
+
+					loc = glGetUniformLocation(m_shadowProgramAnim, "texcoord");
+					glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
 
 					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
 					{
@@ -1108,11 +1144,20 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		glActiveTexture(GL_TEXTURE3);
 		glBindTexture(GL_TEXTURE_2D, m_sboDepth);
 
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, m_perlin_texture);
+
 		loc = glGetUniformLocation(m_shadowProgram, "normal");
 		glUniform1i(loc, 1);
 
 		loc = glGetUniformLocation(m_shadowProgram, "shadowMap");
 		glUniform1i(loc, 3);
+
+		loc = glGetUniformLocation(m_shadowProgram, "perlin_texture");
+		glUniform1i(loc, 2);
+
+		loc = glGetUniformLocation(m_shadowProgram, "height");
+		glUniform1f(loc, *height);
 
 		if (m_glInfo.size() != 0)
 		{
@@ -1124,6 +1169,9 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 			loc = glGetUniformLocation(m_shadowProgram, "Transform");
 			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(emptyTransform));
+
+			loc = glGetUniformLocation(m_shadowProgram, "texcoord");
+			glUniform2f(loc, 0, 0);
 
 			for (unsigned int i = 0; i < m_glInfo.size(); ++i)
 			{
@@ -1146,6 +1194,9 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 				loc = glGetUniformLocation(m_shadowProgram, "Transform");
 				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+
+				loc = glGetUniformLocation(m_shadowProgram, "texcoord");
+				glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
 
 				if (m_models[i].m_fbx->getSkeletonCount() == 0)
 				{
@@ -1351,6 +1402,9 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		glUniformMatrix4fv(loc, 1, GL_FALSE,
 			glm::value_ptr(*projectionView));
 
+		loc = glGetUniformLocation(m_waterProgram, "waterHeight");
+		glUniform1f(loc, *waterHeight);
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_water_texture);
 		loc = glGetUniformLocation(m_waterProgram, "water_texture");
@@ -1397,7 +1451,22 @@ vec3 Renderer::GetTerrainPos(int x, int y)
 	return m_terrain[x][y];
 }
 
+vec2 Renderer::GetTerrainTexCoord(int x, int y)
+{
+	return m_terrainTexCoords[x][y];
+}
+
 void Renderer::SetModelPos(int i, vec3 pos)
 {
 	m_models[i].m_position = glm::translate(pos);
+}
+
+void Renderer::SetModelHeightTexCoord(int i, glm::vec2 texCoord)
+{
+	m_models[i].m_heightTexCoord = texCoord;
+}
+
+void Renderer::SetModelScale(int i, float scale)
+{
+	m_models[i].m_scale = glm::scale(vec3(scale));
 }

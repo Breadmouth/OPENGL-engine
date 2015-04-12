@@ -13,6 +13,7 @@
 
 using glm::mat4;
 using glm::vec3;
+using glm::vec2;
 
 class Renderer
 {
@@ -26,7 +27,7 @@ public:
 	void Update(float timer, float dt, mat4 *cameraTransform);
 	//contains draw for all objects handled by renderer
 	void Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix, 
-			  mat4* projectionView, vec3* cameraPos, float* specPow, float* height);
+			  mat4* projectionView, vec3* cameraPos, float* specPow, float* height, float* waterHeight);
 
 	//load vertex and fragment shader into a program
 	bool LoadShader(std::string program, std::string vertex, std::string fragment);
@@ -68,6 +69,7 @@ public:
 	void CreateWaterPlane(int dims);
 
 	vec3 GetTerrainPos(int x, int y);
+	vec2 GetTerrainTexCoord(int x, int y);
 
 	void LoadTexture(std::string texture, std::string path, GLint type);
 	void LoadNormal(std::string path);
@@ -80,6 +82,8 @@ public:
 
 	void FillModel(int i, mat4 pos, mat4 rot, mat4 scale);
 	void SetModelPos(int i, vec3 pos);
+	void SetModelScale(int i, float scale);
+	void SetModelHeightTexCoord(int i, vec2 texCoord);
 	void SetModelTexture(int i, std::string name);
 
 	struct Vertex {
@@ -113,6 +117,7 @@ private:
 		mat4 m_position;
 		mat4 m_rotation;
 		mat4 m_scale;
+		glm::vec2 m_heightTexCoord;
 	};
 
 	std::map<std::string, unsigned int*> m_programs;
@@ -132,6 +137,7 @@ private:
 	GLInfo m_shadowPlane;
 
 	vec3 **m_terrain;
+	glm::vec2 **m_terrainTexCoords;
 
 	unsigned int m_perlin_texture;
 	unsigned int m_rock_texture;

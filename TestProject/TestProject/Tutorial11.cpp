@@ -77,5 +77,6 @@ void Tutorial11::Update(float dt)
 void Tutorial11::Draw()
 {
 	float height = 50;
-	m_renderer.Draw(&light, &lightColour, &m_lightMatrix, &camera.GetProjectionView(), &camera.GetPosition(), &specPow, &height);
+	float waterHeight = 0.0f;
+	m_renderer.Draw(&light, &lightColour, &m_lightMatrix, &camera.GetProjectionView(), &camera.GetPosition(), &specPow, &height, &waterHeight);
 }

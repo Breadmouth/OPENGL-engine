@@ -33,7 +33,9 @@ protected:
 
 	bool generate;
 	float height;
+	float waterHeight;
 	vec3 modelPos;
+	float modelScale;
 
 	float m_timer;
 	glm::vec2 m_anim;

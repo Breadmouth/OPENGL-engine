@@ -8,9 +8,6 @@ Must be fully textured. 		DONE
 Uses at least 2 geometric models
 created by artists or from web.		DONE
 
-Have a model walking around the
-terrain.				MAYBE
-
 use particle effect or water 
 effect as animation.			CAN DO
 
@@ -20,7 +17,7 @@ choices.				DONE
 
 use antweak to allow user to 
 modify at least 2 other 
-aspects of the environment.		CAN DO
+aspects of the environment.		DONE
 
 document detailing how to use 
 the GUI. 				CAN DO

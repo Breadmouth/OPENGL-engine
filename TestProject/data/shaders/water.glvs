@@ -4,14 +4,19 @@ layout(location=0) in vec4 position;
 layout(location=1) in vec2 texcoord;
 
 uniform mat4 view_proj;
+uniform float waterHeight;
 
 out vec2 vTexcoord;
 out vec4 vPosition;
 
 void main()
 {
-	vPosition = position;
-
+	vec4 pos = position;
+	pos.y = waterHeight;
+	
+	vPosition = pos;
 	vTexcoord = texcoord;
-	gl_Position = view_proj * position;
+	
+	
+	gl_Position = view_proj * pos;
 }

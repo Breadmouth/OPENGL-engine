@@ -13,6 +13,11 @@ uniform mat4 ProjectionView;
 uniform mat4 LightMatrix;
 uniform mat4 Transform;
 
+uniform sampler2D perlin_texture;
+uniform float height;
+uniform vec2 texcoord;
+//uniform float waterHeight;
+
 void main()
 {
 	vTexCoord = TexCoord;
@@ -20,6 +25,8 @@ void main()
 	vPosition = Transform * Position;
 	
 	vec4 P = Transform * Position;
+	P.y += texture(perlin_texture, texcoord).r * height;
+	
 	gl_Position = ProjectionView * P;
 	
 	vShadowCoord = LightMatrix * P;
