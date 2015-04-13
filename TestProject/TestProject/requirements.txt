@@ -9,7 +9,7 @@ Uses at least 2 geometric models
 created by artists or from web.		DONE
 
 use particle effect or water 
-effect as animation.			CAN DO
+effect as animation.			DONE
 
 use antweak to alter procedural
 gen or create gen based on user

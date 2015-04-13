@@ -71,6 +71,9 @@ void Assessment::Create()
 	m_renderer.LoadTexture("m_grass_texture", "../data/grass.jpg", GL_RGBA);
 	m_renderer.LoadTexture("m_water_texture", "../data/water.jpg", GL_RGB);
 
+	m_renderer.LoadTexture("m_water_height_1", "../data/waterheight1.jpg", GL_RGB);
+	m_renderer.LoadTexture("m_water_height_2", "../data/waterheight2.jpg", GL_RGB);
+
 	m_renderer.LoadFBX("../data/fbx/characters/Enemytank/EnemyTank.fbx");
 	m_renderer.LoadTexture("m_texture", "../data/fbx/characters/Enemytank/EnemyTank_D.tga", GL_RGBA);
 	m_renderer.SetModelTexture(0, "m_texture");
@@ -139,5 +142,5 @@ void Assessment::Update(float dt)
 
 void Assessment::Draw()
 {
-	m_renderer.Draw(&light, &lightColour, &mat4(), &camera.GetProjectionView(), &camera.GetPosition(), &specPow, &height, &waterHeight);
+	m_renderer.Draw(&light, &lightColour, &mat4(), &camera.GetProjectionView(), &camera.GetPosition(), &specPow, &height, &waterHeight, &currentTime);
 }

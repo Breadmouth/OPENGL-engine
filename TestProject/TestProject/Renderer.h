@@ -27,7 +27,7 @@ public:
 	void Update(float timer, float dt, mat4 *cameraTransform);
 	//contains draw for all objects handled by renderer
 	void Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix, 
-			  mat4* projectionView, vec3* cameraPos, float* specPow, float* height, float* waterHeight);
+			  mat4* projectionView, vec3* cameraPos, float* specPow, float* height, float* waterHeight, float* time);
 
 	//load vertex and fragment shader into a program
 	bool LoadShader(std::string program, std::string vertex, std::string fragment);
@@ -144,6 +144,9 @@ private:
 	unsigned int m_grass_texture;
 	unsigned int m_snow_texture;
 	unsigned int m_water_texture;
+
+	unsigned int m_water_height_1;
+	unsigned int m_water_height_2;
 
 	//FBXFile* m_fbx;
 	Model m_models[2];

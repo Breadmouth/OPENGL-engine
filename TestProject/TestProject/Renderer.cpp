@@ -28,6 +28,8 @@ Renderer::Renderer()
 	m_textures["m_grass_texture"] = &m_grass_texture;
 	m_textures["m_rock_texture"] = &m_rock_texture;
 	m_textures["m_water_texture"] = &m_water_texture;
+	m_textures["m_water_height_1"] = &m_water_height_1;
+	m_textures["m_water_height_2"] = &m_water_height_2;
 
 }
 
@@ -885,7 +887,7 @@ void Renderer::Update(float timer, float dt, mat4 *cameraTransform)
 }
 
 void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
-	mat4* projectionView, vec3* cameraPos, float* specPow, float* height, float* waterHeight)
+	mat4* projectionView, vec3* cameraPos, float* specPow, float* height, float* waterHeight, float* time)
 {
 	unsigned int loc;
 
@@ -1405,13 +1407,31 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		loc = glGetUniformLocation(m_waterProgram, "waterHeight");
 		glUniform1f(loc, *waterHeight);
 
+		loc = glGetUniformLocation(m_waterProgram, "time");
+		glUniform1f(loc, *time);
+
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_water_texture);
 		loc = glGetUniformLocation(m_waterProgram, "water_texture");
 		glUniform1i(loc, 0);
 
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_water_height_1);
+		loc = glGetUniformLocation(m_waterProgram, "water_height_1");
+		glUniform1i(loc, 1);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, m_water_height_2);
+		loc = glGetUniformLocation(m_waterProgram, "water_height_2");
+		glUniform1i(loc, 2);
+
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 		glBindVertexArray(m_waterPlane.m_VAO);
 		glDrawElements(GL_TRIANGLES, m_waterPlane.m_indexCount, GL_UNSIGNED_INT, nullptr);
+
+		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
 	}
 
 	BindFrameBuffer(false);

@@ -80,5 +80,5 @@ void Tutorial13::Draw()
 	//m_renderer.DrawPlane(&camera.GetProjectionView());
 	float height = 50;
 	float waterHeight = 0.0f;
-	m_renderer.Draw(&light, &lightColour, &mat4(), &camera.GetProjectionView(), &camera.GetPosition(), &specPow, &height, &waterHeight);
+	//m_renderer.Draw(&light, &lightColour, &mat4(), &camera.GetProjectionView(), &camera.GetPosition(), &specPow, &height, &waterHeight);
 }
