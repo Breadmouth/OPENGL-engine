@@ -1,0 +1,29 @@
+#version 410
+
+layout(location=0) in vec4 position;
+layout(location=1) in vec2 texcoord;
+
+uniform mat4 view_proj;
+uniform float waterHeight;
+uniform float time;
+
+uniform sampler2D water_height_1;
+uniform sampler2D water_height_2;
+
+out vec2 vTexcoord;
+out vec4 vPosition;
+
+void main()
+{
+	vec4 pos = position;
+	pos.y = waterHeight;
+
+	pos.y += texture(water_height_1, texcoord).r * sin(time) * 100;
+	pos.y += texture(water_height_2, texcoord).r * (1 - sin(time)) * 100;
+	
+	vPosition = pos;
+	vTexcoord = texcoord;
+	
+	
+	gl_Position = view_proj * pos;
+}

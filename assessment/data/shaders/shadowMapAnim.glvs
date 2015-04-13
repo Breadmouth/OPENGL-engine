@@ -1,0 +1,31 @@
+#version 410
+
+layout(location=0) in vec4 Position; 
+layout(location=4) in vec4 Weights;
+layout(location=5) in vec4 Indices;
+
+
+uniform mat4 LightMatrix; 
+uniform mat4 Transform;
+
+const int MAX_BONES = 128;
+uniform mat4 bones[MAX_BONES];
+
+uniform sampler2D perlin_texture;
+uniform float height;
+uniform vec2 texcoord;
+
+void main() 
+{ 
+	ivec4 index = ivec4(Indices);
+	
+	vec4 P = bones[index.x] * Position * Weights.x;
+	P += bones[index.y] * Position * Weights.y;
+	P += bones[index.z] * Position * Weights.z;
+	P += bones[index.w] * Position * Weights.w;
+
+	P = Transform * P;
+	P.y += texture(perlin_texture, texcoord).r * height;
+	
+	gl_Position= LightMatrix * P;
+}

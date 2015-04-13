@@ -1,0 +1,14 @@
+#version 410
+
+in vec2 vTexcoord;
+in vec4 vPosition;
+
+out vec4 out_color;
+
+uniform sampler2D water_texture;
+
+
+void main()
+{
+	out_color = texture(water_texture, vTexcoord); 
+}

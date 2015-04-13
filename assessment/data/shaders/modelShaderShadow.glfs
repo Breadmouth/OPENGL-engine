@@ -1,0 +1,43 @@
+#version 410
+
+in vec2 vTexCoord;
+in vec4 vNormal;
+in vec4 vPosition;
+in vec4 vShadowCoord;
+
+out vec4 FragColor;
+
+uniform vec3 light;
+uniform vec3 cameraPos;
+uniform vec3 lightColor;
+uniform float specPow;
+uniform sampler2D diffuse;
+uniform sampler2D normal;
+
+uniform sampler2D shadowMap;
+uniform float shadowBias;
+
+
+void main()
+{
+
+	//create normals
+	//mat3 TBN = mat3( normalize( vTangent ), normalize( vBiTangent ), normalize( vNormal));
+	vec3 N = texture(normal, vTexCoord).xyz * 2 - 1;
+	
+	//create diffuse and specular
+	float d = max(0, dot(normalize(N), light));
+	vec3 E = normalize( cameraPos - vPosition.xyz);
+	vec3 R = reflect( -light, vNormal.xyz);
+	float s = max(0, dot(E, R));
+	s = pow(s, specPow);
+	
+	float k = max(0, dot(normalize(vNormal.xyz), light));
+	
+	if (texture(shadowMap, vShadowCoord.xy).r < vShadowCoord.z - shadowBias)
+	{
+		k = 0.1f;
+	}
+
+	FragColor = texture(diffuse, vTexCoord) * vec4(d * lightColor + s * lightColor, 1) * vec4(k, k, k, 1);;
+}
