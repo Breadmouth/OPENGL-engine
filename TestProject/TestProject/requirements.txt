@@ -26,7 +26,5 @@ document must have detail of
 what each GUI element does and 
 include visuals.			CAN DO
 
-comment code				CAN DO
 
-
-Build in release			IMPORTANT
+Build in release			DONE

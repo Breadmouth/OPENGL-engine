@@ -39,5 +39,5 @@ void main()
 		k = 0.1f;
 	}
 
-	FragColor = texture(diffuse, vTexCoord) * vec4(d * lightColor + s * lightColor, 1) * vec4(k, k, k, 1);;
+	FragColor = texture(diffuse, vTexCoord) * vec4(d * lightColor + s * lightColor, 1) * vec4(k, k, k, 1);
 }

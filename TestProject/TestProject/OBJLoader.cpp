@@ -184,7 +184,7 @@ void OBJLoader::LoadObjects(string objPath) {
             }
             else if (buffer.find("usemtl") == 0) {
                 string name = ParseString(buffer, "usemtl");
-                for (int i = 0; i < materials.size(); i++) {
+                for (unsigned int i = 0; i < materials.size(); i++) {
                     if (name == materials[i]->name) {
                         currentMaterial = materials[i];
                     }

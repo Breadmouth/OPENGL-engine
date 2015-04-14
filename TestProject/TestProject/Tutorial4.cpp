@@ -1,5 +1,5 @@
 #include "Tutorial4.h"
-#include <Gizmos.h>
+//#include <Gizmos.h>
 #include <fstream>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -96,7 +96,7 @@ void Tutorial4::Draw()
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 
 
-	Gizmos::draw(camera.GetProjectionView());
+	//Gizmos::draw(camera.GetProjectionView());
 
 }
 
@@ -224,7 +224,7 @@ void Tutorial4::LoadObject(char *path)
 
 	objectLoader = new OBJLoader(path);
 
-	for (int i = 0; i < objectLoader->GetModel()->vertices.size(); ++i)
+	for (unsigned int i = 0; i < objectLoader->GetModel()->vertices.size(); ++i)
 	{
 		Vertex vert;
 		vert.position = vec4(objectLoader->GetModel()->vertices[i], 1);

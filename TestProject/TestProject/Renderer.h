@@ -79,6 +79,7 @@ public:
 
 	bool GetAnimateFBX();
 	void SetAnimateFBX(bool animate);
+	void SetAnimateModel(int i, bool animate);
 
 	void FillModel(int i, mat4 pos, mat4 rot, mat4 scale);
 	void SetModelPos(int i, vec3 pos);
@@ -93,6 +94,7 @@ public:
 		float v_w;
 		float t_x;
 		float t_y;
+		vec3 normal;
 	};
 
 private:
@@ -118,6 +120,7 @@ private:
 		mat4 m_rotation;
 		mat4 m_scale;
 		glm::vec2 m_heightTexCoord;
+		bool m_animate;
 	};
 
 	std::map<std::string, unsigned int*> m_programs;
@@ -137,6 +140,7 @@ private:
 	GLInfo m_shadowPlane;
 
 	vec3 **m_terrain;
+	vec3 **m_terrainNormals;
 	glm::vec2 **m_terrainTexCoords;
 
 	unsigned int m_perlin_texture;

@@ -113,7 +113,8 @@ void Renderer::LoadTexture(std::string texture, std::string path, GLint type)
 
 	glGenTextures(1, m_textures[texture]);
 	glBindTexture(GL_TEXTURE_2D, *m_textures[texture]);
-	glTexImage2D(GL_TEXTURE_2D, 0, type, imageWidth, imageHeight, 0, type, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(GL_TEXTURE_2D, 0, imageFormat, imageWidth, imageHeight, 0, type, GL_UNSIGNED_BYTE, data);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
@@ -385,6 +386,11 @@ void Renderer::SetAnimateFBX(bool animate)
 	m_animateFBX = animate;
 }
 
+void Renderer::SetAnimateModel(int i, bool animate)
+{
+	m_models[i].m_animate = animate;
+}
+
 void Renderer::CreateParticleEmitter()
 {
 	m_emitter = new ParticleEmitter();
@@ -568,11 +574,13 @@ void Renderer::BindFrameBuffer(bool bind)
 
 void Renderer::CreateTerrainPlane(int width, int height)
 {
-	m_terrain = new vec3 *[width];
+	//m_terrain = new vec3 *[width];
+	m_terrainNormals = new vec3*[width];
 	m_terrainTexCoords = new glm::vec2 *[width];
 	for (int i = 0; i < width; i++)
 	{
-		m_terrain[i] = new vec3[height];
+		//m_terrain[i] = new vec3[height];
+		m_terrainNormals[i] = new vec3[width];
 		m_terrainTexCoords[i] = new glm::vec2[height];
 	}
 
@@ -584,7 +592,7 @@ void Renderer::CreateTerrainPlane(int width, int height)
 		{
 			Vertex point;
 			point.v_x = (float)(-(width * 100) / 2) + (i * 100);
-			point.v_y = 0;
+			point.v_y = m_terrain[i][j].y;
 			point.v_z = (float)(-(height * 100) / 2) + (j * 100);
 			point.v_w = 1;
 			point.t_x = 1.0f / width * i;
@@ -598,6 +606,28 @@ void Renderer::CreateTerrainPlane(int width, int height)
 		}
 	}
 
+	for (int i = 0; i < width; ++i)
+	{
+		for (int j = 0; j < height; j++)
+		if (i + 1 != width && j + 1 != height)
+		{
+			vec3 a = m_terrain[i][j];
+			vec3 b = m_terrain[i + 1][j];
+			vec3 c = m_terrain[i][j + 1];
+
+			vec3 U = b - a;
+			vec3 V = c - a;
+			
+			vertexData[i * width + j].normal.x = (U.y * V.z) - (U.z * V.y);
+			vertexData[i * width + j].normal.y = -((U.z * V.x) - (U.x * V.z));
+			vertexData[i * width + j].normal.z = (U.x * V.y) - (U.y * V.x);
+			//vec3 normal = glm::cross(b - a, c - a);
+			vertexData[i * width + j].normal = glm::normalize(vertexData[i * width + j].normal);
+		}
+		else
+			vertexData[i].normal = vec3(0.f, 1.0f, 0.f);
+	}
+
 	unsigned int size = (((width - 1) * 6) * height) - (6 * (width - 1));
 	//unsigned int indexData[size];
 	std::vector<unsigned int> indexData;
@@ -605,7 +635,7 @@ void Renderer::CreateTerrainPlane(int width, int height)
 	m_terrainPlane.m_indexCount = size;
 
 	int j = 0;
-	for (int i = 0; i < size; i += 6)
+	for (unsigned int i = 0; i < size; i += 6)
 	{
 		if ((j + 1) % width)
 		{
@@ -645,6 +675,10 @@ void Renderer::CreateTerrainPlane(int width, int height)
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE,
 		sizeof(Vertex), ((char*)0) + sizeof(float) * 4);
 
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE,
+		sizeof(Vertex), ((char*)0) + sizeof(float) * 6);
+
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -677,7 +711,7 @@ void Renderer::CreateWaterPlane(int dims)
 	m_waterPlane.m_indexCount = size;
 
 	int j = 0;
-	for (int i = 0; i < size; i += 6)
+	for (unsigned int i = 0; i < size; i += 6)
 	{
 		if ((j + 1) % dims)
 		{
@@ -759,19 +793,25 @@ void Renderer::CreatePerlin(int dims)
 
 void Renderer::CreateDiamondSquare(int dims)
 {
+	m_terrain = new vec3 *[dims];
 	float **diamond_square = new float*[dims];
 	
 	for (int i = 0; i < dims; ++i)
 	{
 		diamond_square[i] = new float[dims];
+		m_terrain[i] = new vec3[dims];
 	}
 	
 	diamond_square[0][0] = (float)(rand() % 100) / 100.f;
+	m_terrain[0][0].y = diamond_square[0][0];
 	diamond_square[dims - 1][0] = (float)(rand() % 100) / 100.f;
+	m_terrain[dims - 1][0].y = diamond_square[dims - 1][0];
 	diamond_square[0][dims - 1] = (float)(rand() % 100) / 100.f;
+	m_terrain[0][dims - 1].y = diamond_square[0][dims - 1];
 	diamond_square[dims - 1][dims - 1] = (float)(rand() % 100) / 100.f;
+	m_terrain[dims - 1][dims - 1].y = diamond_square[dims - 1][dims - 1];
 	
-	unsigned int sideLength = dims - 1;
+	int sideLength = dims - 1;
 	float scale;
 	//unsigned int squares = 1;
 	
@@ -791,6 +831,7 @@ void Renderer::CreateDiamondSquare(int dims)
 
 				average += ((float)(rand() % 100) / 100.f) * scale * 2 - scale;
 				diamond_square[i][j] = average;
+				m_terrain[i][j].y = average;
 			}
 		}
 
@@ -829,6 +870,7 @@ void Renderer::CreateDiamondSquare(int dims)
 	
 				average += ((float)(rand() % 100) / 100.f) * scale * 2 - scale;
 				diamond_square[i][j] = average;
+				m_terrain[i][j].y = average;
 			}
 		}
 
@@ -947,7 +989,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 				loc = glGetUniformLocation(m_shadowGenProgram, "texcoord");
 				glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
 
-				if (m_models[i].m_fbx->getSkeletonCount() == 0)
+				if (m_models[i].m_fbx->getSkeletonCount() == 0 || !m_models[i].m_animate)
 				{
 					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
 					{
@@ -987,7 +1029,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 				loc = glGetUniformLocation(m_shadowGenProgramAnim, "texcoord");
 				glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
 
-				if (m_models[i].m_fbx->getSkeletonCount() > 0)
+				if (m_models[i].m_fbx->getSkeletonCount() > 0 && m_models[i].m_animate)
 				{
 					FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
 					skeleton->updateBones();
@@ -1026,7 +1068,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		{
 			if (m_models[i].m_fbx != NULL)
 			{
-				if (m_models[i].m_fbx->getSkeletonCount() > 0)
+				if (m_models[i].m_fbx->getSkeletonCount() > 0 && m_models[i].m_animate)
 				{
 					FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
 					skeleton->updateBones();
@@ -1200,7 +1242,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 				loc = glGetUniformLocation(m_shadowProgram, "texcoord");
 				glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
 
-				if (m_models[i].m_fbx->getSkeletonCount() == 0)
+				if (m_models[i].m_fbx->getSkeletonCount() == 0 || !m_models[i].m_animate)
 				{
 					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
 					{
@@ -1246,6 +1288,18 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 			loc = glGetUniformLocation(m_terrainGenShadowProgram, "shadowBias");
 			glUniform1f(loc, 0.01f);
+
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "light");
+			glUniform3fv(loc, 1, glm::value_ptr(*light));
+
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "cameraPos");
+			glUniform3fv(loc, 1, glm::value_ptr(*cameraPos));
+
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "lightColor");
+			glUniform3fv(loc, 1, glm::value_ptr(*lightColour));
+
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "specPow");
+			glUniform1fv(loc, 1, specPow);
 
 			glBindVertexArray(m_terrainPlane.m_VAO);
 			glDrawElements(GL_TRIANGLES, m_terrainPlane.m_indexCount, GL_UNSIGNED_INT, nullptr);
@@ -1427,8 +1481,14 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 		glBindVertexArray(m_waterPlane.m_VAO);
 		glDrawElements(GL_TRIANGLES, m_waterPlane.m_indexCount, GL_UNSIGNED_INT, nullptr);
+
+		glDisable(GL_BLEND);
 
 		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 

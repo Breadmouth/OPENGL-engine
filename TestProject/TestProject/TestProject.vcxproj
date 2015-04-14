@@ -38,7 +38,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>
+    </LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -61,15 +64,18 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)dep\glm;$(SolutionDir)dep\glfw;$(SolutionDir)dep\aieutilities;$(SolutionDir)src\;$(SolutionDir)dep\stb;$(SolutionDir)dep\anttweakbar\include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>GLM_SWIZZLE;GLM_FORCE_PURE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)dep\glfw\lib-vc2012;$(SolutionDir)dep\anttweakbar\lib;$(SolutionDir)src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;FBXLoader.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\dep\aieutilities\Gizmos.cpp" />
     <ClCompile Include="..\src\gl_core_4_4.c" />
     <ClCompile Include="..\src\tiny_obj_loader.cc" />
     <ClCompile Include="Application.cpp" />
@@ -95,7 +101,6 @@
     <ClCompile Include="Tutorial9.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\dep\aieutilities\Gizmos.h" />
     <ClInclude Include="..\src\FBXFile.h" />
     <ClInclude Include="..\src\gl_core_4_4.h" />
     <ClInclude Include="..\src\tiny_obj_loader.h" />

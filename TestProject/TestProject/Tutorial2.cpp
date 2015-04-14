@@ -1,5 +1,5 @@
 #include "Tutorial2.h"
-#include <Gizmos.h>
+//#include <Gizmos.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include "OBJLoader.h"
@@ -53,7 +53,7 @@ void Tutorial2::Draw()
 	glPolygonMode(GL_BACK, GL_FILL);
 	glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, 0);
 
-	Gizmos::draw(camera.GetProjectionView());
+	//Gizmos::draw(camera.GetProjectionView());
 
 }
 
@@ -177,7 +177,7 @@ void Tutorial2::LoadObject(char *path)
 
 	objectLoader = new OBJLoader(path);
 
-	for (int i = 0; i < objectLoader->GetModel()->vertices.size(); ++i)
+	for (unsigned int i = 0; i < objectLoader->GetModel()->vertices.size(); ++i)
 	{
 		Vertex vert;
 		vert.position = vec4(objectLoader->GetModel()->vertices[i], 1);

@@ -1,5 +1,5 @@
 #include "Tutorial1.h"
-#include <Gizmos.h>
+//#include <Gizmos.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -34,11 +34,11 @@ void Tutorial1::Update(float dt)
 	planet1Translate[2] = vec4(-glm::sin(planet1Rot), 0, glm::cos(planet1Rot), 0);
 	planet1Translate[3] = vec4(0, 0, 0, 1);
 
-	planet1.x = 10 * glm::sin(2 * 3.1415 * (planet1Rot * 0.2));
-	planet1.z = 10 * glm::cos(2 * 3.1415 * (planet1Rot * 0.2));
+	planet1.x = 10 * glm::sin(2 * 3.1415f * (planet1Rot * 0.2f));
+	planet1.z = 10 * glm::cos(2 * 3.1415f * (planet1Rot * 0.2f));
 
-	Gizmos::addSphere(vec3(0,0,0), 2, 15, 15, vec4(0.5f, 0.5f, 0, 1));
-	Gizmos::addSphere(planet1, 1, 12, 12, vec4(0.8f, 0.f, 0.2f, 1), &planet1Translate);
+	//Gizmos::addSphere(vec3(0,0,0), 2, 15, 15, vec4(0.5f, 0.5f, 0, 1));
+	//Gizmos::addSphere(planet1, 1, 12, 12, vec4(0.8f, 0.f, 0.2f, 1), &planet1Translate);
 
 
 	camera.Update(dt);
@@ -46,5 +46,5 @@ void Tutorial1::Update(float dt)
 
 void Tutorial1::Draw()
 {
-	Gizmos::draw(camera.GetProjection() * camera.GetView());
+	//Gizmos::draw(camera.GetProjection() * camera.GetView());
 }

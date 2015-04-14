@@ -1,5 +1,5 @@
 #include "Tutorial6.h"
-#include <Gizmos.h>
+//#include <Gizmos.h>
 #include <fstream>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -54,6 +54,6 @@ void Tutorial6::Draw()
 {
 //	m_renderer.DrawOBJ(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
 
-	Gizmos::draw(camera.GetProjectionView());
+	//Gizmos::draw(camera.GetProjectionView());
 
 }

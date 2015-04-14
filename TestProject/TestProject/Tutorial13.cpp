@@ -1,5 +1,5 @@
 #include "Tutorial13.h"
-#include <Gizmos.h>
+//#include <Gizmos.h>
 #include <fstream>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>

@@ -1,5 +1,5 @@
 #include "Assessment.h"
-#include <Gizmos.h>
+//#include <Gizmos.h>
 #include <fstream>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -15,15 +15,15 @@ using glm::mat4;
 
 Assessment::Assessment()
 {
-	light = vec3(1, 1, 0);
+	light = vec3(0, 1, 0);
 	lightColour = vec3(1, 1, 1);
-	specPow = 16.0f;
+	specPow = 1.0f;
 	cameraSpeed = camera.GetSpeed();
 	animate = false;
 	generate = false;
-	height = 50;
+	height = 30;
 
-	modelScale = 0.1;
+	modelScale = 0.1f;
 	modelPos = vec3(0, 0, 0);
 
 	m_anim.x = 0.0f;
@@ -87,9 +87,9 @@ void Assessment::Create()
 
 	m_renderer.CreateSB();
 
-	m_renderer.CreateTerrainPlane(65, 65);
 	m_renderer.CreateDiamondSquare(65);
-
+	m_renderer.CreateTerrainPlane(65, 65);
+	
 	m_renderer.CreateWaterPlane(65);
 
 	int rand1 = rand() % 65;
@@ -99,11 +99,15 @@ void Assessment::Create()
 	mat4 scale = glm::scale(vec3(0.1f, 0.1f, 0.1f));
 
 	m_renderer.FillModel(0, pos, mat4{ 1.0f }, scale);
+
 	vec2 texcoord = m_renderer.GetTerrainTexCoord(rand1, rand2);
 	m_renderer.SetModelHeightTexCoord(0, texcoord);
+	m_renderer.SetAnimateModel(0, true);
 
 	m_renderer.FillModel(1, mat4{1.0f}, mat4{ 1.0f }, scale);
+
 	m_renderer.SetModelHeightTexCoord(1, texcoord);
+	m_renderer.SetAnimateModel(1, false);
 
 }
 
@@ -117,6 +121,7 @@ void Assessment::Update(float dt)
 	if (generate)
 	{
 		m_renderer.CreateDiamondSquare(65);
+		m_renderer.CreateTerrainPlane(65, 65);
 		generate = false;
 	}
 

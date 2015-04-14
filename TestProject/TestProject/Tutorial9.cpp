@@ -1,5 +1,5 @@
 #include "Tutorial9.h"
-#include <Gizmos.h>
+//#include <Gizmos.h>
 #include <fstream>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -60,5 +60,5 @@ void Tutorial9::Draw()
 
 	m_emitter->Draw((float)glfwGetTime(), camera.GetWorldTransform(), camera.GetProjectionView());
 
-	Gizmos::draw(camera.GetProjectionView());
+	//Gizmos::draw(camera.GetProjectionView());
 }

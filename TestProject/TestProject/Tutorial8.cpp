@@ -1,5 +1,5 @@
 #include "Tutorial8.h"
-#include <Gizmos.h>
+//#include <Gizmos.h>
 #include <fstream>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -68,7 +68,7 @@ void Tutorial8::Draw()
 
 	//m_renderer.DrawParticles(camera.GetProjectionView());
 
-	Gizmos::draw(camera.GetProjectionView());
+	//Gizmos::draw(camera.GetProjectionView());
 }
 
 GLuint Tutorial8::LoadShaderFromFile(std::string path, GLenum shaderType)

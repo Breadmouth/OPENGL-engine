@@ -3,6 +3,7 @@
 in vec2 frag_texcoord;
 in vec4 vPosition;
 in vec4 vShadowCoord;
+in vec4 vNormal;
 
 out vec4 out_color;
 
@@ -10,16 +11,27 @@ uniform sampler2D grass_texture;
 uniform sampler2D shadowMap;
 uniform float shadowBias;
 
+uniform vec3 light;
+uniform vec3 cameraPos;
+uniform vec3 lightColor;
+uniform float specPow;
+
 void main()
 {
+	float d = max(0, dot(normalize(vNormal.xyz), light));
+	vec3 E = normalize(cameraPos - vPosition.xyz);
+	vec3 R = reflect( -light, vNormal.xyz);
+	float s = max(0, dot(E, R));
+	s = pow(s, specPow);
+
 	vec4 grass = texture(grass_texture, frag_texcoord); 
 
-	float k = 1.0f;
+	float k = max(0, dot(normalize(vNormal.xyz), light));
 	
 	if (texture(shadowMap, vShadowCoord.xy).r < vShadowCoord.z - shadowBias)
 	{
 		k = 0.1f;
 	}
 	
-	out_color = grass * vec4(k, k, k, 1.0f);
+	out_color = grass * vec4(lightColor * d + lightColor * s, 1) * vec4(k, k, k, 1.0f);
 }

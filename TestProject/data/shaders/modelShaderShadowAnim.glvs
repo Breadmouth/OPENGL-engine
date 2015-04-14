@@ -42,7 +42,7 @@ void main()
 	P += bones[index.w] * Position * Weights.w;
 	
 	P = Transform * P;
-	P.y += texture(perlin_texture, texcoord).r * height;
+	P.y += texture(perlin_texture, vec2(texcoord.y, texcoord.x)).r * height;
 	
 	gl_Position = ProjectionView * P;
 	

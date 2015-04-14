@@ -1,5 +1,5 @@
 #include "Tutorial7.h"
-#include <Gizmos.h>
+//#include <Gizmos.h>
 #include <fstream>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -68,6 +68,6 @@ void Tutorial7::Draw()
 
 	//m_renderer.DrawFBX(&camera.GetProjectionView(), &light, &camera.GetPosition(), &lightColour, &specPow);
 
-	Gizmos::draw(camera.GetProjectionView());
+	//Gizmos::draw(camera.GetProjectionView());
 
 }
