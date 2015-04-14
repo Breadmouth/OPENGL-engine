@@ -2,6 +2,7 @@
 
 layout(location=0) in vec4 position;
 layout(location=1) in vec2 texcoord;
+layout(location=2) in vec3 normal;
 
 uniform mat4 view_proj;
 uniform mat4 LightMatrix;
@@ -9,6 +10,7 @@ uniform mat4 LightMatrix;
 out vec2 frag_texcoord;
 out vec4 vPosition;
 out vec4 vShadowCoord;
+out vec4 vNormal;
 
 uniform sampler2D perlin_texture;
 uniform float height;
@@ -16,8 +18,10 @@ uniform float height;
 void main()
 {
 	vec4 pos = position;
-	pos.y += texture(perlin_texture, texcoord).r * height;
+	//pos.y += texture(perlin_texture, texcoord).r * height;
+	pos.y *= height;
 	vPosition = pos;
+	vNormal = vec4(normal, 1);
 
 	frag_texcoord = texcoord;
 	gl_Position = view_proj * pos;
