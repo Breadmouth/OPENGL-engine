@@ -10,5 +10,7 @@ uniform sampler2D water_texture;
 
 void main()
 {
-	out_color = texture(water_texture, vTexcoord); 
+	vec4 colour = texture(water_texture, vTexcoord);
+	colour.a = 0.75;
+	out_color = colour; 
 }
