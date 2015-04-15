@@ -23,10 +23,10 @@ void main()
 
 	//create normals
 	//mat3 TBN = mat3( normalize( vTangent ), normalize( vBiTangent ), normalize( vNormal));
-	vec3 N = texture(normal, vTexCoord).xyz * 2 - 1;
+	//vec3 N = texture(normal, vTexCoord).xyz * 2 - 1;
 	
 	//create diffuse and specular
-	float d = max(0, dot(normalize(N), light));
+	float d = max(0, dot(normalize(vNormal.xyz), light));
 	vec3 E = normalize( cameraPos - vPosition.xyz);
 	vec3 R = reflect( -light, vNormal.xyz);
 	float s = max(0, dot(E, R));

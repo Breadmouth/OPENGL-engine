@@ -8,6 +8,7 @@ in vec4 vNormal;
 out vec4 out_color;
 
 uniform sampler2D grass_texture;
+uniform sampler2D rock_texture;
 uniform sampler2D shadowMap;
 uniform float shadowBias;
 
@@ -24,13 +25,18 @@ void main()
 	float s = max(0, dot(E, R));
 	s = pow(s, specPow);
 
-	vec4 grass = texture(grass_texture, frag_texcoord); 
+	vec4 grass = texture(grass_texture, frag_texcoord * 10); 
 
+	if (dot(normalize(vNormal.xyz), vec3(0, 1, 0)) < 0.95f)
+	{
+		grass = texture(rock_texture, frag_texcoord * 10);
+	}
+	
 	float k = max(0, dot(normalize(vNormal.xyz), light));
 	
 	if (texture(shadowMap, vShadowCoord.xy).r < vShadowCoord.z - shadowBias)
 	{
-		k = 0.1f;
+		k = 0.0f;
 	}
 	
 	out_color = grass * vec4(lightColor * d + lightColor * s, 1) * vec4(k, k, k, 1.0f);

@@ -153,7 +153,7 @@ private:
 	unsigned int m_water_height_2;
 
 	//FBXFile* m_fbx;
-	Model m_models[2];
+	Model m_models[10];
 	ParticleEmitter* m_emitter;
 
 	unsigned int m_programID;

@@ -25,7 +25,7 @@ void main()
 	vPosition = Transform * Position;
 	
 	vec4 P = Transform * Position;
-	P.y += texture(perlin_texture, texcoord).r * height;
+	P.y += texture(perlin_texture, vec2(texcoord.y, texcoord.x)).r * height;
 	
 	gl_Position = ProjectionView * P;
 	

@@ -69,7 +69,7 @@ void Renderer::LoadObject(std::string path)
 
 void Renderer::LoadFBX(const char* path)
 {
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
 		if (m_models[i].m_fbx == NULL)
 		{
@@ -618,9 +618,9 @@ void Renderer::CreateTerrainPlane(int width, int height)
 			vec3 U = b - a;
 			vec3 V = c - a;
 			
-			vertexData[i * width + j].normal.x = (U.y * V.z) - (U.z * V.y);
-			vertexData[i * width + j].normal.y = -((U.z * V.x) - (U.x * V.z));
-			vertexData[i * width + j].normal.z = (U.x * V.y) - (U.y * V.x);
+			vertexData[i * width + j].normal.x = (U.y * (V.z/10)) - ((U.z/10) * V.y);
+			vertexData[i * width + j].normal.y = -(((U.z/10) * (V.x/10)) - ((U.x/10) * (V.z/10)));
+			vertexData[i * width + j].normal.z = ((U.x/10) * V.y) - (U.y * (V.x/10));
 			//vec3 normal = glm::cross(b - a, c - a);
 			vertexData[i * width + j].normal = glm::normalize(vertexData[i * width + j].normal);
 		}
@@ -903,11 +903,11 @@ void Renderer::CreateDiamondSquare(int dims)
 
 void Renderer::Update(float timer, float dt, mat4 *cameraTransform)
 {
-	for (int i = 0; i < 2; ++i)
+	for (int i = 0; i < 10; ++i)
 	{
 		if (m_models[i].m_fbx != NULL)
 		{
-			if (m_animateFBX)
+			if (m_animateFBX && m_models[i].m_fbx->getSkeletonCount() > 0)
 			{
 				FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
 				FBXAnimation* animation = m_models[i].m_fbx->getAnimationByIndex(0);
@@ -932,6 +932,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 	mat4* projectionView, vec3* cameraPos, float* specPow, float* height, float* waterHeight, float* time)
 {
 	unsigned int loc;
+	unsigned int modelCount = 10;
 
 	mat4 emptyTransform(1.f);
 
@@ -977,7 +978,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			}
 		}
 
-		for (int i = 0; i < 2; ++i)
+		for (int i = 0; i < modelCount; ++i)
 		{
 			if (m_models[i].m_fbx != NULL)
 			{
@@ -1017,7 +1018,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		loc = glGetUniformLocation(m_shadowGenProgramAnim, "height");
 		glUniform1f(loc, *height);
 
-		for (int i = 0; i < 2; ++i)
+		for (int i = 0; i < modelCount; ++i)
 		{
 			if (m_models[i].m_fbx != NULL)
 			{
@@ -1064,7 +1065,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 		mat4 newLightMatrix = textureSpaceOffset * (*lightMatrix);
 
-		for (int i = 0; i < 2; ++i)
+		for (int i = 0; i < modelCount; ++i)
 		{
 			if (m_models[i].m_fbx != NULL)
 			{
@@ -1224,7 +1225,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			}
 		}
 
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < modelCount; i++)
 		{
 			if (m_models[i].m_fbx != NULL)
 			{
@@ -1280,6 +1281,11 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			glBindTexture(GL_TEXTURE_2D, m_grass_texture);
 			loc = glGetUniformLocation(m_terrainGenShadowProgram, "grass_texture");
 			glUniform1i(loc, 1);
+
+			glActiveTexture(GL_TEXTURE3);
+			glBindTexture(GL_TEXTURE_2D, m_rock_texture);
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "rock_texture");
+			glUniform1i(loc, 3);
 
 			glActiveTexture(GL_TEXTURE2);
 			glBindTexture(GL_TEXTURE_2D, m_sboDepth);
@@ -1348,7 +1354,7 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			}
 		}
 
-		for (int i = 0; i < 2; ++i)
+		for (int i = 0; i < modelCount; ++i)
 		{
 			if (m_models[i].m_fbx != NULL)
 			{

@@ -19,7 +19,7 @@ Assessment::Assessment()
 	lightColour = vec3(1, 1, 1);
 	specPow = 1.0f;
 	cameraSpeed = camera.GetSpeed();
-	animate = false;
+	animate = true;
 	generate = false;
 	height = 30;
 
@@ -69,6 +69,7 @@ void Assessment::Create()
 
 	//load textures
 	m_renderer.LoadTexture("m_grass_texture", "../data/grass.jpg", GL_RGBA);
+	m_renderer.LoadTexture("m_rock_texture", "../data/rock.jpg", GL_RGB);
 	m_renderer.LoadTexture("m_water_texture", "../data/water.jpg", GL_RGB);
 
 	m_renderer.LoadTexture("m_water_height_1", "../data/waterheight1.jpg", GL_RGB);
@@ -81,6 +82,13 @@ void Assessment::Create()
 	m_renderer.LoadFBX("../data/fbx/characters/enemynormal/EnemyNormal.fbx");
 	m_renderer.LoadTexture("m_texture", "../data/fbx/characters/enemynormal/EnemyNormal1_D.tga", GL_RGB);
 	m_renderer.SetModelTexture(1, "m_texture");
+
+	for (int i = 2; i < 10; i++)
+	{
+		m_renderer.LoadFBX("../data/fbx/trees/rock.fbx");
+		m_renderer.LoadTexture("m_texture", "../data/fbx/trees/rockDiffuse.tga", GL_RGB);
+		m_renderer.SetModelTexture(i, "m_texture");
+	}
 	
 	m_renderer.CreateFB();
 	m_renderer.CreateViewPlane();
@@ -106,8 +114,24 @@ void Assessment::Create()
 
 	m_renderer.FillModel(1, mat4{1.0f}, mat4{ 1.0f }, scale);
 
+	texcoord = m_renderer.GetTerrainTexCoord(0, 0);
 	m_renderer.SetModelHeightTexCoord(1, texcoord);
 	m_renderer.SetAnimateModel(1, false);
+
+	for (int i = 2; i < 10; i++)
+	{
+		rand1 = rand() % 65;
+		rand2 = rand() % 65;
+
+		pos = glm::translate(m_renderer.GetTerrainPos(rand1, rand2));
+		scale = glm::scale(vec3(0.5f, 0.5f, 0.5f));
+
+		m_renderer.FillModel(i, pos, mat4{ 1.0f }, scale);
+
+		texcoord = m_renderer.GetTerrainTexCoord(rand1, rand2);
+		m_renderer.SetModelHeightTexCoord(i, texcoord);
+		m_renderer.SetAnimateModel(i, false);
+	}
 
 }
 
