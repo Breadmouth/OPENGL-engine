@@ -70,22 +70,24 @@ void Assessment::Create()
 	//load textures
 	m_renderer.LoadTexture("m_grass_texture", "../data/grass.jpg", GL_RGBA);
 	m_renderer.LoadTexture("m_rock_texture", "../data/rock.jpg", GL_RGB);
+	m_renderer.LoadTexture("m_snow_texture", "../data/snow.jpg", GL_RGB);
 	m_renderer.LoadTexture("m_water_texture", "../data/water.jpg", GL_RGB);
+	m_renderer.LoadTexture("m_sand_texture", "../data/sand.jpg", GL_RGB);
 
 	m_renderer.LoadTexture("m_water_height_1", "../data/waterheight1.jpg", GL_RGB);
 	m_renderer.LoadTexture("m_water_height_2", "../data/waterheight2.jpg", GL_RGB);
 
-	m_renderer.LoadFBX("../data/fbx/characters/Enemytank/EnemyTank.fbx");
+	//m_renderer.LoadFBX("../data/fbx/characters/Enemytank/EnemyTank.fbx");
 	m_renderer.LoadTexture("m_texture", "../data/fbx/characters/Enemytank/EnemyTank_D.tga", GL_RGBA);
 	m_renderer.SetModelTexture(0, "m_texture");
 
-	m_renderer.LoadFBX("../data/fbx/characters/enemynormal/EnemyNormal.fbx");
+	//m_renderer.LoadFBX("../data/fbx/characters/enemynormal/EnemyNormal.fbx");
 	m_renderer.LoadTexture("m_texture", "../data/fbx/characters/enemynormal/EnemyNormal1_D.tga", GL_RGB);
 	m_renderer.SetModelTexture(1, "m_texture");
 
 	for (int i = 2; i < 10; i++)
 	{
-		m_renderer.LoadFBX("../data/fbx/trees/rock.fbx");
+		//m_renderer.LoadFBX("../data/fbx/trees/rock.fbx");
 		m_renderer.LoadTexture("m_texture", "../data/fbx/trees/rockDiffuse.tga", GL_RGB);
 		m_renderer.SetModelTexture(i, "m_texture");
 	}

@@ -1,6 +1,7 @@
 c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\vc120.pdb
 c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\vc120.idb
-c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\application.obj
+c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\gl_core_4_4.obj
+c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\assessment.obj
 c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\camera.obj
 c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\flycamera.obj
 c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\gpuparticleemitter.obj
@@ -20,10 +21,8 @@ c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproj
 c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\tutorial7.obj
 c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\tutorial8.obj
 c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\tutorial9.obj
-c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\gizmos.obj
 c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\tiny_obj_loader.obj
-c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\gl_core_4_4.obj
-c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\debug\testproject.ilk
+c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\application.obj
 c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\debug\testproject.exe
 c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\debug\testproject.pdb
 c:\users\iain.dowling\documents\visual studio 2013\projects\testproject\testproject\debug\testproject.tlog\cl.command.1.tlog

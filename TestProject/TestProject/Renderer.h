@@ -148,6 +148,7 @@ private:
 	unsigned int m_grass_texture;
 	unsigned int m_snow_texture;
 	unsigned int m_water_texture;
+	unsigned int m_sand_texture;
 
 	unsigned int m_water_height_1;
 	unsigned int m_water_height_2;

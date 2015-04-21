@@ -47,14 +47,15 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)dep\glm;$(SolutionDir)dep\glfw;$(SolutionDir)dep\aieutilities;$(SolutionDir)src\;$(SolutionDir)dep\stb;$(SolutionDir)dep\anttweakbar\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dep\glm;$(SolutionDir)dep\glfw;$(SolutionDir)dep\aieutilities;$(SolutionDir)src\;$(SolutionDir)dep\stb;$(SolutionDir)dep\anttweakbar\include;$(SolutionDir)dep\opencl\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLM_SWIZZLE;GLM_FORCE_PURE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SuppressStartupBanner>false</SuppressStartupBanner>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)dep\glfw\lib-vc2012;$(SolutionDir)dep\anttweakbar\lib;$(SolutionDir)src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;FBXLoader_d.lib;FBXLoader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dep\glfw\lib-vc2012;$(SolutionDir)dep\anttweakbar\lib;$(SolutionDir)src;$(SolutionDir)dep\opencl\lib\Win32\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;FBXLoader_d.lib;FBXLoader.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -82,6 +83,7 @@
     <ClCompile Include="Assessment.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="FlyCamera.cpp" />
+    <ClCompile Include="GPGPU.cpp" />
     <ClCompile Include="GPUParticleEmitter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
@@ -106,8 +108,10 @@
     <ClInclude Include="..\src\tiny_obj_loader.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Assessment.h" />
+    <ClInclude Include="CacheCoherence.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="FlyCamera.h" />
+    <ClInclude Include="GPGPU.h" />
     <ClInclude Include="GPUParticleEmitter.h" />
     <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="ParticleEmitter.h" />

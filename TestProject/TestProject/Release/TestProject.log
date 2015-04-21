@@ -1,0 +1,115 @@
+﻿Build started 17/04/2015 9:57:14 AM.
+     1>Project "C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\TestProject\TestProject.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\glm" /I"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw" /I"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\aieutilities" /I"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\\" /I"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\stb" /I"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\include" /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt ..\src\gl_core_4_4.c
+         gl_core_4_4.c
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\glm" /I"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw" /I"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\aieutilities" /I"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\\" /I"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\stb" /I"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\include" /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\src\tiny_obj_loader.cc Application.cpp Assessment.cpp Camera.cpp FlyCamera.cpp GPGPU.cpp GPUParticleEmitter.cpp main.cpp OBJLoader.cpp ParticleEmitter.cpp Renderer.cpp Tutorial1.cpp Tutorial10.cpp Tutorial11.cpp Tutorial13.cpp Tutorial2.cpp Tutorial3.cpp Tutorial4.cpp Tutorial5.cpp Tutorial6.cpp Tutorial7.cpp Tutorial8.cpp Tutorial9.cpp
+         tiny_obj_loader.cc
+         Application.cpp
+         Assessment.cpp
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+     1>Assessment.cpp(39): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+         Camera.cpp
+         FlyCamera.cpp
+         GPGPU.cpp
+         GPUParticleEmitter.cpp
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+         main.cpp
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+         OBJLoader.cpp
+         ParticleEmitter.cpp
+         Renderer.cpp
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+     1>Renderer.cpp(11): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>Renderer.cpp(981): warning C4018: '<' : signed/unsigned mismatch
+     1>Renderer.cpp(1021): warning C4018: '<' : signed/unsigned mismatch
+     1>Renderer.cpp(1068): warning C4018: '<' : signed/unsigned mismatch
+     1>Renderer.cpp(1228): warning C4018: '<' : signed/unsigned mismatch
+     1>Renderer.cpp(1357): warning C4018: '<' : signed/unsigned mismatch
+         Tutorial1.cpp
+         Tutorial10.cpp
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+         Tutorial11.cpp
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+         Tutorial13.cpp
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+         Tutorial2.cpp
+         Tutorial3.cpp
+         Tutorial4.cpp
+         Tutorial5.cpp
+         Tutorial6.cpp
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+         Compiling...
+         Tutorial7.cpp
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+         Tutorial8.cpp
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+         Tutorial9.cpp
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src\FBXFile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\Release\TestProject.exe" /NOLOGO /LIBPATH:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw\lib-vc2012" /LIBPATH:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\lib" /LIBPATH:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src" opengl32.lib glfw3.lib AntTweakBar.lib FBXLoader.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\Release\TestProject.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\Release\TestProject.lib" /MACHINE:X86 /SAFESEH Release\gl_core_4_4.obj
+         Release\tiny_obj_loader.obj
+         Release\Application.obj
+         Release\Assessment.obj
+         Release\Camera.obj
+         Release\FlyCamera.obj
+         Release\GPGPU.obj
+         Release\GPUParticleEmitter.obj
+         Release\main.obj
+         Release\OBJLoader.obj
+         Release\ParticleEmitter.obj
+         Release\Renderer.obj
+         Release\Tutorial1.obj
+         Release\Tutorial10.obj
+         Release\Tutorial11.obj
+         Release\Tutorial13.obj
+         Release\Tutorial2.obj
+         Release\Tutorial3.obj
+         Release\Tutorial4.obj
+         Release\Tutorial5.obj
+         Release\Tutorial6.obj
+         Release\Tutorial7.obj
+         Release\Tutorial8.obj
+         Release\Tutorial9.obj
+         Generating code
+         Finished generating code
+     1>FBXLoader.lib(FBXFile.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'FBXLoader.lib(FBXFile.obj)' or at 'C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\Release\vc120.pdb'; linking object as if no debug info
+         TestProject.vcxproj -> C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\Release\TestProject.exe
+     1>Done Building Project "C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\TestProject\TestProject.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:01:19.49

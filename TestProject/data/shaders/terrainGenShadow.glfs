@@ -9,6 +9,8 @@ out vec4 out_color;
 
 uniform sampler2D grass_texture;
 uniform sampler2D rock_texture;
+uniform sampler2D snow_texture;
+uniform sampler2D sand_texture;
 uniform sampler2D shadowMap;
 uniform float shadowBias;
 
@@ -16,6 +18,8 @@ uniform vec3 light;
 uniform vec3 cameraPos;
 uniform vec3 lightColor;
 uniform float specPow;
+uniform float height;
+uniform float waterHeight;
 
 void main()
 {
@@ -30,6 +34,23 @@ void main()
 	if (dot(normalize(vNormal.xyz), vec3(0, 1, 0)) < 0.95f)
 	{
 		grass = texture(rock_texture, frag_texcoord * 10);
+	}
+	
+	if ((vPosition.y / height) > 38 + waterHeight)
+	{
+		vec4 snow = texture(snow_texture, frag_texcoord * 10);
+		grass = mix(grass, snow, (((vPosition.y / height) - (38 + waterHeight)) / 10));
+	}
+	
+	if ((vPosition.y / height) > waterHeight && (vPosition.y / height) < waterHeight + 4)
+	{
+		vec4 sand = texture(sand_texture, frag_texcoord * 20);
+		grass = mix(sand, grass, (vPosition.y / height) / 4);
+	}
+	
+	if ((vPosition.y / height) < waterHeight)
+	{
+		grass = texture(sand_texture, frag_texcoord * 20);
 	}
 	
 	float k = max(0, dot(normalize(vNormal.xyz), light));

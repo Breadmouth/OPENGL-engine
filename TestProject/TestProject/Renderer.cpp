@@ -28,6 +28,7 @@ Renderer::Renderer()
 	m_textures["m_grass_texture"] = &m_grass_texture;
 	m_textures["m_rock_texture"] = &m_rock_texture;
 	m_textures["m_water_texture"] = &m_water_texture;
+	m_textures["m_sand_texture"] = &m_sand_texture;
 	m_textures["m_water_height_1"] = &m_water_height_1;
 	m_textures["m_water_height_2"] = &m_water_height_2;
 
@@ -802,13 +803,13 @@ void Renderer::CreateDiamondSquare(int dims)
 		m_terrain[i] = new vec3[dims];
 	}
 	
-	diamond_square[0][0] = (float)(rand() % 100) / 100.f;
+	diamond_square[0][0] = (float)(rand() % 100) / 100.f * ((dims * 0.7) * 2 - (dims * 0.7));
 	m_terrain[0][0].y = diamond_square[0][0];
-	diamond_square[dims - 1][0] = (float)(rand() % 100) / 100.f;
+	diamond_square[dims - 1][0] = (float)(rand() % 100) / 100.f * ((dims * 0.7) * 2 - (dims * 0.7));
 	m_terrain[dims - 1][0].y = diamond_square[dims - 1][0];
-	diamond_square[0][dims - 1] = (float)(rand() % 100) / 100.f;
+	diamond_square[0][dims - 1] = (float)(rand() % 100) / 100.f * ((dims * 0.7) * 2 - (dims * 0.7));
 	m_terrain[0][dims - 1].y = diamond_square[0][dims - 1];
-	diamond_square[dims - 1][dims - 1] = (float)(rand() % 100) / 100.f;
+	diamond_square[dims - 1][dims - 1] = (float)(rand() % 100) / 100.f * ((dims * 0.7) * 2 - (dims * 0.7));
 	m_terrain[dims - 1][dims - 1].y = diamond_square[dims - 1][dims - 1];
 	
 	int sideLength = dims - 1;
@@ -876,6 +877,41 @@ void Renderer::CreateDiamondSquare(int dims)
 
 		//squares = (sqrt(squares) * 2) * 2;
 		sideLength /= 2;
+	}
+
+	//smooth points
+	int count = 0;
+	int total = 0;
+
+	for (int repetition = 0; repetition < 0; ++repetition)
+	{
+		for (int x = 0; x < dims - 1; ++x)
+		{
+			for (int y = 0; y < dims - 1; ++y)
+			{
+				count = 0;
+				total = 0;
+
+				for (int i = x - 3; i <= x + 3; ++i)
+				{
+					if (i < 0 || i > dims - 1)
+						continue;
+					for (int j = y - 3; j <= y + 3; ++j)
+					{
+						if (j < 0 || j > dims - 1)
+							continue;
+
+						total += diamond_square[i][j];
+						count++;
+					}
+				}
+				if (count != 0 && total != 0)
+				{
+					diamond_square[x][y] = total / (float)count;
+					m_terrain[x][y].y = diamond_square[x][y];
+				}
+			}
+		}
 	}
 
 	float *data = new float[dims * dims];
@@ -1277,10 +1313,23 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			loc = glGetUniformLocation(m_terrainGenShadowProgram, "height");
 			glUniform1f(loc, *height);
 
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "waterHeight");
+			glUniform1f(loc, *waterHeight);
+
 			glActiveTexture(GL_TEXTURE1);
 			glBindTexture(GL_TEXTURE_2D, m_grass_texture);
 			loc = glGetUniformLocation(m_terrainGenShadowProgram, "grass_texture");
 			glUniform1i(loc, 1);
+
+			glActiveTexture(GL_TEXTURE4);
+			glBindTexture(GL_TEXTURE_2D, m_snow_texture);
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "snow_texture");
+			glUniform1i(loc, 4);
+
+			glActiveTexture(GL_TEXTURE5);
+			glBindTexture(GL_TEXTURE_2D, m_sand_texture);
+			loc = glGetUniformLocation(m_terrainGenShadowProgram, "sand_texture");
+			glUniform1i(loc, 5);
 
 			glActiveTexture(GL_TEXTURE3);
 			glBindTexture(GL_TEXTURE_2D, m_rock_texture);
@@ -1440,6 +1489,11 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			glBindTexture(GL_TEXTURE_2D, m_snow_texture);
 			loc = glGetUniformLocation(m_terrainGenProgram, "snow_texture");
 			glUniform1i(loc, 3);
+
+			glActiveTexture(GL_TEXTURE4);
+			glBindTexture(GL_TEXTURE_2D, m_sand_texture);
+			loc = glGetUniformLocation(m_terrainGenProgram, "sand_texture");
+			glUniform1i(loc, 4);
 
 			glBindVertexArray(m_terrainPlane.m_VAO);
 			glDrawElements(GL_TRIANGLES, m_terrainPlane.m_indexCount, GL_UNSIGNED_INT, nullptr);
