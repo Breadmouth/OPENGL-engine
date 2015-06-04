@@ -41,6 +41,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>
     </LinkIncremental>
+    <IncludePath>C:\Users\iain.dowling\Documents\PhysX\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\iain.dowling\Documents\PhysX\Lib\vc12win32;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>C:\Users\iain.dowling\Documents\PhysX\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\iain.dowling\Documents\PhysX\Lib\vc12win32;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -54,7 +60,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)dep\glfw\lib-vc2012;$(SolutionDir)dep\anttweakbar\lib;$(SolutionDir)src;$(SolutionDir)dep\opencl\lib\Win32\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;FBXLoader_d.lib;FBXLoader.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;FBXLoader_d.lib;FBXLoader.lib;PhysX3DEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysX3CommonDEBUG_x86.lib;PhysX3VehicleDEBUG.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3CookingDEBUG_x86.lib;PhysXVisualDebuggerSDKDEBUG.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
@@ -73,7 +79,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)dep\glfw\lib-vc2012;$(SolutionDir)dep\anttweakbar\lib;$(SolutionDir)src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;FBXLoader.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;FBXLoader.lib;PhysX3_x86.lib;PhysX3Extensions.lib;PhysXCommon_x86.lib;PhysXVehicle.lib;PhysX3CharacterKinematic_x86.lib;PhysX3Cooking_x86.lib;PhysXVisualDebuggerSDK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -82,12 +88,16 @@
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="Assessment.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CheckerBoard.cpp" />
+    <ClCompile Include="CheckerAI.cpp" />
+    <ClCompile Include="CheckerPlayer.cpp" />
     <ClCompile Include="FlyCamera.cpp" />
     <ClCompile Include="GPGPU.cpp" />
     <ClCompile Include="GPUParticleEmitter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
+    <ClCompile Include="PhysXTut.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Tutorial1.cpp" />
     <ClCompile Include="Tutorial10.cpp" />
@@ -110,11 +120,17 @@
     <ClInclude Include="Assessment.h" />
     <ClInclude Include="CacheCoherence.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CheckerBoard.h" />
+    <ClInclude Include="CheckerAI.h" />
+    <ClInclude Include="CheckerPiece.h" />
+    <ClInclude Include="CheckerPlayer.h" />
     <ClInclude Include="FlyCamera.h" />
     <ClInclude Include="GPGPU.h" />
     <ClInclude Include="GPUParticleEmitter.h" />
+    <ClInclude Include="myAllocator.h" />
     <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="ParticleEmitter.h" />
+    <ClInclude Include="PhysXTut.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Tutorial1.h" />
     <ClInclude Include="Tutorial10.h" />

@@ -1,11 +1,12 @@
 #include "Assessment.h"
 #include "CacheCoherence.h"
 #include "GPGPU.h"
-
+#include "CheckerBoard.h"
+#include "PhysXTut.h"
 
 int main()
 {
-	Assessment app;
+	PhysXTut app;
 
 	app.Run();
 

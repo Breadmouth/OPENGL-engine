@@ -1,17 +1,21 @@
-﻿Build started 22/04/2015 8:24:42 AM.
-     1>Project "C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\TestProject\TestProject.vcxproj" on node 2 (Build target(s)).
+﻿Build started 4/06/2015 5:01:17 PM.
+     1>Project "C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\TestProject\TestProject.vcxproj" on node 2 (Build target(s)).
      1>Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\Debug\TestProject.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\glfw\lib-vc2012" /LIBPATH:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\anttweakbar\lib" /LIBPATH:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\src" /LIBPATH:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\dep\opencl\lib\Win32\x86" opengl32.lib glfw3.lib AntTweakBar.lib FBXLoader_d.lib FBXLoader.lib OpenCL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\Debug\TestProject.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\Debug\TestProject.lib" /MACHINE:X86 /PROFILE Debug\gl_core_4_4.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\Debug\TestProject.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\glfw\lib-vc2012" /LIBPATH:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\anttweakbar\lib" /LIBPATH:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\src" /LIBPATH:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\opencl\lib\Win32\x86" opengl32.lib glfw3.lib AntTweakBar.lib FBXLoader_d.lib FBXLoader.lib PhysX3DEBUG_x86.lib PhysX3ExtensionsDEBUG.lib PhysX3CommonDEBUG_x86.lib PhysX3VehicleDEBUG.lib PhysX3CharacterKinematicDEBUG_x86.lib PhysX3CookingDEBUG_x86.lib PhysXVisualDebuggerSDKDEBUG.lib OpenCL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\Debug\TestProject.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\Debug\TestProject.lib" /MACHINE:X86 /PROFILE Debug\gl_core_4_4.obj
          Debug\tiny_obj_loader.obj
          Debug\Application.obj
          Debug\Assessment.obj
          Debug\Camera.obj
+         Debug\CheckerBoard.obj
+         Debug\CheckerAI.obj
+         Debug\CheckerPlayer.obj
          Debug\FlyCamera.obj
          Debug\GPGPU.obj
          Debug\GPUParticleEmitter.obj
          Debug\main.obj
          Debug\OBJLoader.obj
          Debug\ParticleEmitter.obj
+         Debug\PhysXTut.obj
          Debug\Renderer.obj
          Debug\Tutorial1.obj
          Debug\Tutorial10.obj
@@ -28,10 +32,10 @@
      1>LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/PROFILE' specification
      1>gl_core_4_4.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/OPT:LBR' specification
      1>LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-     1>FBXLoader_d.lib(FBXFile.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'FBXLoader_d.lib(FBXFile.obj)' or at 'C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\Debug\vc120.pdb'; linking object as if no debug info
-         TestProject.vcxproj -> C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\Debug\TestProject.exe
-     1>Done Building Project "C:\Users\iain.dowling\Documents\Visual Studio 2013\Projects\TestProject\TestProject\TestProject.vcxproj" (Build target(s)).
+     1>FBXLoader_d.lib(FBXFile.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'FBXLoader_d.lib(FBXFile.obj)' or at 'C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\Debug\vc120.pdb'; linking object as if no debug info
+         TestProject.vcxproj -> C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\Debug\TestProject.exe
+     1>Done Building Project "C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\TestProject\TestProject.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.10
+Time Elapsed 00:00:01.62

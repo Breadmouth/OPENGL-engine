@@ -93,6 +93,18 @@
     <ClCompile Include="GPGPU.cpp">
       <Filter>Source Files\Tutorials</Filter>
     </ClCompile>
+    <ClCompile Include="CheckerBoard.cpp">
+      <Filter>Source Files\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="CheckerAI.cpp">
+      <Filter>Source Files\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="CheckerPlayer.cpp">
+      <Filter>Source Files\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysXTut.cpp">
+      <Filter>Source Files\Tutorials</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\gl_core_4_4.h">
@@ -168,6 +180,24 @@
       <Filter>Header Files\Tutorials</Filter>
     </ClInclude>
     <ClInclude Include="GPGPU.h">
+      <Filter>Header Files\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckerBoard.h">
+      <Filter>Header Files\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckerAI.h">
+      <Filter>Header Files\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckerPlayer.h">
+      <Filter>Header Files\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckerPiece.h">
+      <Filter>Header Files\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysXTut.h">
+      <Filter>Header Files\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="myAllocator.h">
       <Filter>Header Files\Tutorials</Filter>
     </ClInclude>
   </ItemGroup>
