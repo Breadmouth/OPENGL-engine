@@ -27,6 +27,9 @@ public:
 
 	void SetUpPhysX();
 	void UpdatePhysX(float dt);
+	void SetUpVisualDebugger();
+
+	void SetupTut1();
 
 protected:
 	FlyCamera camera;

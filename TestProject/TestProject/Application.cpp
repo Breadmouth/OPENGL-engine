@@ -3,7 +3,7 @@
 #include <gl_core_4_4.h>
 #include <include/GLFW/glfw3.h>
 
-#include <Gizmos.h>
+#include "Gizmos.h"
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -68,7 +68,7 @@ int Application::Run()
 	glfwSetCharCallback(window, OnChar);
 	glfwSetWindowSizeCallback(window, OnWindowResize);
 
-	//Gizmos::create();
+	Gizmos::create();
 
 	Create();
 
@@ -82,7 +82,7 @@ int Application::Run()
 	{
 		glClearColor(m_clearColour.r, m_clearColour.g, m_clearColour.b, m_clearColour.a);
 		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//Gizmos::clear();
+		Gizmos::clear();
 
 		currentTime = (float)glfwGetTime();
 		float dt = currentTime - previousDeltaTime;
@@ -98,7 +98,7 @@ int Application::Run()
 
 	Destroy();
 
-	//Gizmos::destroy();
+	Gizmos::destroy();
 
 	//destroy AntTweakBar
 	TwDeleteAllBars();

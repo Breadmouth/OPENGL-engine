@@ -45,6 +45,10 @@ void PhysXTut::Create()
 	//physX init
 	SetUpPhysX();
 
+	SetUpVisualDebugger();
+
+	SetupTut1();
+
 	//AntTweakBar
 	m_bar = TwNewBar("my bar");
 
@@ -217,4 +221,41 @@ void PhysXTut::UpdatePhysX(float dt)
 	{
 
 	}
+}
+
+void PhysXTut::SetUpVisualDebugger()
+{
+	//check if PVDconnection manager is avaliable on this platform
+	if (g_Physics->getPvdConnectionManager() == NULL)
+	{
+		return;
+	}
+	//setup connection parameters
+	const char* pvd_host_ip = "127.0.0.1";
+	//ip of the PC which is running pvd
+	int port = 5425;
+	//TCP port to connect to
+	unsigned int timeout = 100;
+	//timeout in milliseconds to wait for PVD to respond
+	PxVisualDebuggerConnectionFlags connectionFlags = PxVisualDebuggerExt::getAllConnectionFlags();
+	//and now try to connect PxVisualDebuggerExt
+	auto theConnection = PxVisualDebuggerExt::createConnection(
+		g_Physics->getPvdConnectionManager(), pvd_host_ip, port, timeout, connectionFlags);
+}
+
+void PhysXTut::SetupTut1()
+{
+	//add a plane
+	PxTransform pose = PxTransform(PxVec3(0.0f, 0, 0.0f), PxQuat(PxHalfPi*1.0f, PxVec3(0.0f, 0.0f, 1.0f)));
+	PxRigidStatic* plane = PxCreateStatic(*g_Physics, pose, PxPlaneGeometry(), *g_PhysicsMaterial);
+	//add it to the PhysX scene
+	g_PhysicsScene->addActor(*plane);
+
+	//add a box
+	float density = 10;
+	PxBoxGeometry box(2, 2, 2);
+	PxTransform transform(PxVec3(10, 10, 10));
+	PxRigidDynamic* dynamicActor = PxCreateDynamic(*g_Physics, transform, box, *g_PhysicsMaterial, density);
+	//add it to the physX scene
+	g_PhysicsScene->addActor(*dynamicActor);
 }

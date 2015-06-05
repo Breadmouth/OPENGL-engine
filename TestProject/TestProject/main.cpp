@@ -3,10 +3,11 @@
 #include "GPGPU.h"
 #include "CheckerBoard.h"
 #include "PhysXTut.h"
+#include "PhysGenTut.h"
 
 int main()
 {
-	PhysXTut app;
+	PhysGenTut app;
 
 	app.Run();
 

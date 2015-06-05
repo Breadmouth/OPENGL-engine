@@ -19,6 +19,12 @@
     <Filter Include="Header Files\Tutorials">
       <UniqueIdentifier>{cce9b9b8-81ef-4f60-9f3d-46b0f93cbf20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\PhysGen">
+      <UniqueIdentifier>{72a09d68-652f-4ba7-be2a-b4a81b1aae91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\PhysGen">
+      <UniqueIdentifier>{8e964e75-bf18-4f6d-9e41-5a22734acc62}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -104,6 +110,15 @@
     </ClCompile>
     <ClCompile Include="PhysXTut.cpp">
       <Filter>Source Files\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysScene.cpp">
+      <Filter>Source Files\PhysGen</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysGenTut.cpp">
+      <Filter>Source Files\Tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="Gizmos.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -199,6 +214,18 @@
     </ClInclude>
     <ClInclude Include="myAllocator.h">
       <Filter>Header Files\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysScene.h">
+      <Filter>Header Files\PhysGen</Filter>
+    </ClInclude>
+    <ClInclude Include="Actors.h">
+      <Filter>Header Files\PhysGen</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysGenTut.h">
+      <Filter>Header Files\Tutorials</Filter>
+    </ClInclude>
+    <ClInclude Include="Gizmos.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

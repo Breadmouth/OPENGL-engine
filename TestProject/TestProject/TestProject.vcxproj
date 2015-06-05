@@ -53,7 +53,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)dep\glm;$(SolutionDir)dep\glfw;$(SolutionDir)dep\aieutilities;$(SolutionDir)src\;$(SolutionDir)dep\stb;$(SolutionDir)dep\anttweakbar\include;$(SolutionDir)dep\opencl\inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dep\glm;$(SolutionDir)dep\glfw;$(SolutionDir)src\;$(SolutionDir)dep\stb;$(SolutionDir)dep\anttweakbar\include;$(SolutionDir)dep\opencl\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLM_SWIZZLE;GLM_FORCE_PURE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SuppressStartupBanner>false</SuppressStartupBanner>
     </ClCompile>
@@ -71,7 +71,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)dep\glm;$(SolutionDir)dep\glfw;$(SolutionDir)dep\aieutilities;$(SolutionDir)src\;$(SolutionDir)dep\stb;$(SolutionDir)dep\anttweakbar\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dep\glm;$(SolutionDir)dep\glfw;$(SolutionDir)dep\aieutilities;$(SolutionDir)src\;$(SolutionDir)dep\stb;$(SolutionDir)dep\anttweakbar\include;$(SolutionDir)dep\opencl\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLM_SWIZZLE;GLM_FORCE_PURE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -92,11 +92,14 @@
     <ClCompile Include="CheckerAI.cpp" />
     <ClCompile Include="CheckerPlayer.cpp" />
     <ClCompile Include="FlyCamera.cpp" />
+    <ClCompile Include="Gizmos.cpp" />
     <ClCompile Include="GPGPU.cpp" />
     <ClCompile Include="GPUParticleEmitter.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="ParticleEmitter.cpp" />
+    <ClCompile Include="PhysGenTut.cpp" />
+    <ClCompile Include="PhysScene.cpp" />
     <ClCompile Include="PhysXTut.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Tutorial1.cpp" />
@@ -116,6 +119,7 @@
     <ClInclude Include="..\src\FBXFile.h" />
     <ClInclude Include="..\src\gl_core_4_4.h" />
     <ClInclude Include="..\src\tiny_obj_loader.h" />
+    <ClInclude Include="Actors.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="Assessment.h" />
     <ClInclude Include="CacheCoherence.h" />
@@ -125,11 +129,14 @@
     <ClInclude Include="CheckerPiece.h" />
     <ClInclude Include="CheckerPlayer.h" />
     <ClInclude Include="FlyCamera.h" />
+    <ClInclude Include="Gizmos.h" />
     <ClInclude Include="GPGPU.h" />
     <ClInclude Include="GPUParticleEmitter.h" />
     <ClInclude Include="myAllocator.h" />
     <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="ParticleEmitter.h" />
+    <ClInclude Include="PhysGenTut.h" />
+    <ClInclude Include="PhysScene.h" />
     <ClInclude Include="PhysXTut.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="Tutorial1.h" />

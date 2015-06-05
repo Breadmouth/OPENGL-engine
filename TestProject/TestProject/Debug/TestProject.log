@@ -1,6 +1,19 @@
-﻿Build started 4/06/2015 5:01:17 PM.
+﻿Build started 5/06/2015 1:54:11 PM.
      1>Project "C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\TestProject\TestProject.vcxproj" on node 2 (Build target(s)).
-     1>Link:
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\glm" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\glfw" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\src\\" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\stb" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\anttweakbar\include" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\opencl\inc" /ZI /W3 /WX- /sdl /Od /Oy- /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt PhysGenTut.cpp
+         Microsoft (R) C/C++ Optimizing Compiler Version 18.00.21005.1 for x86
+         Copyright (C) Microsoft Corporation.  All rights reserved.
+         
+         cl /c /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\glm" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\glfw" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\src\\" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\stb" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\anttweakbar\include" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\opencl\inc" /ZI /W3 /WX- /sdl /Od /Oy- /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt PhysGenTut.cpp
+         
+         PhysGenTut.cpp
+     1>c:\users\iain.dowling\desktop\opengl-engine\testproject\src\fbxfile.h(9): warning C4005: 'GLM_SWIZZLE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_SWIZZLE'
+     1>c:\users\iain.dowling\desktop\opengl-engine\testproject\src\fbxfile.h(10): warning C4005: 'GLM_FORCE_PURE' : macro redefinition
+                 command-line arguments :  see previous definition of 'GLM_FORCE_PURE'
+     1>c:\users\iain.dowling\desktop\opengl-engine\testproject\testproject\physgentut.cpp(27): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+       Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\Debug\TestProject.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\glfw\lib-vc2012" /LIBPATH:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\anttweakbar\lib" /LIBPATH:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\src" /LIBPATH:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\opencl\lib\Win32\x86" opengl32.lib glfw3.lib AntTweakBar.lib FBXLoader_d.lib FBXLoader.lib PhysX3DEBUG_x86.lib PhysX3ExtensionsDEBUG.lib PhysX3CommonDEBUG_x86.lib PhysX3VehicleDEBUG.lib PhysX3CharacterKinematicDEBUG_x86.lib PhysX3CookingDEBUG_x86.lib PhysXVisualDebuggerSDKDEBUG.lib OpenCL.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\Debug\TestProject.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\Debug\TestProject.lib" /MACHINE:X86 /PROFILE Debug\gl_core_4_4.obj
          Debug\tiny_obj_loader.obj
          Debug\Application.obj
@@ -10,11 +23,14 @@
          Debug\CheckerAI.obj
          Debug\CheckerPlayer.obj
          Debug\FlyCamera.obj
+         Debug\Gizmos.obj
          Debug\GPGPU.obj
          Debug\GPUParticleEmitter.obj
          Debug\main.obj
          Debug\OBJLoader.obj
          Debug\ParticleEmitter.obj
+         Debug\PhysGenTut.obj
+         Debug\PhysScene.obj
          Debug\PhysXTut.obj
          Debug\Renderer.obj
          Debug\Tutorial1.obj
@@ -38,4 +54,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.62
+Time Elapsed 00:00:05.80
