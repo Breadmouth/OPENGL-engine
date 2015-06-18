@@ -59,6 +59,33 @@ void PhysGenTut::SetupTut1()
 	m_physicsScene->timeStep = .001f;
 	//add 4 balls
 	Sphere* newBall;
+	Sphere* newBall2;
+	Box* newBox;
+	Box* newBox2;
+	Plane* newPlane;
+	Plane* newPlane2;
+	Plane* newPlane3;
+	Plane* newPlane4;
 	newBall = new Sphere(glm::vec2(0, 0), glm::vec2(0, 0), 3.0f, 1, glm::vec4(1, 0, 0, 1));
+	newBall2 = new Sphere(glm::vec2(4, 0), glm::vec2(-40, 0), 6.0f, 1, glm::vec4(0, 0, 1, 1));
+	newBox = new Box(glm::vec2(2, 0), glm::vec2(-20, 0), 5.0f, 1, 1, glm::vec4(1, 0, 1, 1));
+	newBox2 = new Box(glm::vec2(-2, 0), glm::vec2(20, 0), 5.0f, 1, 1, glm::vec4(1, 0, 1, 1));
+	//bottom
+	newPlane = new Plane(glm::vec2(0, 1), -10, glm::vec4(.2, .2, .2, 1));
+	//left
+	newPlane2 = new Plane(glm::vec2(1, 0), -10, glm::vec4(.2, .2, .2, 1));
+	//right
+	newPlane3 = new Plane(glm::vec2(1, 0), 10, glm::vec4(.2, .2, .2, 1));
+	//top
+	newPlane4 = new Plane(glm::vec2(0, 1), 10, glm::vec4(.2, .2, .2, 1));
 	m_physicsScene->AddActor(newBall);
+	m_physicsScene->AddActor(newBall2);
+	m_physicsScene->AddActor(newBox);
+	m_physicsScene->AddActor(newBox2);
+
+	m_physicsScene->AddActor(newPlane);
+	m_physicsScene->AddActor(newPlane2);
+	m_physicsScene->AddActor(newPlane3);
+	m_physicsScene->AddActor(newPlane4);
+
 }

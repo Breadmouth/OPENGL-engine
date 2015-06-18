@@ -25,4 +25,16 @@ public:
 	void DebugScene();
 	void AddGizmos();
 
+	void CheckForCollision();
+
+	//collision check functions
+	static bool PlaneToPlane(Actor* obj1, Actor* obj2);
+	static bool PlaneToSphere(Actor* obj1, Actor* obj2);
+	static bool PlaneToBox(Actor* obj1, Actor* obj2);
+	static bool SphereToPlane(Actor* obj1, Actor* obj2);
+	static bool SphereToSphere(Actor* obj1, Actor* obj2);
+	static bool SphereToBox(Actor* obj1, Actor* obj2);
+	static bool BoxToPlane(Actor* obj1, Actor* obj2);
+	static bool BoxToSphere(Actor* obj1, Actor* obj2);
+	static bool BoxToBox(Actor* obj1, Actor* obj2);
 };
