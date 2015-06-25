@@ -54,7 +54,7 @@ protected:
 class RigidBody : public Actor
 {
 public:
-	RigidBody(glm::vec2 position, glm::vec2 velocity, float rotation, float mass);
+	RigidBody(glm::vec2 position, glm::vec2 velocity, float rotation, float mass, bool isStatic);
 	~RigidBody(){};
 
 	virtual void Update(glm::vec3 gravity, float timeStep); 
@@ -73,6 +73,7 @@ public:
 	glm::vec2 GetVelocity(){ return m_velocity; };
 	float GetRotation2D(){ return m_rotation2D; };
 	float GetMass(){ return m_mass; };
+	bool GetStatic() { return m_static; };
 
 protected:
 	glm::vec2 m_position;
@@ -88,7 +89,7 @@ protected:
 class Sphere : public RigidBody
 {
 public:
-	Sphere(glm::vec2 position, glm::vec2 velocity, float mass, float radius, glm::vec4 colour);
+	Sphere(glm::vec2 position, glm::vec2 velocity, float mass, float radius, glm::vec4 colour, bool isStatic);
 	~Sphere(){};
 
 	virtual void MakeGizmo();
@@ -102,7 +103,7 @@ protected:
 class Box : public RigidBody
 {
 public:
-	Box(glm::vec2 position, glm::vec2 velocity, float mass, float height, float length, glm::vec4 colour);
+	Box(glm::vec2 position, glm::vec2 velocity, float mass, float height, float length, glm::vec4 colour, bool isStatic);
 	~Box(){};
 	
 	virtual void MakeGizmo();

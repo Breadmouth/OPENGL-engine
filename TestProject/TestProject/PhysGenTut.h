@@ -23,8 +23,14 @@ public:
 
 	void SetupTut1();
 
+	float GetTableWidth() { return tableWidth; };
+	float GetTableHeight() { return tableHeight; }; 
+
 protected:
 	FlyCamera camera;
+
+	float tableWidth = 24.f;
+	float tableHeight = 12.f;
 
 	//Renderer m_renderer;
 	//GPUParticleEmitter* m_emitter;
