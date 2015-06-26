@@ -31,6 +31,10 @@ RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float rotation, flo
 	m_mass = mass;
 	m_rotation2D = rotation;
 	m_static = isStatic;
+
+	m_angularVelocity = glm::vec2(0);
+	m_angularDrag = 1.f;
+	m_linearDrag = 0.992f;
 }
 
 void RigidBody::Update(glm::vec3 gravity, float timeStep)
@@ -38,7 +42,7 @@ void RigidBody::Update(glm::vec3 gravity, float timeStep)
 	if (!m_static)
 	{
 		m_position += m_velocity * timeStep;
-		m_velocity *= 0.995f;
+		m_velocity *= m_linearDrag;
 		//ApplyForce(glm::vec2(gravity.x, gravity.y));
 	}
 }
@@ -48,8 +52,7 @@ void RigidBody::ApplyForce(glm::vec2 force)
 	if (!m_static)
 	{
 		glm::vec2 accel;
-		accel.x = force.x / m_mass;
-		accel.y = force.y / m_mass;
+		accel = force / m_mass;
 		m_velocity += accel;
 	}
 }

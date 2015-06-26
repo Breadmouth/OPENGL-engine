@@ -26,11 +26,21 @@ public:
 	float GetTableWidth() { return tableWidth; };
 	float GetTableHeight() { return tableHeight; }; 
 
+	void GetMouseInput();
+
 protected:
 	FlyCamera camera;
 
+	GLFWwindow* m_window;
+
 	float tableWidth = 24.f;
 	float tableHeight = 12.f;
+
+	bool lMouseButtonPressed = false;
+	float cursorX;
+	float cursorY;
+
+	Sphere* m_whiteBall;
 
 	//Renderer m_renderer;
 	//GPUParticleEmitter* m_emitter;

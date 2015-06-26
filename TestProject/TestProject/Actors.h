@@ -67,7 +67,10 @@ public:
 	void ApplyForce();
 
 	void SetVelocity(glm::vec2 velocity);
+	void SetAngularVelocity(glm::vec2 velocity);
 	void SetPosition(glm::vec2 position);
+	void SetLinearDrag(float linearDrag) { m_linearDrag = linearDrag; };
+	void SetAngularDrag(float angularDrag) { m_angularDrag = angularDrag; };
 
 	glm::vec2 GetPosition(){ return m_position; };
 	glm::vec2 GetVelocity(){ return m_velocity; };
@@ -78,8 +81,12 @@ public:
 protected:
 	glm::vec2 m_position;
 	glm::vec2 m_velocity;
+	glm::vec2 m_angularVelocity;
 	float m_rotation2D;
 	float m_mass;
+
+	float m_linearDrag;
+	float m_angularDrag;
 
 	bool m_static;
 

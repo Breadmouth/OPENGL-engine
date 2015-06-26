@@ -248,26 +248,29 @@ bool PhysScene::SphereToBox(Actor* obj1, Actor* obj2)
 		if ((sphereBoxDist.x * sphereBoxDist.x) + (sphereBoxDist.y * sphereBoxDist.y) < sphere->GetRadius() * sphere->GetRadius())
 		{
 			glm::vec2 delta = sphere->GetPosition() - box->GetPosition();
-			float distance = glm::length(delta);
-			float intersection = sphere->GetRadius() + glm::length(boxPoint) - distance; //not precise enough
+			float intersection;
 
 			glm::vec2 boxNormal;
 			float mod = box->GetHeight() / box->GetLength();
 			if (delta.y > 0 && (delta.x < delta.y / mod && delta.x > -delta.y / mod)) //top
 			{
 				boxNormal = glm::vec2(0, 1);
+				intersection = sphere->GetRadius() + glm::length(boxPoint.y) - (glm::length(sphere->GetPosition() - glm::vec2(sphere->GetPosition().x, box->GetPosition().y)));
 			}
 			if (delta.y < 0 && (delta.x > delta.y / mod && delta.x < -delta.y / mod)) //bottom
 			{
 				boxNormal = glm::vec2(0, -1);
+				intersection = sphere->GetRadius() + glm::length(boxPoint.y) - (glm::length(sphere->GetPosition() - glm::vec2(sphere->GetPosition().x, box->GetPosition().y)));
 			}
 			if (delta.x > 0 && (delta.y < delta.x * mod && delta.y > -delta.x * mod)) //right
 			{
 				boxNormal = glm::vec2(1, 0);
+				intersection = sphere->GetRadius() + glm::length(boxPoint.x) - (glm::length(sphere->GetPosition() - glm::vec2(box->GetPosition().x, sphere->GetPosition().y)));
 			}
 			if (delta.x < 0 && (delta.y > delta.x * mod && delta.y < -delta.x * mod)) //left
 			{
 				boxNormal = glm::vec2(-1, 0);
+				intersection = sphere->GetRadius() + glm::length(boxPoint.x) - (glm::length(sphere->GetPosition() - glm::vec2(box->GetPosition().x, sphere->GetPosition().y)));
 			}
 
 			glm::vec2 collisionNormal = glm::normalize(delta);

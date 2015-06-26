@@ -23,6 +23,7 @@ PhysGenTut::PhysGenTut()
 void PhysGenTut::Create()
 {
 	camera.SetInputWindow(glfwGetCurrentContext());
+	m_window = glfwGetCurrentContext();
 
 	srand(time(NULL));
 
@@ -40,6 +41,8 @@ void PhysGenTut::Destroy()
 
 void PhysGenTut::Update(float dt)
 {
+	GetMouseInput();
+
 	m_physicsScene->Update();
 	m_physicsScene->AddGizmos();
 
@@ -60,8 +63,6 @@ void PhysGenTut::SetupTut1()
 	m_physicsScene = new PhysScene();
 	m_physicsScene->gravity = glm::vec3(0, -10, 0);
 	m_physicsScene->timeStep = .001f;
-
-	Sphere* whiteBall;
 
 	Sphere* ball1;
 	Sphere* ball2;
@@ -91,7 +92,7 @@ void PhysGenTut::SetupTut1()
 	Plane* newPlane3;
 	Plane* newPlane4;
 
-	whiteBall = new Sphere(glm::vec2(0.5f * 0.75f * -tableWidth, 0), glm::vec2(1000, 0), 1.f, 0.5f, glm::vec4(1, 1, 1, 1), false);
+	m_whiteBall = new Sphere(glm::vec2(0.5f * 0.75f * -tableWidth, 0), glm::vec2(0, 0), 1.f, 0.5f, glm::vec4(1, 1, 1, 1), false);
 
 	ball1 = new Sphere(glm::vec2(tableWidth / 4, 0), glm::vec2(0, 0), 1.f, 0.5f, glm::vec4(1, 0, 0, 1), false);
 	ball2 = new Sphere(glm::vec2(tableWidth / 4 + (1 * 0.708), 0.5f), glm::vec2(0, 0), 1.f, 0.5f, glm::vec4(1, 0, 0, 1), false);
@@ -109,12 +110,12 @@ void PhysGenTut::SetupTut1()
 	ball14 = new Sphere(glm::vec2(tableWidth / 4 + (4 * 0.708), -2.f), glm::vec2(0, 0), 1.f, 0.5f, glm::vec4(0, 0, 1, 1), false);
 	blackBall = new Sphere(glm::vec2(tableWidth / 4 + (2 * 0.708), 0), glm::vec2(0, 0), 1.f, 0.5f, glm::vec4(0, 0, 0, 1), false);
 
-	leftWall = new Box(glm::vec2(12.f, 0), glm::vec2(0, 0), 0.0f, 8.5f, 1, glm::vec4(0, 0.5, 0, 1), true);
-	rightWall = new Box(glm::vec2(-12.f, 0), glm::vec2(0, 0), 0.0f, 8.5f, 1, glm::vec4(0, 0.5, 0, 1), true);
-	topWallLeft = new Box(glm::vec2(-5.56f, 5.56f), glm::vec2(0, 0), 0.0f, 1, 9.8f, glm::vec4(0, 0.5, 0, 1), true);
-	bottomWallLeft = new Box(glm::vec2(-5.56f, -5.56f), glm::vec2(0, 0), 0.0f, 1, 9.8f, glm::vec4(0, 0.5, 0, 1), true);
-	topWallRight = new Box(glm::vec2(5.56f, 5.56f), glm::vec2(0, 0), 0.0f, 1, 9.8f, glm::vec4(0, 0.5, 0, 1), true);
-	bottomWallRight = new Box(glm::vec2(5.56f, -5.56f), glm::vec2(0, 0), 0.0f, 1, 9.8f, glm::vec4(0, 0.5, 0, 1), true);
+	leftWall = new Box(glm::vec2(12.f, 0), glm::vec2(0, 0), 0.0f, 8.3f, 1, glm::vec4(0, 0.5, 0, 1), true);
+	rightWall = new Box(glm::vec2(-12.f, 0), glm::vec2(0, 0), 0.0f, 8.3f, 1, glm::vec4(0, 0.5, 0, 1), true);
+	topWallLeft = new Box(glm::vec2(-5.56f, 5.56f), glm::vec2(0, 0), 0.0f, 1, 9.6f, glm::vec4(0, 0.5, 0, 1), true);
+	bottomWallLeft = new Box(glm::vec2(-5.56f, -5.56f), glm::vec2(0, 0), 0.0f, 1, 9.6f, glm::vec4(0, 0.5, 0, 1), true);
+	topWallRight = new Box(glm::vec2(5.56f, 5.56f), glm::vec2(0, 0), 0.0f, 1, 9.6f, glm::vec4(0, 0.5, 0, 1), true);
+	bottomWallRight = new Box(glm::vec2(5.56f, -5.56f), glm::vec2(0, 0), 0.0f, 1, 9.6f, glm::vec4(0, 0.5, 0, 1), true);
 	//bottom
 	newPlane = new Plane(glm::vec2(0, 1), -13, glm::vec4(.2, .2, .2, 1));
 	//left
@@ -123,7 +124,8 @@ void PhysGenTut::SetupTut1()
 	newPlane3 = new Plane(glm::vec2(1, 0), 13, glm::vec4(.2, .2, .2, 1));
 	//top
 	newPlane4 = new Plane(glm::vec2(0, 1), 13, glm::vec4(.2, .2, .2, 1));
-	m_physicsScene->AddActor(whiteBall);
+
+	m_physicsScene->AddActor(m_whiteBall);
 
 	m_physicsScene->AddActor(ball1);
 	m_physicsScene->AddActor(ball2);
@@ -153,4 +155,43 @@ void PhysGenTut::SetupTut1()
 	m_physicsScene->AddActor(newPlane3);
 	m_physicsScene->AddActor(newPlane4);
 
+}
+
+void PhysGenTut::GetMouseInput()
+{
+	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+	{
+		lMouseButtonPressed = true;
+	}
+	else
+	{
+		if (lMouseButtonPressed)
+		{
+			double mouseX, mouseY;
+			glfwGetCursorPos(m_window, &mouseX, &mouseY);
+
+			int width, height;
+			glfwGetFramebufferSize(m_window, &width, &height);
+
+			glm::vec3 screenPos(mouseX / width * 2 - 1, (mouseY / height * 2 - 1) * -1, -1);
+
+			screenPos.x /= camera.GetProjection()[0][0];
+			screenPos.y /= camera.GetProjection()[1][1];
+
+			glm::vec3 dir = glm::normalize(camera.GetWorldTransform() * glm::vec4(screenPos, 0)).xyz();
+
+			float PoSubLoDotN = glm::dot((glm::vec3(0, 0, 1) * 0) - camera.GetWorldTransform()[3].xyz(), glm::vec3(0, 0, 1));
+			float LDotN = glm::dot(dir, glm::vec3(0, 0, 1));
+
+			float d = PoSubLoDotN / LDotN;
+
+			glm::vec3 finalVal = camera.GetWorldTransform()[3].xyz() + dir * d;
+
+			glm::vec2 shit = finalVal.xy() - m_whiteBall->GetPosition();
+
+			m_whiteBall->ApplyForce(-shit * 50);
+
+			lMouseButtonPressed = false;
+		}
+	}
 }
