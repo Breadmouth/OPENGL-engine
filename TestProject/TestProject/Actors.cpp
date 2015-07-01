@@ -2,7 +2,7 @@
 
 
 //----------Plane
-Plane::Plane(glm::vec2 normal, float offset, glm::vec4 colour)
+Plane::Plane(glm::vec3 normal, float offset, glm::vec4 colour)
 {
 	m_offset = offset;
 	m_normal = normal;
@@ -12,19 +12,12 @@ Plane::Plane(glm::vec2 normal, float offset, glm::vec4 colour)
 
 void Plane::MakeGizmo()
 {
-	glm::vec2 centrePoint = m_offset * m_normal;
-	glm::vec3 centre = glm::vec3(centrePoint.x, centrePoint.y, 0);
-
-	float acosy = glm::acos(glm::dot(m_normal.x, m_normal.y) / (glm::length(m_normal.x) - glm::length(m_normal.y)));
-
-	glm::mat4 angle = glm::rotate(acosy, centre);
-
 	//Gizmos::addAABBFilled(centre, glm::vec3(1000, 1000, 0.01), m_colour, &angle);
 }
 
 
 //---------RigidBody
-RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float rotation, float mass, bool isStatic)
+RigidBody::RigidBody(glm::vec3 position, glm::vec3 velocity, float rotation, float mass, bool isStatic)
 {
 	m_position = position;
 	m_velocity = velocity;
@@ -32,7 +25,7 @@ RigidBody::RigidBody(glm::vec2 position, glm::vec2 velocity, float rotation, flo
 	m_rotation2D = rotation;
 	m_static = isStatic;
 
-	m_angularVelocity = glm::vec2(0);
+	m_angularVelocity = glm::vec3(0);
 	m_angularDrag = 1.f;
 	m_linearDrag = 0.992f;
 }
@@ -47,33 +40,33 @@ void RigidBody::Update(glm::vec3 gravity, float timeStep)
 	}
 }
 
-void RigidBody::ApplyForce(glm::vec2 force)
+void RigidBody::ApplyForce(glm::vec3 force)
 {
 	if (!m_static)
 	{
-		glm::vec2 accel;
+		glm::vec3 accel;
 		accel = force / m_mass;
 		m_velocity += accel;
 	}
 }
 
-void RigidBody::ApplyForceToActor(RigidBody* actor2, glm::vec2 force)
+void RigidBody::ApplyForceToActor(RigidBody* actor2, glm::vec3 force)
 {
 	actor2->ApplyForce(force);
 }
 
-void RigidBody::SetVelocity(glm::vec2 velocity)
+void RigidBody::SetVelocity(glm::vec3 velocity)
 {
 	m_velocity = velocity;
 }
 
-void RigidBody::SetPosition(glm::vec2 position)
+void RigidBody::SetPosition(glm::vec3 position)
 {
 	m_position = position;
 }
 
 //----------Sphere
-Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float mass, float radius, glm::vec4 colour, bool isStatic)
+Sphere::Sphere(glm::vec3 position, glm::vec3 velocity, float mass, float radius, glm::vec4 colour, bool isStatic)
 : RigidBody(position, velocity, 0, mass, isStatic)
 {
 	m_radius = radius;
@@ -83,20 +76,21 @@ Sphere::Sphere(glm::vec2 position, glm::vec2 velocity, float mass, float radius,
 
 void Sphere::MakeGizmo()
 {
-	Gizmos::addSphere(glm::vec3(m_position.x, m_position.y, 0), m_radius, 10, 10, m_colour);
+	Gizmos::addSphere(m_position, m_radius, 10, 10, m_colour);
 }
 
 //--------Box
-Box::Box(glm::vec2 position, glm::vec2 velocity, float mass, float height, float length, glm::vec4 colour, bool isStatic)
+Box::Box(glm::vec3 position, glm::vec3 velocity, float mass, float height, float length, float width, glm::vec4 colour, bool isStatic)
 : RigidBody(position, velocity, 0, mass, isStatic)
 {
 	m_height = height;
 	m_length = length;
+	m_width = width;
 	m_colour = colour;
 	m_shapeID = ShapeType::BOX;
 }
 
 void Box::MakeGizmo()
 {
-	Gizmos::addAABBFilled(glm::vec3(m_position.x, m_position.y, 0), glm::vec3(m_length / 2, m_height / 2, 1), m_colour);
+	Gizmos::addAABBFilled(m_position, glm::vec3(m_length / 2, m_height / 2, 1), m_colour);
 }

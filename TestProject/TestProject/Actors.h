@@ -35,17 +35,17 @@ protected:
 class Plane : public Actor
 {
 public:
-	Plane(glm::vec2 normal, float offset, glm::vec4 colour);
+	Plane(glm::vec3 normal, float offset, glm::vec4 colour);
 	~Plane(){};
 
 	virtual void Update(glm::vec3 gravity, float timeStep){};
 	virtual void Debug(){};
 	virtual void MakeGizmo();
 
-	glm::vec2 GetNormal(){ return m_normal; };
+	glm::vec3 GetNormal(){ return m_normal; };
 	float GetOffset(){ return m_offset; };
 protected:
-	glm::vec2 m_normal;
+	glm::vec3 m_normal;
 	float m_offset;
 	glm::vec4 m_colour;
 
@@ -54,34 +54,35 @@ protected:
 class RigidBody : public Actor
 {
 public:
-	RigidBody(glm::vec2 position, glm::vec2 velocity, float rotation, float mass, bool isStatic);
+	RigidBody(glm::vec3 position, glm::vec3 velocity, float rotation, float mass, bool isStatic);
 	~RigidBody(){};
 
 	virtual void Update(glm::vec3 gravity, float timeStep); 
 
 	virtual void Debug(){};
 
-	void ApplyForce(glm::vec2 force);
-	void ApplyForceToActor(RigidBody* actor2, glm::vec2 force);
+	void ApplyForce(glm::vec3 force);
+	void ApplyForceToActor(RigidBody* actor2, glm::vec3 force);
 
 	void ApplyForce();
 
-	void SetVelocity(glm::vec2 velocity);
-	void SetAngularVelocity(glm::vec2 velocity);
-	void SetPosition(glm::vec2 position);
+	void SetVelocity(glm::vec3 velocity);
+	void SetAngularVelocity(glm::vec3 velocity);
+	void SetPosition(glm::vec3 position);
 	void SetLinearDrag(float linearDrag) { m_linearDrag = linearDrag; };
 	void SetAngularDrag(float angularDrag) { m_angularDrag = angularDrag; };
 
-	glm::vec2 GetPosition(){ return m_position; };
-	glm::vec2 GetVelocity(){ return m_velocity; };
+	glm::vec3 GetPosition(){ return m_position; };
+	glm::vec3 GetVelocity(){ return m_velocity; };
 	float GetRotation2D(){ return m_rotation2D; };
 	float GetMass(){ return m_mass; };
 	bool GetStatic() { return m_static; };
 
 protected:
-	glm::vec2 m_position;
-	glm::vec2 m_velocity;
-	glm::vec2 m_angularVelocity;
+	glm::vec3 m_position;
+	glm::vec3 m_velocity;
+	glm::vec3 m_angularVelocity;
+
 	float m_rotation2D;
 	float m_mass;
 
@@ -96,7 +97,7 @@ protected:
 class Sphere : public RigidBody
 {
 public:
-	Sphere(glm::vec2 position, glm::vec2 velocity, float mass, float radius, glm::vec4 colour, bool isStatic);
+	Sphere(glm::vec3 position, glm::vec3 velocity, float mass, float radius, glm::vec4 colour, bool isStatic);
 	~Sphere(){};
 
 	virtual void MakeGizmo();
@@ -110,15 +111,17 @@ protected:
 class Box : public RigidBody
 {
 public:
-	Box(glm::vec2 position, glm::vec2 velocity, float mass, float height, float length, glm::vec4 colour, bool isStatic);
+	Box(glm::vec3 position, glm::vec3 velocity, float mass, float height, float length, float width, glm::vec4 colour, bool isStatic);
 	~Box(){};
 	
 	virtual void MakeGizmo();
 
 	float GetHeight(){ return m_height; };
 	float GetLength(){ return m_length; };
+	float GetWidth(){ return m_width; };
 
 protected:
 	float m_height;
 	float m_length;
+	float m_width;
 };
