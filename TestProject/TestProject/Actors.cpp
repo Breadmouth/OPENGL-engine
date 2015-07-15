@@ -17,17 +17,18 @@ void Plane::MakeGizmo()
 
 
 //---------RigidBody
-RigidBody::RigidBody(glm::vec3 position, glm::vec3 velocity, float rotation, float mass, bool isStatic)
+RigidBody::RigidBody(glm::vec3 position, glm::vec3 velocity, float rotation, float mass, float elasticity, bool isStatic)
 {
 	m_position = position;
 	m_velocity = velocity;
 	m_mass = mass;
+	m_elasticity = elasticity;
 	m_rotation2D = rotation;
 	m_static = isStatic;
 
 	m_angularVelocity = glm::vec3(0);
 	m_angularDrag = 1.f;
-	m_linearDrag = 0.992f;
+	m_linearDrag = 0.99f;
 }
 
 void RigidBody::Update(glm::vec3 gravity, float timeStep)
@@ -36,7 +37,7 @@ void RigidBody::Update(glm::vec3 gravity, float timeStep)
 	{
 		m_position += m_velocity * timeStep;
 		m_velocity *= m_linearDrag;
-		//ApplyForce(glm::vec2(gravity.x, gravity.y));
+		ApplyForce(gravity);
 	}
 }
 
@@ -66,8 +67,8 @@ void RigidBody::SetPosition(glm::vec3 position)
 }
 
 //----------Sphere
-Sphere::Sphere(glm::vec3 position, glm::vec3 velocity, float mass, float radius, glm::vec4 colour, bool isStatic)
-: RigidBody(position, velocity, 0, mass, isStatic)
+Sphere::Sphere(glm::vec3 position, glm::vec3 velocity, float mass, float elasticity, float radius, glm::vec4 colour, bool isStatic)
+: RigidBody(position, velocity, 0, mass, elasticity, isStatic)
 {
 	m_radius = radius;
 	m_colour = colour;
@@ -80,8 +81,8 @@ void Sphere::MakeGizmo()
 }
 
 //--------Box
-Box::Box(glm::vec3 position, glm::vec3 velocity, float mass, float height, float length, float width, glm::vec4 colour, bool isStatic)
-: RigidBody(position, velocity, 0, mass, isStatic)
+Box::Box(glm::vec3 position, glm::vec3 velocity, float mass, float elasticity, float height, float length, float width, glm::vec4 colour, bool isStatic)
+: RigidBody(position, velocity, 0, mass, elasticity, isStatic)
 {
 	m_height = height;
 	m_length = length;
