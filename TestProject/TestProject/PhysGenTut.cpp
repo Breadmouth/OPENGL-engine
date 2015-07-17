@@ -93,30 +93,30 @@ void PhysGenTut::SetupTut1()
 	Plane* newPlane4;
 	Plane* floor;
 
-	m_whiteBall = new Sphere(glm::vec3(0.5f * 0.75f * -tableWidth, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 1, 1, 1), false);
+	m_whiteBall = new Sphere(glm::vec3(0.5f * 0.75f * -tableWidth, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 1, 1, 1), false);
 
-	ball1 = new Sphere(glm::vec3(tableWidth / 4, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
-	ball2 = new Sphere(glm::vec3(tableWidth / 4 + (1 * 0.708), 0.5f, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
-	ball3 = new Sphere(glm::vec3(tableWidth / 4 + (1 * 0.708), -0.5f, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
-	ball4 = new Sphere(glm::vec3(tableWidth / 4 + (2 * 0.708), 1.f, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
-	ball5 = new Sphere(glm::vec3(tableWidth / 4 + (2 * 0.708), -1.f, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
-	ball6 = new Sphere(glm::vec3(tableWidth / 4 + (3 * 0.708), 1.5f, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
-	ball7 = new Sphere(glm::vec3(tableWidth / 4 + (3 * 0.708), 0.5f, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
-	ball8 = new Sphere(glm::vec3(tableWidth / 4 + (3 * 0.708), -0.5f, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
-	ball9 = new Sphere(glm::vec3(tableWidth / 4 + (3 * 0.708), -1.5f, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
-	ball10 = new Sphere(glm::vec3(tableWidth / 4 + (4 * 0.708), 2.f, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
-	ball11 = new Sphere(glm::vec3(tableWidth / 4 + (4 * 0.708), 1.f, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
-	ball12 = new Sphere(glm::vec3(tableWidth / 4 + (4 * 0.708), 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
-	ball13 = new Sphere(glm::vec3(tableWidth / 4 + (4 * 0.708), -1.f, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
-	ball14 = new Sphere(glm::vec3(tableWidth / 4 + (4 * 0.708), -2.f, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
-	blackBall = new Sphere(glm::vec3(tableWidth / 4 + (2 * 0.708), 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 0, 1), false);
+	ball1 = new Sphere(glm::vec3(tableWidth / 4, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
+	ball2 = new Sphere(glm::vec3(tableWidth / 4 + (1 * 0.708), 0.5f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
+	ball3 = new Sphere(glm::vec3(tableWidth / 4 + (1 * 0.708), -0.5f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
+	ball4 = new Sphere(glm::vec3(tableWidth / 4 + (2 * 0.708), 1.f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
+	ball5 = new Sphere(glm::vec3(tableWidth / 4 + (2 * 0.708), -1.f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
+	ball6 = new Sphere(glm::vec3(tableWidth / 4 + (3 * 0.708), 1.5f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
+	ball7 = new Sphere(glm::vec3(tableWidth / 4 + (3 * 0.708), 0.5f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
+	ball8 = new Sphere(glm::vec3(tableWidth / 4 + (3 * 0.708), -0.5f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
+	ball9 = new Sphere(glm::vec3(tableWidth / 4 + (3 * 0.708), -1.5f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
+	ball10 = new Sphere(glm::vec3(tableWidth / 4 + (4 * 0.708), 2.f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
+	ball11 = new Sphere(glm::vec3(tableWidth / 4 + (4 * 0.708), 1.f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
+	ball12 = new Sphere(glm::vec3(tableWidth / 4 + (4 * 0.708), 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
+	ball13 = new Sphere(glm::vec3(tableWidth / 4 + (4 * 0.708), -1.f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
+	ball14 = new Sphere(glm::vec3(tableWidth / 4 + (4 * 0.708), -2.f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 1, 1), false);
+	blackBall = new Sphere(glm::vec3(tableWidth / 4 + (2 * 0.708), 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(0, 0, 0, 1), false);
 
-	rightWall = new Box(glm::vec3(12.f, 0, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 8.3f, 1, 1, glm::vec4(0, 0.5, 0, 1), true);
-	leftWall = new Box(glm::vec3(-12.f, 0, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 8.3f, 1, 1, glm::vec4(0, 0.5, 0, 1), true);
-	topWallLeft = new Box(glm::vec3(-5.56f, 5.56f, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 1, 9.6f, 1, glm::vec4(0, 0.5, 0, 1), true);
-	bottomWallLeft = new Box(glm::vec3(-5.56f, -5.56f, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 1, 9.6f, 1, glm::vec4(0, 0.5, 0, 1), true);
-	topWallRight = new Box(glm::vec3(5.56f, 5.56f, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 1, 9.6f, 1, glm::vec4(0, 0.5, 0, 1), true);
-	bottomWallRight = new Box(glm::vec3(5.56f, -5.56f, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 1, 9.6f, 1, glm::vec4(0, 0.5, 0, 1), true);
+	rightWall = new Box(glm::vec3(12.f, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 8.3f, 1, 1, glm::vec4(0, 0.5, 0, 1), true);
+	leftWall = new Box(glm::vec3(-12.f, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 8.3f, 1, 1, glm::vec4(0, 0.5, 0, 1), true);
+	topWallLeft = new Box(glm::vec3(-5.56f, 5.56f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 1, 9.6f, 1, glm::vec4(0, 0.5, 0, 1), true);
+	bottomWallLeft = new Box(glm::vec3(-5.56f, -5.56f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 1, 9.6f, 1, glm::vec4(0, 0.5, 0, 1), true);
+	topWallRight = new Box(glm::vec3(5.56f, 5.56f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 1, 9.6f, 1, glm::vec4(0, 0.5, 0, 1), true);
+	bottomWallRight = new Box(glm::vec3(5.56f, -5.56f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 1, 9.6f, 1, glm::vec4(0, 0.5, 0, 1), true);
 	//bottom
 	newPlane = new Plane(glm::vec3(0, 1, 0), -13, glm::vec4(.2, .2, .2, 1));
 	//left
