@@ -80,6 +80,9 @@ void PhysGenTut::SetupTut1()
 	Sphere* ball14;
 	Sphere* blackBall;
 
+	Box* boxxy;
+	Box* boxxo;
+
 	Box* leftWall;
 	Box* rightWall;
 	Box* topWallLeft;
@@ -93,7 +96,8 @@ void PhysGenTut::SetupTut1()
 	Plane* newPlane4;
 	Plane* floor;
 
-	m_whiteBall = new Sphere(glm::vec3(0.5f * 0.75f * -tableWidth, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 1, 1, 1), false);
+	m_whiteBall = new Sphere(glm::vec3(0.5f * 0.75f * -tableWidth, 0, 0.f), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 1, 1, 1), false);
+	//m_whiteBall = new Sphere(glm::vec3(-12.f, 3.f, 5.f), glm::vec3(0, 0, -50.f), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 1, 1, 1), false);
 
 	ball1 = new Sphere(glm::vec3(tableWidth / 4, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
 	ball2 = new Sphere(glm::vec3(tableWidth / 4 + (1 * 0.708), 0.5f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1.f, 0.8f, 0.5f, glm::vec4(1, 0, 0, 1), false);
@@ -117,6 +121,10 @@ void PhysGenTut::SetupTut1()
 	bottomWallLeft = new Box(glm::vec3(-5.56f, -5.56f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 1, 9.6f, 1, glm::vec4(0, 0.5, 0, 1), true);
 	topWallRight = new Box(glm::vec3(5.56f, 5.56f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 1, 9.6f, 1, glm::vec4(0, 0.5, 0, 1), true);
 	bottomWallRight = new Box(glm::vec3(5.56f, -5.56f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 0.0f, 0.6f, 1, 9.6f, 1, glm::vec4(0, 0.5, 0, 1), true);
+
+	boxxy = new Box(glm::vec3(1.f, -3.f, 0), glm::vec3(0, 60.f, 0), glm::vec3(0, 0, 0), 1, 0.6f, 1, 1, 1, glm::vec4(1, 0, 1, 1), false);
+	boxxo = new Box(glm::vec3(1.f, 3.f, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), 1, 0.6f, 1, 1, 1, glm::vec4(1, 0, 1, 1), false);
+
 	//bottom
 	newPlane = new Plane(glm::vec3(0, 1, 0), -13, glm::vec4(.2, .2, .2, 1));
 	//left
@@ -153,6 +161,9 @@ void PhysGenTut::SetupTut1()
 	m_physicsScene->AddActor(bottomWallLeft);
 	m_physicsScene->AddActor(topWallRight);
 	m_physicsScene->AddActor(bottomWallRight);
+
+	m_physicsScene->AddActor(boxxy);
+	m_physicsScene->AddActor(boxxo);
 
 	m_physicsScene->AddActor(newPlane);
 	m_physicsScene->AddActor(newPlane2);

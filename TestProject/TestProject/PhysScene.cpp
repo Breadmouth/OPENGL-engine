@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "PhysScene.h"
-#define true false
+
 PhysScene::PhysScene()
 {
 	
@@ -46,15 +46,15 @@ typedef bool (*fn)(Actor*, Actor*);
 
 static fn collisionFunctionArray[] =
 {
-	PhysScene::PlaneToPlane,
-	PhysScene::PlaneToSphere,
-	PhysScene::PlaneToBox,
-	PhysScene::SphereToPlane,
-	PhysScene::SphereToSphere,
-	PhysScene::SphereToBox,
-	PhysScene::BoxToPlane,
-	PhysScene::BoxToSphere,
-	PhysScene::BoxToBox,
+	PhysScene::PlaneToPlane,	//unnecessary
+	PhysScene::PlaneToSphere,	//done
+	PhysScene::PlaneToBox,		//-
+	PhysScene::SphereToPlane,	//done
+	PhysScene::SphereToSphere,	//done
+	PhysScene::SphereToBox,		//done
+	PhysScene::BoxToPlane,		//-
+	PhysScene::BoxToSphere,		//done
+	PhysScene::BoxToBox,		//-
 };
 
 void PhysScene::CheckForCollision()
@@ -96,16 +96,24 @@ bool PhysScene::SphereToSphere(Actor* obj1, Actor* obj2)
 		{
 			glm::vec3 collisionNormal = glm::normalize(delta);
 			glm::vec3 relativeVelocity = sphere1->GetVelocity() - sphere2->GetVelocity();
+
+			if (relativeVelocity.x == 0 && relativeVelocity.y == 0 && relativeVelocity.z == 0)
+			{
+				relativeVelocity = glm::vec3(1, 0, 0);
+			}
 			glm::vec3 collisionVector = collisionNormal *(glm::dot(relativeVelocity, collisionNormal));
+
+			glm::vec3 V2 = collisionNormal * sphere1->GetRadius();
 			if (!sphere1->GetStatic() && !sphere2->GetStatic())
 			{
 				glm::vec3 forceVector = collisionVector * 1.0f / ((1 / sphere1->GetMass()) + (1 / sphere2->GetMass()));
 
 				//apply rotational velocity
-				glm::vec3 torqueLever = glm::normalize(glm::cross(glm::cross(delta, glm::vec3(0, 1, 0)), delta)) *  sphere1->GetRadius();
+				glm::vec3 torqueLever = glm::normalize(glm::cross(glm::cross(relativeVelocity, V2), V2)) *  sphere1->GetRadius();
 				float torque = glm::dot(torqueLever, relativeVelocity) * 1.0f / (1 / sphere1->GetMass() + 1 / sphere2->GetMass());
-				sphere1->ApplyTorque(-torque);
-				sphere2->ApplyTorque(torque);
+				glm::vec3 dir = glm::normalize(glm::cross(V2, relativeVelocity));
+				sphere1->ApplyTorque(-torque, dir);
+				sphere2->ApplyTorque(torque, dir);
 
 				//use newtons 3rd law to apply collision forces to colliding bodies
 				float combinedElasticity = (sphere1->GetElasticity() + sphere2->GetElasticity()) / 2.0f;
@@ -126,9 +134,10 @@ bool PhysScene::SphereToSphere(Actor* obj1, Actor* obj2)
 				sphere1->ApplyForceToActor(sphere2, forceVector + (forceVector * combinedElasticity));
 
 				//apply rotational velocity
-				glm::vec3 torqueLever = glm::normalize(glm::cross(glm::cross(delta, glm::vec3(0, 1, 0)), delta)) *  sphere1->GetRadius();
+				glm::vec3 torqueLever = glm::normalize(glm::cross(glm::cross(relativeVelocity, V2), V2)) *  sphere1->GetRadius();
 				float torque = glm::dot(torqueLever, relativeVelocity) * 1.0f / (1 / sphere1->GetMass() + 1 / sphere2->GetMass());
-				sphere2->ApplyTorque(torque);
+				glm::vec3 dir = glm::normalize(glm::cross(V2, relativeVelocity));
+				sphere2->ApplyTorque(torque, dir);
 
 				//move our spheres out of collision
 				glm::vec3 seperationVector = collisionNormal * intersection;
@@ -143,9 +152,10 @@ bool PhysScene::SphereToSphere(Actor* obj1, Actor* obj2)
 				sphere2->ApplyForceToActor(sphere1, -forceVector - (forceVector * combinedElasticity));
 
 				//apply rotational velocity
-				glm::vec3 torqueLever = glm::normalize(glm::cross(glm::cross(delta, glm::vec3(0, 1, 0)), delta)) *  sphere1->GetRadius();
+				glm::vec3 torqueLever = glm::normalize(glm::cross(glm::cross(relativeVelocity, V2), V2)) *  sphere1->GetRadius();
 				float torque = glm::dot(torqueLever, relativeVelocity) * 1.0f / (1 / sphere1->GetMass() + 1 / sphere2->GetMass());
-				sphere1->ApplyTorque(-torque);
+				glm::vec3 dir = glm::normalize(glm::cross(V2, relativeVelocity));
+				sphere1->ApplyTorque(-torque, dir);
 
 				//move our spheres out of collision
 				glm::vec3 seperationVector = collisionNormal * intersection;
@@ -243,6 +253,23 @@ bool PhysScene::SphereToBox(Actor* obj1, Actor* obj2)
 		glm::vec3 sphereBoxDist = sphere->GetPosition() - box->GetPosition();
 		glm::vec3 boxPoint;
 
+		glm::vec3 c1 = glm::vec3(box->GetPosition().x - (box->GetLength() / 2.f), box->GetPosition().y - (box->GetHeight() / 2.f), box->GetPosition().z - (box->GetWidth() / 2.f));
+		glm::vec3 c2 = glm::vec3(box->GetPosition().x + (box->GetLength() / 2.f), box->GetPosition().y + (box->GetHeight() / 2.f), box->GetPosition().z + (box->GetWidth() / 2.f));
+
+		float distSq = sphere->GetRadius() * sphere->GetRadius();
+		if (sphere->GetPosition().x < c1.x)
+			distSq -= pow(sphere->GetPosition().x - c1.x, 2);
+		else if (sphere->GetPosition().x > c2.x)
+			distSq -= pow(sphere->GetPosition().x - c2.x, 2);
+		if (sphere->GetPosition().y < c1.y)
+			distSq -= pow(sphere->GetPosition().y - c1.y, 2);
+		else if (sphere->GetPosition().y > c2.y)
+			distSq -= pow(sphere->GetPosition().y - c2.y, 2);
+		if (sphere->GetPosition().z < c1.z)
+			distSq -= pow(sphere->GetPosition().z - c1.z, 2);
+		else if (sphere->GetPosition().z > c2.z)
+			distSq -= pow(sphere->GetPosition().z - c2.z, 2);
+
 		if (sphereBoxDist.x < -box->GetLength() / 2.f)
 		{
 			boxPoint.x = -box->GetLength() / 2.f;
@@ -255,7 +282,7 @@ bool PhysScene::SphereToBox(Actor* obj1, Actor* obj2)
 		{
 			boxPoint.x = sphereBoxDist.x;
 		}
-
+		
 		if (sphereBoxDist.y < -box->GetHeight() / 2.f)
 		{
 			boxPoint.y = -box->GetHeight() / 2.f;
@@ -268,7 +295,7 @@ bool PhysScene::SphereToBox(Actor* obj1, Actor* obj2)
 		{
 			boxPoint.y = sphereBoxDist.y;
 		}
-
+		
 		if (sphereBoxDist.z < -box->GetWidth() / 2.f)
 		{
 			boxPoint.z = -box->GetWidth() / 2.f;
@@ -282,8 +309,7 @@ bool PhysScene::SphereToBox(Actor* obj1, Actor* obj2)
 			boxPoint.z = sphereBoxDist.z;
 		}
 
-		sphereBoxDist = sphereBoxDist - boxPoint;
-		if ((sphereBoxDist.x * sphereBoxDist.x) + (sphereBoxDist.y * sphereBoxDist.y) < sphere->GetRadius() * sphere->GetRadius())
+		if (distSq > 0)
 		{
 			glm::vec3 delta = sphere->GetPosition() - box->GetPosition();
 			float intersection;
@@ -297,30 +323,30 @@ bool PhysScene::SphereToBox(Actor* obj1, Actor* obj2)
 				boxNormal = glm::vec3(0, 1, 0);
 				intersection = sphere->GetRadius() + glm::length(boxPoint.y) - (glm::length(sphere->GetPosition() - glm::vec3(sphere->GetPosition().x, box->GetPosition().y, box->GetPosition().z)));
 			}
-			if (delta.y < 0 && (delta.x > delta.y / modHL && delta.x < -delta.y / modHL) && (delta.z > delta.y / modHW && delta.z < -delta.y / modHW)) //bottom
+			else if (delta.y < 0 && (delta.x > delta.y / modHL && delta.x < -delta.y / modHL) && (delta.z > delta.y / modHW && delta.z < -delta.y / modHW)) //bottom
 			{
 				boxNormal = glm::vec3(0, -1, 0);
 				intersection = sphere->GetRadius() + glm::length(boxPoint.y) - (glm::length(sphere->GetPosition() - glm::vec3(sphere->GetPosition().x, box->GetPosition().y, box->GetPosition().z)));
 			}
-			if (delta.x > 0 && (delta.y < delta.x * modHL && delta.y > -delta.x * modHL) && (delta.z < delta.x / modLW && delta.z > -delta.x / modLW)) //right
+			else if (delta.x > 0 && (delta.y < delta.x * modHL && delta.y > -delta.x * modHL) && (delta.z < delta.x / modLW && delta.z > -delta.x / modLW)) //right
 			{
 				boxNormal = glm::vec3(1, 0, 0);
 				intersection = sphere->GetRadius() + glm::length(boxPoint.x) - (glm::length(sphere->GetPosition() - glm::vec3(box->GetPosition().x, sphere->GetPosition().y, box->GetPosition().z)));
 			}
-			if (delta.x < 0 && (delta.y > delta.x * modHL && delta.y < -delta.x * modHL) && (delta.z > delta.x / modLW && delta.z < -delta.x / modLW)) //left
+			else if (delta.x < 0 && (delta.y > delta.x * modHL && delta.y < -delta.x * modHL) && (delta.z > delta.x / modLW && delta.z < -delta.x / modLW)) //left
 			{
 				boxNormal = glm::vec3(-1, 0, 0);
 				intersection = sphere->GetRadius() + glm::length(boxPoint.x) - (glm::length(sphere->GetPosition() - glm::vec3(box->GetPosition().x, sphere->GetPosition().y, box->GetPosition().z)));
 			}
-			if (delta.z > 0 && (delta.y < delta.z * modHW && delta.y > -delta.z * modHW) && (delta.x < delta.z * modLW && delta.x > -delta.z * modLW)) //front
+			else if (delta.z > 0 && (delta.y < delta.z * modHW && delta.y > -delta.z * modHW) && (delta.x < delta.z * modLW && delta.x > -delta.z * modLW)) //front
 			{
 				boxNormal = glm::vec3(0, 0, 1);
-				intersection = sphere->GetRadius() + glm::length(boxPoint.z) - (glm::length(sphere->GetPosition() - glm::vec3(box->GetPosition().x, box->GetPosition().y, sphere->GetPosition().z)));
+				intersection = sphere->GetRadius() + glm::length(boxPoint.z) - (glm::length(sphere->GetPosition() - glm::vec3(box->GetPosition().x, sphere->GetPosition().y, box->GetPosition().z)));
 			}
-			if (delta.z < 0 && (delta.y > delta.z * modHW && delta.y < -delta.z * modHW) && (delta.x > delta.z * modLW && delta.x < -delta.z * modLW)) //back
+			else if (delta.z < 0 && (delta.y > delta.z * modHW && delta.y < -delta.z * modHW) && (delta.x > delta.z * modLW && delta.x < -delta.z * modLW)) //back
 			{
 				boxNormal = glm::vec3(0, 0, -1);
-				intersection = sphere->GetRadius() + glm::length(boxPoint.z) - (glm::length(sphere->GetPosition() - glm::vec3(box->GetPosition().x, box->GetPosition().y, sphere->GetPosition().z)));
+				intersection = sphere->GetRadius() + glm::length(boxPoint.z) - (glm::length(sphere->GetPosition() - glm::vec3(box->GetPosition().x, sphere->GetPosition().y, box->GetPosition().z)));
 			}
 
 			//glm::vec3 relativeVelocity = sphere->GetVelocity() - box->GetVelocity();
@@ -328,13 +354,17 @@ bool PhysScene::SphereToBox(Actor* obj1, Actor* obj2)
 			if (!sphere->GetStatic() && !box->GetStatic())
 			{
 				glm::vec3 forceVector = -1 * sphere->GetMass() * boxNormal * (glm::dot(boxNormal, sphere->GetVelocity()));
+
 				//use newtons 3rd law to apply collision forces to colliding bodies
 				float combinedElasticity = (sphere->GetElasticity() + box->GetElasticity()) / 2.0f;
 				box->ApplyForceToActor(sphere, forceVector + (forceVector * combinedElasticity));
 				box->ApplyForce(-forceVector - (forceVector * combinedElasticity));
+
 				//move our spheres out of collision
 				glm::vec3 seperationVector = boxNormal * intersection * 0.5f;
 				sphere->SetPosition(sphere->GetPosition() + seperationVector);
+				box->SetPosition(box->GetPosition() - seperationVector);
+
 			}
 			else if (sphere->GetStatic())
 			{
@@ -343,9 +373,11 @@ bool PhysScene::SphereToBox(Actor* obj1, Actor* obj2)
 			else
 			{
 				glm::vec3 forceVector = -1 * sphere->GetMass() * boxNormal * (glm::dot(boxNormal, sphere->GetVelocity()));
+
 				//use newtons 3rd law to apply collision forces to colliding bodies
 				float combinedElasticity = (sphere->GetElasticity() + box->GetElasticity()) / 2.0f;
 				box->ApplyForceToActor(sphere, forceVector + (forceVector * combinedElasticity));
+
 				//move our spheres out of collision
 				glm::vec3 seperationVector = boxNormal * intersection * 0.5f;
 				sphere->SetPosition(sphere->GetPosition() + seperationVector);
@@ -376,6 +408,10 @@ bool PhysScene::BoxToBox(Actor* obj1, Actor* obj2)
 	//if successful then test collision
 	if (box1 != NULL && box2 != NULL)
 	{
+		bool collision = false;
+
+
+
 		//check iff AABB are overlapping
 		if (box1->GetPosition().x < box2->GetPosition().x + box2->GetLength() &&
 			box1->GetPosition().x + box1->GetLength() > box2->GetPosition().x &&
@@ -384,7 +420,132 @@ bool PhysScene::BoxToBox(Actor* obj1, Actor* obj2)
 			box1->GetPosition().z < box2->GetPosition().z + box2->GetWidth() &&
 			box1->GetPosition().z + box1->GetWidth() > box2->GetPosition().z)
 		{
+			glm::vec3 delta = box2->GetPosition() - box1->GetPosition();
 
+			glm::vec3 boxPoint;
+			//find collision normal
+			if (delta.x < -box2->GetLength() / 2.f)
+			{
+				boxPoint.x = -box2->GetLength() / 2.f;
+			}
+			else if (delta.x > box2->GetLength() / 2.f)
+			{
+				boxPoint.x = box2->GetLength() / 2.f;
+			}
+			else
+			{
+				boxPoint.x = delta.x;
+			}
+
+			if (delta.y < -box2->GetHeight() / 2.f)
+			{
+				boxPoint.y = -box2->GetHeight() / 2.f;
+			}
+			else if (delta.y > box2->GetHeight() / 2.f)
+			{
+				boxPoint.y = box2->GetHeight() / 2.f;
+			}
+			else
+			{
+				boxPoint.y = delta.y;
+			}
+
+			if (delta.z < -box2->GetWidth() / 2.f)
+			{
+				boxPoint.z = -box2->GetWidth() / 2.f;
+			}
+			else if (delta.z > box2->GetWidth() / 2.f)
+			{
+				boxPoint.z = box2->GetWidth() / 2.f;
+			}
+			else
+			{
+				boxPoint.z = delta.z;
+			}
+
+			float intersection;
+
+			glm::vec3 boxNormal;
+			float modHL = box2->GetHeight() / box2->GetLength();
+			float modHW = box2->GetHeight() / box2->GetWidth();
+			float modLW = box2->GetLength() / box2->GetWidth();
+			if (delta.y > 0 && (delta.x < delta.y / modHL && delta.x > -delta.y / modHL) && (delta.z < delta.y / modHW && delta.z > -delta.y / modHW)) //top
+			{
+				boxNormal = glm::vec3(0, 1, 0);
+				intersection = delta.y - (box1->GetHeight() / 2.0f) - (box2->GetHeight() / 2.0f);
+			}
+			else if (delta.y < 0 && (delta.x > delta.y / modHL && delta.x < -delta.y / modHL) && (delta.z > delta.y / modHW && delta.z < -delta.y / modHW)) //bottom
+			{
+				boxNormal = glm::vec3(0, -1, 0);
+				intersection = delta.y - (box1->GetHeight() / 2.0f) - (box2->GetHeight() / 2.0f);
+			}
+			else if (delta.x > 0 && (delta.y < delta.x * modHL && delta.y > -delta.x * modHL) && (delta.z < delta.x / modLW && delta.z > -delta.x / modLW)) //right
+			{
+				boxNormal = glm::vec3(1, 0, 0);
+				intersection = delta.x - (box1->GetLength() / 2.0f) - (box2->GetLength() / 2.0f);
+			}
+			else if (delta.x < 0 && (delta.y > delta.x * modHL && delta.y < -delta.x * modHL) && (delta.z > delta.x / modLW && delta.z < -delta.x / modLW)) //left
+			{
+				boxNormal = glm::vec3(-1, 0, 0);
+				intersection = delta.x - (box1->GetLength() / 2.0f) - (box2->GetLength() / 2.0f);
+			}
+			else if (delta.z > 0 && (delta.y < delta.z * modHW && delta.y > -delta.z * modHW) && (delta.x < delta.z * modLW && delta.x > -delta.z * modLW)) //front
+			{
+				boxNormal = glm::vec3(0, 0, 1);
+				intersection = delta.z - (box1->GetWidth() / 2.0f) - (box2->GetWidth() / 2.0f);
+			}
+			else if (delta.z < 0 && (delta.y > delta.z * modHW && delta.y < -delta.z * modHW) && (delta.x > delta.z * modLW && delta.x < -delta.z * modLW)) //back
+			{
+				boxNormal = glm::vec3(0, 0, -1);
+				intersection = delta.z - (box1->GetWidth() / 2.0f) - (box2->GetWidth() / 2.0f);
+			}
+
+			float distance = glm::length(delta);
+			glm::vec3 relativeVelocity = box1->GetVelocity() - box2->GetVelocity();
+
+			glm::vec3 collisionVector = boxNormal *(glm::dot(relativeVelocity, boxNormal));
+
+			if (!box1->GetStatic() && !box2->GetStatic())
+			{
+				glm::vec3 forceVector = collisionVector * 1.0f / ((1 / box1->GetMass()) + (1 / box2->GetMass()));
+
+				//use newtons 3rd law to apply collision forces to colliding bodies
+				float combinedElasticity = (box1->GetElasticity() + box2->GetElasticity()) / 2.0f;
+				box1->ApplyForceToActor(box2, forceVector + (forceVector * combinedElasticity));
+				box1->ApplyForce(-forceVector - (forceVector * combinedElasticity));
+
+				//move our spheres out of collision
+				glm::vec3 seperationVector = boxNormal * intersection * 0.5f;
+				box1->SetPosition(box1->GetPosition() + seperationVector);
+				box2->SetPosition(box2->GetPosition() - seperationVector);
+			}
+			else if (box1->GetStatic() && box2->GetStatic())
+			{
+			}
+			else if (box1->GetStatic())
+			{
+				glm::vec3 forceVector = collisionVector * 1.0f / ((1 / box1->GetMass()) + (1 / box2->GetMass()));
+
+				//use newtons 3rd law to apply collision forces to colliding bodies
+				float combinedElasticity = (box1->GetElasticity() + box2->GetElasticity()) / 2.0f;
+				box1->ApplyForceToActor(box2, forceVector + (forceVector * combinedElasticity));
+
+				//move our spheres out of collision
+				glm::vec3 seperationVector = boxNormal * intersection * 0.5f;
+				box2->SetPosition(box2->GetPosition() - seperationVector);
+			}
+			else //box2 is static
+			{
+				glm::vec3 forceVector = collisionVector * 1.0f / ((1 / box1->GetMass()) + (1 / box2->GetMass()));
+
+				//use newtons 3rd law to apply collision forces to colliding bodies
+				float combinedElasticity = (box1->GetElasticity() + box2->GetElasticity()) / 2.0f;
+				box1->ApplyForce(-forceVector - (forceVector * combinedElasticity));
+
+				//move our spheres out of collision
+				glm::vec3 seperationVector = boxNormal * intersection * 0.5f;
+				box1->SetPosition(box1->GetPosition() + seperationVector);
+			}
 			return true;
 		}
 		return true;

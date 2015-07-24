@@ -37,6 +37,7 @@ void RigidBody::Update(glm::vec3 gravity, float timeStep)
 	{
 		m_position += m_velocity * timeStep;
 		m_velocity *= m_linearDrag;
+		//rotationMatrix = glm::rotate(rotation2D, glm::vec3(0.f, 0.f, 1.0f));
 		m_rotation3D += m_angularVelocity * timeStep;
 		m_angularVelocity *= m_angularDrag;
 		ApplyForce(gravity);
@@ -59,11 +60,11 @@ void RigidBody::ApplyForceToActor(RigidBody* actor2, glm::vec3 force)
 	actor2->ApplyForce(force);
 }
 
-void RigidBody::ApplyTorque(float torque)
+void RigidBody::ApplyTorque(float torque, glm::vec3 torqueDir)
 {
 	if (!m_static)
 	{
-		m_angularVelocity += torque;
+		m_angularVelocity += torque * torqueDir;
 	}
 }
 
@@ -107,5 +108,5 @@ Box::Box(glm::vec3 position, glm::vec3 velocity, glm::vec3 rotation, float mass,
 
 void Box::MakeGizmo()
 {
-	Gizmos::addAABBFilled(m_position, glm::vec3(m_length / 2, m_height / 2, 1), m_colour);
+	Gizmos::addAABBFilled(m_position, glm::vec3(m_length / 2, m_height / 2, m_width / 2.0f), m_colour);
 }

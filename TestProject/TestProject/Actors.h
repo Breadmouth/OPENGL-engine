@@ -64,7 +64,7 @@ public:
 	void ApplyForce(glm::vec3 force);
 	void ApplyForceToActor(RigidBody* actor2, glm::vec3 force);
 
-	void ApplyTorque(float torque);
+	void ApplyTorque(float torque, glm::vec3 torqueDir);
 
 	void SetVelocity(glm::vec3 velocity);
 	void SetAngularVelocity(glm::vec3 velocity);

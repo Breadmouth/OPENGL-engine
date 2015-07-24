@@ -1,4 +1,4 @@
-﻿Build started 17/07/2015 4:10:34 PM.
+﻿Build started 24/07/2015 4:12:49 PM.
      1>Project "C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\TestProject\TestProject.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\glm" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\glfw" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\src\\" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\stb" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\anttweakbar\include" /I"C:\Users\iain.dowling\Desktop\OPENGL-engine\TestProject\dep\opencl\inc" /ZI /W3 /WX- /sdl /Od /Oy- /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt PhysScene.cpp
@@ -50,4 +50,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:05.54
+Time Elapsed 00:00:05.15
