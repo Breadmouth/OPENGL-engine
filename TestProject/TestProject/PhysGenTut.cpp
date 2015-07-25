@@ -155,15 +155,15 @@ void PhysGenTut::SetupTut1()
 	m_physicsScene->AddActor(ball14);
 	m_physicsScene->AddActor(blackBall);
 
+	m_physicsScene->AddActor(boxxy);
+	m_physicsScene->AddActor(boxxo);
+
 	m_physicsScene->AddActor(leftWall);
 	m_physicsScene->AddActor(rightWall);
 	m_physicsScene->AddActor(topWallLeft);
 	m_physicsScene->AddActor(bottomWallLeft);
 	m_physicsScene->AddActor(topWallRight);
 	m_physicsScene->AddActor(bottomWallRight);
-
-	m_physicsScene->AddActor(boxxy);
-	m_physicsScene->AddActor(boxxo);
 
 	m_physicsScene->AddActor(newPlane);
 	m_physicsScene->AddActor(newPlane2);
