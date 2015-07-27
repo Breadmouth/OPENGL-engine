@@ -23,6 +23,11 @@ public:
 
 	void SetupTut1();
 
+	void CreatePool();
+
+	void CreateCube();
+	void CreateSphere();
+
 	float GetTableWidth() { return tableWidth; };
 	float GetTableHeight() { return tableHeight; }; 
 
@@ -39,6 +44,9 @@ protected:
 	bool lMouseButtonPressed = false;
 	float cursorX;
 	float cursorY;
+
+	float m_createCooldown = 0.f;
+	bool m_useMouseInput = false;
 
 	Sphere* m_whiteBall;
 

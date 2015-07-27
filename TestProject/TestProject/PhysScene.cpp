@@ -49,12 +49,19 @@ static fn collisionFunctionArray[] =
 	PhysScene::PlaneToPlane,	//done
 	PhysScene::PlaneToSphere,	//done
 	PhysScene::PlaneToBox,		//done
+	PhysScene::PlaneToJoint,	//ignore
 	PhysScene::SphereToPlane,	//done
 	PhysScene::SphereToSphere,	//done
 	PhysScene::SphereToBox,		//done
+	PhysScene::SphereToJoint,	//ignore
 	PhysScene::BoxToPlane,		//done
 	PhysScene::BoxToSphere,		//done
 	PhysScene::BoxToBox,		//done
+	PhysScene::BoxToJoint,		//ignore
+	PhysScene::JointToPlane,	//ignore
+	PhysScene::JointToSphere,	//ignore
+	PhysScene::JointToBox,		//ignore
+	PhysScene::JointToJoint,	//ignore
 };
 
 void PhysScene::CheckForCollision()
@@ -141,7 +148,7 @@ bool PhysScene::SphereToSphere(Actor* obj1, Actor* obj2)
 
 				//move our spheres out of collision
 				glm::vec3 seperationVector = collisionNormal * intersection;
-				sphere2->SetPosition(sphere2->GetPosition() - seperationVector);
+				sphere2->SetPosition(sphere2->GetPosition() + seperationVector);
 			}
 			else
 			{
@@ -159,7 +166,7 @@ bool PhysScene::SphereToSphere(Actor* obj1, Actor* obj2)
 
 				//move our spheres out of collision
 				glm::vec3 seperationVector = collisionNormal * intersection;
-				sphere1->SetPosition(sphere1->GetPosition() + seperationVector);
+				sphere1->SetPosition(sphere1->GetPosition() - seperationVector);
 			}
 			return true;
 		}
@@ -207,15 +214,6 @@ bool PhysScene::SphereToPlane(Actor* obj1, Actor* obj2)
 
 bool PhysScene::PlaneToPlane(Actor* obj1, Actor* obj2)
 {
-	//try to cast to sphere and sphere
-	Plane* plane1 = dynamic_cast<Plane*>(obj1);
-	Plane* plane2 = dynamic_cast<Plane*>(obj2);
-	//if successful then test collision
-	if (plane1 != NULL && plane2 != NULL)
-	{
-		//unnecessary check
-		return true;
-	}
 	return false;
 }
 
@@ -388,7 +386,16 @@ bool PhysScene::SphereToBox(Actor* obj1, Actor* obj2)
 			}
 			else if (sphere->GetStatic())
 			{
+				//glm::vec3 forceVector = -1 * sphere->GetMass() * boxNormal * (glm::dot(boxNormal, sphere->GetVelocity()));
+				glm::vec3 forceVector = -1 * collisionVector * 1.0f / ((1 / sphere->GetMass()) + (1 / box->GetMass()));
 
+				//use newtons 3rd law to apply collision forces to colliding bodies
+				float combinedElasticity = (sphere->GetElasticity() + box->GetElasticity()) / 2.0f;
+				box->ApplyForce(-forceVector - (forceVector * combinedElasticity));
+
+				//move our spheres out of collision
+				glm::vec3 seperationVector = boxNormal * intersection * 0.5f;
+				box->SetPosition(box->GetPosition() - seperationVector);
 			}
 			else
 			{
@@ -433,60 +440,18 @@ bool PhysScene::BoxToBox(Actor* obj1, Actor* obj2)
 			return false;
 
 		//check iff AABB are overlapping
-		if (box1->GetPosition().x < box2->GetPosition().x + box2->GetLength() &&
-			box1->GetPosition().x + box1->GetLength() > box2->GetPosition().x &&
-			box1->GetPosition().y < box2->GetPosition().y + box2->GetHeight() &&
-			box1->GetPosition().y + box1->GetHeight() > box2->GetPosition().y &&
-			box1->GetPosition().z < box2->GetPosition().z + box2->GetWidth() &&
-			box1->GetPosition().z + box1->GetWidth() > box2->GetPosition().z)
+		if (box1->GetPosition().x - box1->GetLength() / 2.f < box2->GetPosition().x + box2->GetLength() / 2.f &&
+			box1->GetPosition().x + box1->GetLength() / 2.f > box2->GetPosition().x - box2->GetLength() / 2.f &&
+			box1->GetPosition().y - box1->GetHeight() / 2.f < box2->GetPosition().y + box2->GetHeight() / 2.f &&
+			box1->GetPosition().y + box1->GetHeight() / 2.f > box2->GetPosition().y - box2->GetHeight() / 2.f &&
+			box1->GetPosition().z - box1->GetWidth() / 2.f < box2->GetPosition().z + box2->GetWidth() / 2.f &&
+			box1->GetPosition().z + box1->GetWidth() / 2.f > box2->GetPosition().z - box2->GetWidth() / 2.f)
 		{
 			glm::vec3 delta = box2->GetPosition() - box1->GetPosition();
 
-
-
-			glm::vec3 boxPoint;
-			//find collision normal
-			if (delta.x < -box2->GetLength() / 2.f)
-			{
-				boxPoint.x = -box2->GetLength() / 2.f;
-			}
-			else if (delta.x > box2->GetLength() / 2.f)
-			{
-				boxPoint.x = box2->GetLength() / 2.f;
-			}
-			else
-			{
-				boxPoint.x = delta.x;
-			}
-
-			if (delta.y < -box2->GetHeight() / 2.f)
-			{
-				boxPoint.y = -box2->GetHeight() / 2.f;
-			}
-			else if (delta.y > box2->GetHeight() / 2.f)
-			{
-				boxPoint.y = box2->GetHeight() / 2.f;
-			}
-			else
-			{
-				boxPoint.y = delta.y;
-			}
-
-			if (delta.z < -box2->GetWidth() / 2.f)
-			{
-				boxPoint.z = -box2->GetWidth() / 2.f;
-			}
-			else if (delta.z > box2->GetWidth() / 2.f)
-			{
-				boxPoint.z = box2->GetWidth() / 2.f;
-			}
-			else
-			{
-				boxPoint.z = delta.z;
-			}
-
 			float intersection;
 
+			//find boxnormal/collision normal
 			glm::vec3 boxNormal;
 			float modHL = box2->GetHeight() / box2->GetLength();
 			float modHW = box2->GetHeight() / box2->GetWidth();
@@ -499,7 +464,7 @@ bool PhysScene::BoxToBox(Actor* obj1, Actor* obj2)
 			else if (delta.y < 0 && (delta.x > delta.y / modHL && delta.x < -delta.y / modHL) && (delta.z > delta.y / modHW && delta.z < -delta.y / modHW)) //bottom
 			{
 				boxNormal = glm::vec3(0, -1, 0);
-				intersection = delta.y + (box1->GetHeight() / 2.0f) - (box2->GetHeight() / 2.0f);
+				intersection = delta.y + (box1->GetHeight() / 2.0f) + (box2->GetHeight() / 2.0f);
 			}
 			else if (delta.x > 0 && (delta.y < delta.x * modHL && delta.y > -delta.x * modHL) && (delta.z < delta.x / modLW && delta.z > -delta.x / modLW)) //right
 			{
@@ -509,7 +474,7 @@ bool PhysScene::BoxToBox(Actor* obj1, Actor* obj2)
 			else if (delta.x < 0 && (delta.y > delta.x * modHL && delta.y < -delta.x * modHL) && (delta.z > delta.x / modLW && delta.z < -delta.x / modLW)) //left
 			{
 				boxNormal = glm::vec3(-1, 0, 0);
-				intersection = delta.x + (box1->GetLength() / 2.0f) - (box2->GetLength() / 2.0f);
+				intersection = delta.x + (box1->GetLength() / 2.0f) + (box2->GetLength() / 2.0f);
 			}
 			else if (delta.z > 0 && (delta.y < delta.z * modHW && delta.y > -delta.z * modHW) && (delta.x < delta.z * modLW && delta.x > -delta.z * modLW)) //front
 			{
@@ -519,7 +484,7 @@ bool PhysScene::BoxToBox(Actor* obj1, Actor* obj2)
 			else if (delta.z < 0 && (delta.y > delta.z * modHW && delta.y < -delta.z * modHW) && (delta.x > delta.z * modLW && delta.x < -delta.z * modLW)) //back
 			{
 				boxNormal = glm::vec3(0, 0, -1);
-				intersection = delta.z + (box1->GetWidth() / 2.0f) - (box2->GetWidth() / 2.0f);
+				intersection = delta.z + (box1->GetWidth() / 2.0f) + (box2->GetWidth() / 2.0f);
 			}
 
 			float distance = glm::length(delta);
@@ -536,7 +501,7 @@ bool PhysScene::BoxToBox(Actor* obj1, Actor* obj2)
 				box1->ApplyForceToActor(box2, forceVector + (forceVector * combinedElasticity));
 				box1->ApplyForce(-forceVector - (forceVector * combinedElasticity));
 
-				//move our spheres out of collision
+				//move our bodies out of collision
 				glm::vec3 seperationVector = boxNormal * intersection * 0.5f;
 				box1->SetPosition(box1->GetPosition() + seperationVector);
 				box2->SetPosition(box2->GetPosition() - seperationVector);
@@ -552,7 +517,7 @@ bool PhysScene::BoxToBox(Actor* obj1, Actor* obj2)
 				float combinedElasticity = (box1->GetElasticity() + box2->GetElasticity()) / 2.0f;
 				box1->ApplyForceToActor(box2, forceVector + (forceVector * combinedElasticity));
 
-				//move our spheres out of collision
+				//move our bodies out of collision
 				glm::vec3 seperationVector = boxNormal * intersection * 0.5f;
 				box2->SetPosition(box2->GetPosition() - seperationVector);
 			}
@@ -564,7 +529,7 @@ bool PhysScene::BoxToBox(Actor* obj1, Actor* obj2)
 				float combinedElasticity = (box1->GetElasticity() + box2->GetElasticity()) / 2.0f;
 				box1->ApplyForce(-forceVector - (forceVector * combinedElasticity));
 
-				//move our spheres out of collision
+				//move our bodies out of collision
 				glm::vec3 seperationVector = boxNormal * intersection * 0.5f;
 				box1->SetPosition(box1->GetPosition() + seperationVector);
 			}
@@ -572,5 +537,42 @@ bool PhysScene::BoxToBox(Actor* obj1, Actor* obj2)
 		}
 		return true;
 	}
+	return false;
+}
+
+//-------------ALL JOINT CHECKS ARE IGNORED
+
+bool PhysScene::PlaneToJoint(Actor* obj1, Actor* obj2)
+{
+	return false;
+}
+
+bool PhysScene::SphereToJoint(Actor* obj1, Actor* obj2)
+{
+	return false;
+}
+
+bool PhysScene::BoxToJoint(Actor* obj1, Actor* obj2)
+{
+	return false;
+}
+
+bool PhysScene::JointToPlane(Actor* obj1, Actor* obj2)
+{
+	return false;
+}
+
+bool PhysScene::JointToSphere(Actor* obj1, Actor* obj2)
+{
+	return false;
+}
+
+bool PhysScene::JointToBox(Actor* obj1, Actor* obj2)
+{
+	return false;
+}
+
+bool PhysScene::JointToJoint(Actor* obj1, Actor* obj2)
+{
 	return false;
 }

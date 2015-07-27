@@ -110,3 +110,33 @@ void Box::MakeGizmo()
 {
 	Gizmos::addAABBFilled(m_position, glm::vec3(m_length / 2, m_height / 2, m_width / 2.0f), m_colour);
 }
+
+//---------SpringJoint
+SpringJoint::SpringJoint(RigidBody* rb1, RigidBody* rb2, float k, float damping)
+{
+	m_connections[0] = rb1;
+	m_connections[1] = rb2;
+	m_damping = damping;
+	m_springCo = k;
+	m_restLength = m_connections[0]->GetPosition() - m_connections[1]->GetPosition();
+	m_shapeID = JOINT;
+}
+
+void SpringJoint::MakeGizmo()
+{
+	Gizmos::addLine(m_connections[0]->GetPosition(), m_connections[1]->GetPosition(), glm::vec4(1));
+}
+
+void SpringJoint::Update(glm::vec3 gravity, float timeStep)
+{
+	// f=-kX-bv
+	// k = spring constant
+	// X = displacement from rest position
+	// b = damping value
+	// v = relative velocity
+	glm::vec3 force = -m_springCo * (m_connections[0]->GetPosition() - m_connections[1]->GetPosition() - m_restLength);
+	force -= m_damping * (m_connections[0]->GetVelocity() - m_connections[1]->GetVelocity());
+
+	m_connections[0]->ApplyForce(force);
+	m_connections[1]->ApplyForce(-force);
+}

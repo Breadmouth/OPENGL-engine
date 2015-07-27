@@ -12,7 +12,8 @@ enum ShapeType
 	PLANE = 0,
 	SPHERE = 1,
 	BOX = 2,
-	NUMBERSHAPE = 3,
+	JOINT = 3,
+	NUMBERSHAPE = 4,
 };
 
 class Actor
@@ -126,4 +127,20 @@ protected:
 	float m_height;
 	float m_length;
 	float m_width;
+};
+
+class SpringJoint : public Actor
+{
+public:
+	SpringJoint(RigidBody* rb1, RigidBody* rb2, float k, float damping);
+
+protected:
+	virtual void Update(glm::vec3 gravity, float timeStep);
+	virtual void Debug(){};
+	virtual void MakeGizmo();
+
+	RigidBody* m_connections[2];
+	float m_damping;
+	glm::vec3 m_restLength;
+	float m_springCo;
 };

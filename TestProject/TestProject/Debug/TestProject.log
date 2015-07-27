@@ -1,4 +1,4 @@
-﻿Build started 25/07/2015 11:07:59 AM.
+﻿Build started 27/07/2015 12:48:44 PM.
      1>Project "C:\Users\Iain\Desktop\OPENGL-engine\TestProject\TestProject\TestProject.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\Users\Iain\Desktop\OPENGL-engine\TestProject\dep\glm" /I"C:\Users\Iain\Desktop\OPENGL-engine\TestProject\dep\glfw" /I"C:\Users\Iain\Desktop\OPENGL-engine\TestProject\src\\" /I"C:\Users\Iain\Desktop\OPENGL-engine\TestProject\dep\stb" /I"C:\Users\Iain\Desktop\OPENGL-engine\TestProject\dep\anttweakbar\include" /I"C:\Users\Iain\Desktop\OPENGL-engine\TestProject\dep\opencl\inc" /I"C:\Users\Iain\Desktop\OPENGL-engine\TestProject\dep\Include" /ZI /W3 /WX- /sdl /Od /Oy- /D GLM_SWIZZLE /D GLM_FORCE_PURE /D _CRT_SECURE_NO_WARNINGS /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt PhysGenTut.cpp
@@ -81,4 +81,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:07.34
+Time Elapsed 00:00:06.79

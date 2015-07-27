@@ -31,10 +31,17 @@ public:
 	static bool PlaneToPlane(Actor* obj1, Actor* obj2);
 	static bool PlaneToSphere(Actor* obj1, Actor* obj2);
 	static bool PlaneToBox(Actor* obj1, Actor* obj2);
+	static bool PlaneToJoint(Actor* obj1, Actor* obj2);
 	static bool SphereToPlane(Actor* obj1, Actor* obj2);
 	static bool SphereToSphere(Actor* obj1, Actor* obj2);
 	static bool SphereToBox(Actor* obj1, Actor* obj2);
+	static bool SphereToJoint(Actor* obj1, Actor* obj2);
 	static bool BoxToPlane(Actor* obj1, Actor* obj2);
 	static bool BoxToSphere(Actor* obj1, Actor* obj2);
 	static bool BoxToBox(Actor* obj1, Actor* obj2);
+	static bool BoxToJoint(Actor* obj1, Actor* obj2);
+	static bool JointToPlane(Actor* obj1, Actor* obj2);
+	static bool JointToSphere(Actor* obj1, Actor* obj2);
+	static bool JointToBox(Actor* obj1, Actor* obj2);
+	static bool JointToJoint(Actor* obj1, Actor* obj2);
 };
