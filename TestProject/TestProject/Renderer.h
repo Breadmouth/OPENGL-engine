@@ -87,6 +87,8 @@ public:
 	void SetModelHeightTexCoord(int i, vec2 texCoord);
 	void SetModelTexture(int i, std::string name);
 
+	int GetModelCount(){ return m_modelCount; };
+
 	struct Vertex {
 		float v_x;
 		float v_y;
@@ -154,8 +156,12 @@ private:
 	unsigned int m_water_height_2;
 
 	//FBXFile* m_fbx;
-	Model m_models[10];
+	//Model m_models[10];
+
+	std::vector<Model*> m_models;
 	ParticleEmitter* m_emitter;
+
+	int m_modelCount;
 
 	unsigned int m_programID;
 	unsigned int m_postProcessProgram;

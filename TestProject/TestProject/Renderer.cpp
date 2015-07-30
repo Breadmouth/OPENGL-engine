@@ -10,6 +10,8 @@ Renderer::Renderer()
 {
 	srand(time(NULL));
 
+	m_modelCount = 0;
+
 	m_objects = 0;
 	m_animateFBX = false;
 
@@ -41,10 +43,10 @@ Renderer::~Renderer()
 
 void Renderer::Destroy()
 {
-	for (int i = 0; i < 2; ++i)
+	for (auto model : m_models)
 	{
-		if (m_models[i].m_fbx != NULL)
-			CleanupOpenGLBuffers(m_models[i].m_fbx);
+		if (model->m_fbx != NULL)
+			CleanupOpenGLBuffers(model->m_fbx);
 	}
 
 	glDeleteProgram(m_programID);
@@ -70,31 +72,43 @@ void Renderer::LoadObject(std::string path)
 
 void Renderer::LoadFBX(const char* path)
 {
-	for (int i = 0; i < 10; ++i)
-	{
-		if (m_models[i].m_fbx == NULL)
-		{
-			m_models[i].m_fbx = new FBXFile();
-			m_models[i].m_fbx->load(path);
-			CreateOpenGLBuffers(m_models[i].m_fbx);
+	Model* newModel = new Model();
+	newModel->m_fbx = new FBXFile();
+	newModel->m_fbx->load(path);
+	CreateOpenGLBuffers(newModel->m_fbx);
 
-			m_models[i].m_position = mat4{ 1.f };
-			m_models[i].m_rotation = mat4{ 1.f };
-			m_models[i].m_scale = mat4{ 1.f };
+	newModel->m_position = mat4{ 1.f };
+	newModel->m_rotation = mat4{ 1.f };
+	newModel->m_scale = mat4{ 1.f };
 
-			return;
-		}
-	}
+	m_models.push_back(newModel);
+	m_modelCount++;
+
+	//for (int i = 0; i < 10; ++i)
+	//{
+	//	if (m_models[i].m_fbx == NULL)
+	//	{
+	//		m_models[i].m_fbx = new FBXFile();
+	//		m_models[i].m_fbx->load(path);
+	//		CreateOpenGLBuffers(m_models[i].m_fbx);
+	//
+	//		m_models[i].m_position = mat4{ 1.f };
+	//		m_models[i].m_rotation = mat4{ 1.f };
+	//		m_models[i].m_scale = mat4{ 1.f };
+	//
+	//		return;
+	//	}
+	//}
 }
 
 void Renderer::UpdateFBX(float timer)
 {
-	for (int i = 0; i < 2; ++i)
+	for (auto model : m_models)
 	{
 		if (m_animateFBX)
 		{
-			FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
-			FBXAnimation* animation = m_models[i].m_fbx->getAnimationByIndex(0);
+			FBXSkeleton* skeleton = model->m_fbx->getSkeletonByIndex(0);
+			FBXAnimation* animation = model->m_fbx->getAnimationByIndex(0);
 
 			skeleton->evaluate(animation, timer);
 
@@ -104,6 +118,21 @@ void Renderer::UpdateFBX(float timer)
 			}
 		}
 	}
+	//for (int i = 0; i < 2; ++i)
+	//{
+	//	if (m_animateFBX)
+	//	{
+	//		FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
+	//		FBXAnimation* animation = m_models[i].m_fbx->getAnimationByIndex(0);
+	//
+	//		skeleton->evaluate(animation, timer);
+	//
+	//		for (unsigned int bone_index = 0; bone_index < skeleton->m_boneCount; ++bone_index)
+	//		{
+	//			skeleton->m_nodes[bone_index]->updateGlobalTransform();
+	//		}
+	//	}
+	//}
 }
 
 void Renderer::LoadTexture(std::string texture, std::string path, GLint type)
@@ -389,7 +418,7 @@ void Renderer::SetAnimateFBX(bool animate)
 
 void Renderer::SetAnimateModel(int i, bool animate)
 {
-	m_models[i].m_animate = animate;
+	m_models[i]->m_animate = animate;
 }
 
 void Renderer::CreateParticleEmitter()
@@ -939,24 +968,39 @@ void Renderer::CreateDiamondSquare(int dims)
 
 void Renderer::Update(float timer, float dt, mat4 *cameraTransform)
 {
-	for (int i = 0; i < 10; ++i)
+	for (auto model : m_models)
 	{
-		if (m_models[i].m_fbx != NULL)
+		if (m_animateFBX && model->m_fbx->getSkeletonCount() > 0)
 		{
-			if (m_animateFBX && m_models[i].m_fbx->getSkeletonCount() > 0)
+			FBXSkeleton* skeleton = model->m_fbx->getSkeletonByIndex(0);
+			FBXAnimation* animation = model->m_fbx->getAnimationByIndex(0);
+
+			skeleton->evaluate(animation, timer);
+
+			for (unsigned int bone_index = 0; bone_index < skeleton->m_boneCount; ++bone_index)
 			{
-				FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
-				FBXAnimation* animation = m_models[i].m_fbx->getAnimationByIndex(0);
-
-				skeleton->evaluate(animation, timer);
-
-				for (unsigned int bone_index = 0; bone_index < skeleton->m_boneCount; ++bone_index)
-				{
-					skeleton->m_nodes[bone_index]->updateGlobalTransform();
-				}
+				skeleton->m_nodes[bone_index]->updateGlobalTransform();
 			}
 		}
 	}
+	//for (int i = 0; i < 10; ++i)
+	//{
+	//	if (m_models[i].m_fbx != NULL)
+	//	{
+	//		if (m_animateFBX && m_models[i].m_fbx->getSkeletonCount() > 0)
+	//		{
+	//			FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
+	//			FBXAnimation* animation = m_models[i].m_fbx->getAnimationByIndex(0);
+	//
+	//			skeleton->evaluate(animation, timer);
+	//
+	//			for (unsigned int bone_index = 0; bone_index < skeleton->m_boneCount; ++bone_index)
+	//			{
+	//				skeleton->m_nodes[bone_index]->updateGlobalTransform();
+	//			}
+	//		}
+	//	}
+	//}
 
 	if (m_emitter != NULL)
 	{
@@ -1014,32 +1058,56 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			}
 		}
 
-		for (int i = 0; i < modelCount; ++i)
+		for (auto model : m_models)
 		{
-			if (m_models[i].m_fbx != NULL)
+			mat4 transform = model->m_scale * model->m_rotation * model->m_position;
+
+			loc = glGetUniformLocation(m_shadowGenProgram, "Transform");
+			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+
+			loc = glGetUniformLocation(m_shadowGenProgram, "texcoord");
+			glUniform2f(loc, model->m_heightTexCoord.x, model->m_heightTexCoord.y);
+
+			if (model->m_fbx->getSkeletonCount() == 0 || !model->m_animate)
 			{
-				mat4 transform = m_models[i].m_scale * m_models[i].m_rotation * m_models[i].m_position;
-
-				loc = glGetUniformLocation(m_shadowGenProgram, "Transform");
-				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
-
-				loc = glGetUniformLocation(m_shadowGenProgram, "texcoord");
-				glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
-
-				if (m_models[i].m_fbx->getSkeletonCount() == 0 || !m_models[i].m_animate)
+				for (unsigned int j = 0; j < model->m_fbx->getMeshCount(); ++j)
 				{
-					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
-					{
-						FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
+					FBXMeshNode* mesh = model->m_fbx->getMeshByIndex(j);
 
-						unsigned int* glData = (unsigned int*)mesh->m_userData;
+					unsigned int* glData = (unsigned int*)mesh->m_userData;
 
-						glBindVertexArray(glData[0]);
-						glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
-					}
+					glBindVertexArray(glData[0]);
+					glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
 				}
 			}
 		}
+
+		//for (int i = 0; i < modelCount; ++i)
+		//{
+		//	if (m_models[i].m_fbx != NULL)
+		//	{
+		//		mat4 transform = m_models[i].m_scale * m_models[i].m_rotation * m_models[i].m_position;
+		//
+		//		loc = glGetUniformLocation(m_shadowGenProgram, "Transform");
+		//		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+		//
+		//		loc = glGetUniformLocation(m_shadowGenProgram, "texcoord");
+		//		glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
+		//
+		//		if (m_models[i].m_fbx->getSkeletonCount() == 0 || !m_models[i].m_animate)
+		//		{
+		//			for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
+		//			{
+		//				FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
+		//
+		//				unsigned int* glData = (unsigned int*)mesh->m_userData;
+		//
+		//				glBindVertexArray(glData[0]);
+		//				glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+		//			}
+		//		}
+		//	}
+		//}
 
 		glUseProgram(m_shadowGenProgramAnim);
 
@@ -1054,38 +1122,68 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 		loc = glGetUniformLocation(m_shadowGenProgramAnim, "height");
 		glUniform1f(loc, *height);
 
-		for (int i = 0; i < modelCount; ++i)
+		for (auto model : m_models)
 		{
-			if (m_models[i].m_fbx != NULL)
+			mat4 transform = model->m_rotation * model->m_position * model->m_scale;
+
+			loc = glGetUniformLocation(m_shadowGenProgramAnim, "Transform");
+			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+
+			loc = glGetUniformLocation(m_shadowGenProgramAnim, "texcoord");
+			glUniform2f(loc, model->m_heightTexCoord.x, model->m_heightTexCoord.y);
+
+			if (model->m_fbx->getSkeletonCount() > 0 && model->m_animate)
 			{
-				mat4 transform = m_models[i].m_rotation * m_models[i].m_position * m_models[i].m_scale;
+				FBXSkeleton* skeleton = model->m_fbx->getSkeletonByIndex(0);
+				skeleton->updateBones();
 
-				loc = glGetUniformLocation(m_shadowGenProgramAnim, "Transform");
-				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+				loc = glGetUniformLocation(m_shadowGenProgramAnim, "bones");
+				glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
 
-				loc = glGetUniformLocation(m_shadowGenProgramAnim, "texcoord");
-				glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
-
-				if (m_models[i].m_fbx->getSkeletonCount() > 0 && m_models[i].m_animate)
+				for (unsigned int j = 0; j < model->m_fbx->getMeshCount(); ++j)
 				{
-					FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
-					skeleton->updateBones();
+					FBXMeshNode* mesh = model->m_fbx->getMeshByIndex(j);
 
-					loc = glGetUniformLocation(m_shadowGenProgramAnim, "bones");
-					glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
+					unsigned int* glData = (unsigned int*)mesh->m_userData;
 
-					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
-					{
-						FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
-
-						unsigned int* glData = (unsigned int*)mesh->m_userData;
-
-						glBindVertexArray(glData[0]);
-						glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
-					}
+					glBindVertexArray(glData[0]);
+					glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
 				}
 			}
 		}
+
+		//for (int i = 0; i < modelCount; ++i)
+		//{
+		//	if (m_models[i].m_fbx != NULL)
+		//	{
+		//		mat4 transform = m_models[i].m_rotation * m_models[i].m_position * m_models[i].m_scale;
+		//
+		//		loc = glGetUniformLocation(m_shadowGenProgramAnim, "Transform");
+		//		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+		//
+		//		loc = glGetUniformLocation(m_shadowGenProgramAnim, "texcoord");
+		//		glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
+		//
+		//		if (m_models[i].m_fbx->getSkeletonCount() > 0 && m_models[i].m_animate)
+		//		{
+		//			FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
+		//			skeleton->updateBones();
+		//
+		//			loc = glGetUniformLocation(m_shadowGenProgramAnim, "bones");
+		//			glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
+		//
+		//			for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
+		//			{
+		//				FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
+		//
+		//				unsigned int* glData = (unsigned int*)mesh->m_userData;
+		//
+		//				glBindVertexArray(glData[0]);
+		//				glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+		//			}
+		//		}
+		//	}
+		//}
 
 		BindFrameBuffer(true);
 
@@ -1101,86 +1199,164 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 		mat4 newLightMatrix = textureSpaceOffset * (*lightMatrix);
 
-		for (int i = 0; i < modelCount; ++i)
+		for (auto model : m_models)
 		{
-			if (m_models[i].m_fbx != NULL)
+			if (model->m_fbx->getSkeletonCount() > 0 && model->m_animate)
 			{
-				if (m_models[i].m_fbx->getSkeletonCount() > 0 && m_models[i].m_animate)
+				FBXSkeleton* skeleton = model->m_fbx->getSkeletonByIndex(0);
+				skeleton->updateBones();
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "ProjectionView");
+				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "LightMatrix");
+				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(newLightMatrix));
+
+				mat4 transform = model->m_rotation * model->m_position * model->m_scale;
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "Transform");
+				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "light");
+				glUniform3fv(loc, 1, glm::value_ptr(*light));
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "cameraPos");
+				glUniform3fv(loc, 1, glm::value_ptr(*cameraPos));
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "lightColor");
+				glUniform3fv(loc, 1, glm::value_ptr(*lightColour));
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "specPow");
+				glUniform1fv(loc, 1, specPow);
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "shadowBias");
+				glUniform1f(loc, 0.01f);
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "bones");
+				glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
+
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, model->m_texture);
+
+				glActiveTexture(GL_TEXTURE1);
+				glBindTexture(GL_TEXTURE_2D, m_normal);
+
+				glActiveTexture(GL_TEXTURE2);
+				glBindTexture(GL_TEXTURE_2D, m_sboDepth);
+
+				glActiveTexture(GL_TEXTURE3);
+				glBindTexture(GL_TEXTURE_2D, m_perlin_texture);
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "diffuse");
+				glUniform1i(loc, 0);
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "normal");
+				glUniform1i(loc, 1);
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "shadowMap");
+				glUniform1i(loc, 2);
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "perlin_texture");
+				glUniform1i(loc, 3);
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "height");
+				glUniform1f(loc, *height);
+
+				loc = glGetUniformLocation(m_shadowProgramAnim, "texcoord");
+				glUniform2f(loc, model->m_heightTexCoord.x, model->m_heightTexCoord.y);
+
+				for (unsigned int j = 0; j < model->m_fbx->getMeshCount(); ++j)
 				{
-					FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
-					skeleton->updateBones();
+					FBXMeshNode* mesh = model->m_fbx->getMeshByIndex(j);
 
-					loc = glGetUniformLocation(m_shadowProgramAnim, "ProjectionView");
-					glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
+					unsigned int* glData = (unsigned int*)mesh->m_userData;
 
-					loc = glGetUniformLocation(m_shadowProgramAnim, "LightMatrix");
-					glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(newLightMatrix));
-
-					mat4 transform = m_models[i].m_rotation * m_models[i].m_position * m_models[i].m_scale;
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "Transform");
-					glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "light");
-					glUniform3fv(loc, 1, glm::value_ptr(*light));
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "cameraPos");
-					glUniform3fv(loc, 1, glm::value_ptr(*cameraPos));
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "lightColor");
-					glUniform3fv(loc, 1, glm::value_ptr(*lightColour));
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "specPow");
-					glUniform1fv(loc, 1, specPow);
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "shadowBias");
-					glUniform1f(loc, 0.01f);
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "bones");
-					glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
-
-					glActiveTexture(GL_TEXTURE0);
-					glBindTexture(GL_TEXTURE_2D, m_models[i].m_texture);
-
-					glActiveTexture(GL_TEXTURE1);
-					glBindTexture(GL_TEXTURE_2D, m_normal);
-
-					glActiveTexture(GL_TEXTURE2);
-					glBindTexture(GL_TEXTURE_2D, m_sboDepth);
-
-					glActiveTexture(GL_TEXTURE3);
-					glBindTexture(GL_TEXTURE_2D, m_perlin_texture);
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "diffuse");
-					glUniform1i(loc, 0);
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "normal");
-					glUniform1i(loc, 1);
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "shadowMap");
-					glUniform1i(loc, 2);
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "perlin_texture");
-					glUniform1i(loc, 3);
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "height");
-					glUniform1f(loc, *height);
-
-					loc = glGetUniformLocation(m_shadowProgramAnim, "texcoord");
-					glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
-
-					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
-					{
-						FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
-
-						unsigned int* glData = (unsigned int*)mesh->m_userData;
-
-						glBindVertexArray(glData[0]);
-						glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
-					}
+					glBindVertexArray(glData[0]);
+					glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
 				}
 			}
 		}
+
+		//for (int i = 0; i < modelCount; ++i)
+		//{
+		//	if (m_models[i].m_fbx != NULL)
+		//	{
+		//		if (m_models[i].m_fbx->getSkeletonCount() > 0 && m_models[i].m_animate)
+		//		{
+		//			FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
+		//			skeleton->updateBones();
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "ProjectionView");
+		//			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "LightMatrix");
+		//			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(newLightMatrix));
+		//
+		//			mat4 transform = m_models[i].m_rotation * m_models[i].m_position * m_models[i].m_scale;
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "Transform");
+		//			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "light");
+		//			glUniform3fv(loc, 1, glm::value_ptr(*light));
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "cameraPos");
+		//			glUniform3fv(loc, 1, glm::value_ptr(*cameraPos));
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "lightColor");
+		//			glUniform3fv(loc, 1, glm::value_ptr(*lightColour));
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "specPow");
+		//			glUniform1fv(loc, 1, specPow);
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "shadowBias");
+		//			glUniform1f(loc, 0.01f);
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "bones");
+		//			glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
+		//
+		//			glActiveTexture(GL_TEXTURE0);
+		//			glBindTexture(GL_TEXTURE_2D, m_models[i].m_texture);
+		//
+		//			glActiveTexture(GL_TEXTURE1);
+		//			glBindTexture(GL_TEXTURE_2D, m_normal);
+		//
+		//			glActiveTexture(GL_TEXTURE2);
+		//			glBindTexture(GL_TEXTURE_2D, m_sboDepth);
+		//
+		//			glActiveTexture(GL_TEXTURE3);
+		//			glBindTexture(GL_TEXTURE_2D, m_perlin_texture);
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "diffuse");
+		//			glUniform1i(loc, 0);
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "normal");
+		//			glUniform1i(loc, 1);
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "shadowMap");
+		//			glUniform1i(loc, 2);
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "perlin_texture");
+		//			glUniform1i(loc, 3);
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "height");
+		//			glUniform1f(loc, *height);
+		//
+		//			loc = glGetUniformLocation(m_shadowProgramAnim, "texcoord");
+		//			glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
+		//
+		//			for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
+		//			{
+		//				FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
+		//
+		//				unsigned int* glData = (unsigned int*)mesh->m_userData;
+		//
+		//				glBindVertexArray(glData[0]);
+		//				glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+		//			}
+		//		}
+		//	}
+		//}
 
 		glUseProgram(m_shadowProgram);
 
@@ -1261,38 +1437,68 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			}
 		}
 
-		for (int i = 0; i < modelCount; i++)
+		for (auto model : m_models)
 		{
-			if (m_models[i].m_fbx != NULL)
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, model->m_texture);
+
+			loc = glGetUniformLocation(m_shadowProgram, "diffuse");
+			glUniform1i(loc, 0);
+
+			mat4 transform = model->m_rotation * model->m_position * model->m_scale;
+
+			loc = glGetUniformLocation(m_shadowProgram, "Transform");
+			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+
+			loc = glGetUniformLocation(m_shadowProgram, "texcoord");
+			glUniform2f(loc, model->m_heightTexCoord.x, model->m_heightTexCoord.y);
+
+			if (model->m_fbx->getSkeletonCount() == 0 || !model->m_animate)
 			{
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, m_models[i].m_texture);
-
-				loc = glGetUniformLocation(m_shadowProgram, "diffuse");
-				glUniform1i(loc, 0);
-
-				mat4 transform = m_models[i].m_rotation * m_models[i].m_position * m_models[i].m_scale;
-
-				loc = glGetUniformLocation(m_shadowProgram, "Transform");
-				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
-
-				loc = glGetUniformLocation(m_shadowProgram, "texcoord");
-				glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
-
-				if (m_models[i].m_fbx->getSkeletonCount() == 0 || !m_models[i].m_animate)
+				for (unsigned int j = 0; j < model->m_fbx->getMeshCount(); ++j)
 				{
-					for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
-					{
-						FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
+					FBXMeshNode* mesh = model->m_fbx->getMeshByIndex(j);
 
-						unsigned int* glData = (unsigned int*)mesh->m_userData;
+					unsigned int* glData = (unsigned int*)mesh->m_userData;
 
-						glBindVertexArray(glData[0]);
-						glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
-					}
+					glBindVertexArray(glData[0]);
+					glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
 				}
 			}
 		}
+
+		//for (int i = 0; i < modelCount; i++)
+		//{
+		//	if (m_models[i].m_fbx != NULL)
+		//	{
+		//		glActiveTexture(GL_TEXTURE0);
+		//		glBindTexture(GL_TEXTURE_2D, m_models[i].m_texture);
+		//
+		//		loc = glGetUniformLocation(m_shadowProgram, "diffuse");
+		//		glUniform1i(loc, 0);
+		//
+		//		mat4 transform = m_models[i].m_rotation * m_models[i].m_position * m_models[i].m_scale;
+		//
+		//		loc = glGetUniformLocation(m_shadowProgram, "Transform");
+		//		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+		//
+		//		loc = glGetUniformLocation(m_shadowProgram, "texcoord");
+		//		glUniform2f(loc, m_models[i].m_heightTexCoord.x, m_models[i].m_heightTexCoord.y);
+		//
+		//		if (m_models[i].m_fbx->getSkeletonCount() == 0 || !m_models[i].m_animate)
+		//		{
+		//			for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
+		//			{
+		//				FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
+		//
+		//				unsigned int* glData = (unsigned int*)mesh->m_userData;
+		//
+		//				glBindVertexArray(glData[0]);
+		//				glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+		//			}
+		//		}
+		//	}
+		//}
 
 		if (m_terrainPlane.m_indexCount != NULL)// needs indexcount to be set
 		{
@@ -1403,61 +1609,114 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 			}
 		}
 
-		for (int i = 0; i < modelCount; ++i)
+		for (auto model : m_models)
 		{
-			if (m_models[i].m_fbx != NULL)
+			FBXSkeleton* skeleton = model->m_fbx->getSkeletonByIndex(0);
+			skeleton->updateBones();
+
+			glUseProgram(m_programID);
+
+			loc = glGetUniformLocation(m_programID, "ProjectionView");
+			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
+
+			mat4 transform = model->m_rotation * model->m_position * model->m_scale;
+
+			loc = glGetUniformLocation(m_programID, "Transform");
+			glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+
+			loc = glGetUniformLocation(m_programID, "bones");
+			glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
+
+			loc = glGetUniformLocation(m_programID, "light");
+			glUniform3fv(loc, 1, glm::value_ptr(*light));
+
+			loc = glGetUniformLocation(m_programID, "cameraPos");
+			glUniform3fv(loc, 1, glm::value_ptr(*cameraPos));
+
+			loc = glGetUniformLocation(m_programID, "lightColor");
+			glUniform3fv(loc, 1, glm::value_ptr(*lightColour));
+
+			loc = glGetUniformLocation(m_programID, "specPow");
+			glUniform1fv(loc, 1, specPow);
+
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, model->m_texture);
+
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, m_normal);
+
+			loc = glGetUniformLocation(m_programID, "diffuse");
+			glUniform1i(loc, 0);
+
+			loc = glGetUniformLocation(m_programID, "normal");
+			glUniform1i(loc, 1);
+
+			for (unsigned int j = 0; j < model->m_fbx->getMeshCount(); ++j)
 			{
-				FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
-				skeleton->updateBones();
+				FBXMeshNode* mesh = model->m_fbx->getMeshByIndex(j);
 
-				glUseProgram(m_programID);
+				unsigned int* glData = (unsigned int*)mesh->m_userData;
 
-				loc = glGetUniformLocation(m_programID, "ProjectionView");
-				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
-
-				mat4 transform = m_models[i].m_rotation * m_models[i].m_position * m_models[i].m_scale;
-
-				loc = glGetUniformLocation(m_programID, "Transform");
-				glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
-
-				loc = glGetUniformLocation(m_programID, "bones");
-				glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
-
-				loc = glGetUniformLocation(m_programID, "light");
-				glUniform3fv(loc, 1, glm::value_ptr(*light));
-
-				loc = glGetUniformLocation(m_programID, "cameraPos");
-				glUniform3fv(loc, 1, glm::value_ptr(*cameraPos));
-
-				loc = glGetUniformLocation(m_programID, "lightColor");
-				glUniform3fv(loc, 1, glm::value_ptr(*lightColour));
-
-				loc = glGetUniformLocation(m_programID, "specPow");
-				glUniform1fv(loc, 1, specPow);
-
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, m_models[i].m_texture);
-
-				glActiveTexture(GL_TEXTURE1);
-				glBindTexture(GL_TEXTURE_2D, m_normal);
-
-				loc = glGetUniformLocation(m_programID, "diffuse");
-				glUniform1i(loc, 0);
-
-				loc = glGetUniformLocation(m_programID, "normal");
-				glUniform1i(loc, 1);
-
-				for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
-				{
-					FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
-
-					unsigned int* glData = (unsigned int*)mesh->m_userData;
-
-					glBindVertexArray(glData[0]);
-					glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
-				}
+				glBindVertexArray(glData[0]);
+				glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
 			}
 		}
+
+		//for (int i = 0; i < modelCount; ++i)
+		//{
+		//	if (m_models[i].m_fbx != NULL)
+		//	{
+		//		FBXSkeleton* skeleton = m_models[i].m_fbx->getSkeletonByIndex(0);
+		//		skeleton->updateBones();
+		//
+		//		glUseProgram(m_programID);
+		//
+		//		loc = glGetUniformLocation(m_programID, "ProjectionView");
+		//		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
+		//
+		//		mat4 transform = m_models[i].m_rotation * m_models[i].m_position * m_models[i].m_scale;
+		//
+		//		loc = glGetUniformLocation(m_programID, "Transform");
+		//		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(transform));
+		//
+		//		loc = glGetUniformLocation(m_programID, "bones");
+		//		glUniformMatrix4fv(loc, skeleton->m_boneCount, GL_FALSE, (float*)skeleton->m_bones);
+		//
+		//		loc = glGetUniformLocation(m_programID, "light");
+		//		glUniform3fv(loc, 1, glm::value_ptr(*light));
+		//
+		//		loc = glGetUniformLocation(m_programID, "cameraPos");
+		//		glUniform3fv(loc, 1, glm::value_ptr(*cameraPos));
+		//
+		//		loc = glGetUniformLocation(m_programID, "lightColor");
+		//		glUniform3fv(loc, 1, glm::value_ptr(*lightColour));
+		//
+		//		loc = glGetUniformLocation(m_programID, "specPow");
+		//		glUniform1fv(loc, 1, specPow);
+		//
+		//		glActiveTexture(GL_TEXTURE0);
+		//		glBindTexture(GL_TEXTURE_2D, m_models[i].m_texture);
+		//
+		//		glActiveTexture(GL_TEXTURE1);
+		//		glBindTexture(GL_TEXTURE_2D, m_normal);
+		//
+		//		loc = glGetUniformLocation(m_programID, "diffuse");
+		//		glUniform1i(loc, 0);
+		//
+		//		loc = glGetUniformLocation(m_programID, "normal");
+		//		glUniform1i(loc, 1);
+		//
+		//		for (unsigned int j = 0; j < m_models[i].m_fbx->getMeshCount(); ++j)
+		//		{
+		//			FBXMeshNode* mesh = m_models[i].m_fbx->getMeshByIndex(j);
+		//
+		//			unsigned int* glData = (unsigned int*)mesh->m_userData;
+		//
+		//			glBindVertexArray(glData[0]);
+		//			glDrawElements(GL_TRIANGLES, (unsigned int)mesh->m_indices.size(), GL_UNSIGNED_INT, 0);
+		//		}
+		//	}
+		//}
 
 		if (m_terrainPlane.m_indexCount != NULL)// needs indexcount to be set
 		{
@@ -1576,14 +1835,14 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 void Renderer::FillModel(int i, mat4 pos, mat4 rot, mat4 scale)
 {
-	m_models[i].m_position = pos;
-	m_models[i].m_rotation = rot;
-	m_models[i].m_scale = scale;
+	m_models[i]->m_position = pos;
+	m_models[i]->m_rotation = rot;
+	m_models[i]->m_scale = scale;
 }
 
 void Renderer::SetModelTexture(int i, std::string name)
 {
-	m_models[i].m_texture = *m_textures[name];
+	m_models[i]->m_texture = *m_textures[name];
 }
 
 vec3 Renderer::GetTerrainPos(int x, int y)
@@ -1598,15 +1857,15 @@ vec2 Renderer::GetTerrainTexCoord(int x, int y)
 
 void Renderer::SetModelPos(int i, vec3 pos)
 {
-	m_models[i].m_position = glm::translate(pos);
+	m_models[i]->m_position = glm::translate(pos);
 }
 
 void Renderer::SetModelHeightTexCoord(int i, glm::vec2 texCoord)
 {
-	m_models[i].m_heightTexCoord = texCoord;
+	m_models[i]->m_heightTexCoord = texCoord;
 }
 
 void Renderer::SetModelScale(int i, float scale)
 {
-	m_models[i].m_scale = glm::scale(vec3(scale));
+	m_models[i]->m_scale = glm::scale(vec3(scale));
 }

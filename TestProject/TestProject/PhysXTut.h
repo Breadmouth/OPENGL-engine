@@ -16,6 +16,20 @@ using glm::vec2;
 
 using namespace physx;
 
+class MyControllerHitReport : public PxUserControllerHitReport
+{
+public:
+	virtual void onShapeHit(const PxControllerShapeHit & hit);
+
+	virtual void onControllerHit(const PxControllersHit & hit){};
+	virtual void onObstacleHit(const PxControllerObstacleHit &hit){};
+
+	MyControllerHitReport() :PxUserControllerHitReport(){};
+	PxVec3 getPlayerContactNormal(){ return _playerContactNormal; };
+	void clearPlayerContactNormal(){ _playerContactNormal = PxVec3(0, 0, 0); };
+	PxVec3 _playerContactNormal;
+};
+
 class PhysXTut : public Application
 {
 public:
@@ -30,6 +44,17 @@ public:
 	void SetUpVisualDebugger();
 
 	void SetupTut1();
+	void AddPlayerController();
+	void UpdatePlayer(float dt);
+
+	void AddWidget(PxShape* shape, PxRigidActor* actor);
+
+	void AddBox(PxShape* pShape, PxRigidActor* actor);
+	void AddPlane(PxShape* pShape, PxRigidActor* actor);
+	void AddSphere(PxShape* pShape, PxRigidActor* actor);
+	void AddCapsule(PxShape* pShape, PxRigidActor* actor);
+
+	void FireBall();
 
 protected:
 	FlyCamera camera;
@@ -48,6 +73,17 @@ protected:
 	PxMaterial* g_boxMaterial;
 	PxCooking* g_PhysicsCooker;
 
+	MyControllerHitReport* myHitReport;
+	PxControllerManager* gCharacterManager;
+	PxController* gPlayerController;
+
+	float m_characterYVelocity;
+	float m_characterRotation;
+	float m_playerGravity;
+
+	std::vector<PxRigidActor*> g_PhysXActors;
+
+	float mouseClickCooldown = 0.2f;
 
 	vec3 light;
 	vec3 lightColour;

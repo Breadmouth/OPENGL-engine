@@ -22,6 +22,8 @@ protected:
 	float currentTime;
 	unsigned int m_texture, m_normal;
 
+	GLFWwindow* window;
+
 	TwBar* m_bar;
 
 	vec4 m_clearColour;

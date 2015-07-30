@@ -37,7 +37,7 @@ int Application::Run()
 	if (glfwInit() == false)
 		return -1;
 
-	GLFWwindow* window = glfwCreateWindow(1280, 720, "Computer Graphics", nullptr, nullptr);
+	window = glfwCreateWindow(1280, 720, "Computer Graphics", nullptr, nullptr);
 
 
 	if (window == nullptr)

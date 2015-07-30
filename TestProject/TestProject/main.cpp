@@ -1,4 +1,5 @@
 #include "Assessment.h"
+#include "Application.h"
 #include "CacheCoherence.h"
 #include "GPGPU.h"
 #include "CheckerBoard.h"
@@ -7,7 +8,7 @@
 
 int main()
 {
-	PhysGenTut app;
+	PhysXTut app;
 
 	app.Run();
 
