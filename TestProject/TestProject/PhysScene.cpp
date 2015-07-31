@@ -198,7 +198,7 @@ bool PhysScene::PlaneToSphere(Actor* obj1, Actor* obj2)
 				planeNormal *= -1;
 			}
 			glm::vec3 forceVector = -1 * sphere->GetMass() * planeNormal * (glm::dot(planeNormal, sphere->GetVelocity()));
-			sphere->ApplyForce(2 * forceVector);
+			sphere->ApplyForce(forceVector + (forceVector * sphere->GetElasticity()));
 			sphere->SetPosition(sphere->GetPosition() + (collisionNormal * intersection * 0.5f));
 			return true;
 		}
@@ -246,7 +246,7 @@ bool PhysScene::PlaneToBox(Actor* obj1, Actor* obj2)
 					planeNormal *= -1;
 				}
 				glm::vec3 forceVector = -1 * box->GetMass() * planeNormal * (glm::dot(planeNormal, box->GetVelocity()));
-				box->ApplyForce(2 * forceVector);
+				box->ApplyForce(forceVector + (forceVector * box->GetElasticity()));
 				box->SetPosition(box->GetPosition() + (collisionNormal * intersection * 0.5f));
 				return true;
 			}

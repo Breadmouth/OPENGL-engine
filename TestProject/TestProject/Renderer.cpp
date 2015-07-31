@@ -423,13 +423,13 @@ void Renderer::SetAnimateModel(int i, bool animate)
 
 void Renderer::CreateParticleEmitter()
 {
-	m_emitter = new ParticleEmitter();
-	m_emitter->Init(1000, 500, 0.1f, 1.0f, 1, 5, 1, 0.1f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
+	//m_emitter = new ParticleEmitter();
+	//m_emitter->Init(1000, 500, 0.1f, 1.0f, 1, 5, 1, 0.1f, glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));
 }
 
 void Renderer::UpdateParticles(float dt, mat4 cameraTransform)
 {
-	m_emitter->Update(dt, cameraTransform);
+	//m_emitter->Update(dt, cameraTransform);
 }
 
 void Renderer::CreateFB()
@@ -1002,10 +1002,10 @@ void Renderer::Update(float timer, float dt, mat4 *cameraTransform)
 	//	}
 	//}
 
-	if (m_emitter != NULL)
-	{
-		m_emitter->Update(dt, *cameraTransform);
-	}
+	//if (m_emitter != NULL)
+	//{
+	//	m_emitter->Update(dt, *cameraTransform);
+	//}
 }
 
 void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
@@ -1760,14 +1760,14 @@ void Renderer::Draw(vec3 *light, vec3* lightColour, mat4 *lightMatrix,
 
 	}
 
-	if (m_emitter != NULL)
-	{
-		glUseProgram(m_programID);
-		loc = glGetUniformLocation(m_programID, "ProjectionView");
-		glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
-
-		m_emitter->Draw();
-	}
+	//if (m_emitter != NULL)
+	//{
+	//	glUseProgram(m_programID);
+	//	loc = glGetUniformLocation(m_programID, "ProjectionView");
+	//	glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(*projectionView));
+	//
+	//	m_emitter->Draw();
+	//}
 
 	if (m_waterPlane.m_indexCount != NULL)// needs indexcount to be set
 	{

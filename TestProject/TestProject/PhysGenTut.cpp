@@ -251,7 +251,7 @@ void PhysGenTut::CreateCube()
 		newBox = new Box(glm::vec3(0, 0, 0), glm::vec3(rand() % 100, rand() % 100, rand() % 100), glm::vec3(0, 0, 0), 1, 0.6f, 1, 1, 1, glm::vec4(0, 1, 0, 1), false);
 		m_physicsScene->AddActor(newBox);
 
-		m_createCooldown = 0.2f;
+		m_createCooldown = 0.5f;
 	}
 }
 
@@ -263,7 +263,7 @@ void PhysGenTut::CreateSphere()
 		newSphere = new Sphere(glm::vec3(0, 0, 0), glm::vec3(rand() % 100, rand() % 100, rand() % 100), glm::vec3(0, 0, 0), 1, 0.8f, 0.5, glm::vec4(0, 0, 1, 1), false);
 		m_physicsScene->AddActor(newSphere);
 
-		m_createCooldown = 0.2f;
+		m_createCooldown = 0.5f;
 	}
 }
 

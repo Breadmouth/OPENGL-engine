@@ -159,7 +159,7 @@ private:
 	//Model m_models[10];
 
 	std::vector<Model*> m_models;
-	ParticleEmitter* m_emitter;
+	//ParticleEmitter* m_emitter;
 
 	int m_modelCount;
 

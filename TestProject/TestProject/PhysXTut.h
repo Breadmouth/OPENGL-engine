@@ -2,14 +2,25 @@
 
 #include "Application.h"
 #include "FlyCamera.h"
+#include "PhysXCamera.h"
 #include "tiny_obj_loader.h"
 #include "Renderer.h"
 #include "FBXFile.h"
+#include "ParticleEmitter.h"
+#include "ParticleFluidEmitter.h"
+#include "TriggerCallback.h"
 
 //physX headers
 #include <PxPhysicsAPI.h>
 #include <PxScene.h>
 #include <pvd/PxVisualDebugger.h>
+
+#include <particles\PxParticleBase.h>
+#include <particles\PxParticleSystem.h>
+#include <particles\PxParticleFluid.h>
+#include <particles\PxParticleCreationData.h>
+#include <particles\PxParticleFlag.h>
+
 #include <vector>
 
 using glm::vec2;
@@ -57,7 +68,7 @@ public:
 	void FireBall();
 
 protected:
-	FlyCamera camera;
+	PhysXCamera camera;
 
 	Renderer m_renderer;
 	//GPUParticleEmitter* m_emitter;
@@ -77,11 +88,17 @@ protected:
 	PxControllerManager* gCharacterManager;
 	PxController* gPlayerController;
 
+	ParticleFluidEmitter* m_particleEmitter;
+
+	TriggerCallback m_trigger;
+
 	float m_characterYVelocity;
 	float m_characterRotation;
 	float m_playerGravity;
+	float m_yAccel;
 
 	std::vector<PxRigidActor*> g_PhysXActors;
+	std::vector<PxArticulation*> g_PhysXActorRagdolls;
 
 	float mouseClickCooldown = 0.2f;
 

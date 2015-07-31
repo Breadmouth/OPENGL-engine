@@ -1,223 +1,202 @@
 #include "ParticleEmitter.h"
+#include <iostream>
+#include<vector>
+#define GLM_SWIZZLE
+#include <glm/glm.hpp>
+#include <glm/ext.hpp>
+#include "Gizmos.h"
 
-ParticleEmitter::ParticleEmitter()
-	: m_particles(nullptr),
-	m_firstDead(0),
-	m_maxParticles(0),
-	m_position(0, 0, 0),
-	m_vao(0), m_vbo(0), m_ibo(0),
-	m_vertexData(nullptr)
+
+//constructor
+ParticleEmitter::ParticleEmitter(int _maxParticles, PxVec3 _position,PxParticleSystem* _ps,float _releaseDelay)
 {
+	m_releaseDelay		= _releaseDelay;
+	//maximum number of particles our emitter can handle
+	m_maxParticles		= _maxParticles; 
 
+	//array of particle structs
+	m_activeParticles	= new Particle[m_maxParticles]; 
+	
+	m_time				= 0; //time system has been running
+	m_respawnTime		= 0; //time for next respawn
+	m_position			= _position;
+	m_ps				=_ps; //pointer to the physX particle system
+	m_particleMaxAge	= 8; //maximum time in seconds that a particle can live for
+	
+	//initialize the buffer
+	for(int index=0;index<m_maxParticles;index++)
+	{
+		m_activeParticles[index].active = false;
+		m_activeParticles[index].maxTime = 0;
+	}
+
+	m_minVelocity = PxVec3(-10.0f, 0, -10.0f);
+	m_maxVelocity = PxVec3(10.0f, 0, 10.0f);
 }
 
+//destructure
 ParticleEmitter::~ParticleEmitter()
 {
-	delete[] m_particles;
-	delete[] m_vertexData;
-
-	glDeleteVertexArrays(1, &m_vao);
-	glDeleteBuffers(1, &m_vbo);
-	glDeleteBuffers(1, &m_ibo);
+	//remove all the active particles
+	delete m_activeParticles;
 }
 
-void ParticleEmitter::Init(unsigned int a_maxParticles,
-	unsigned int a_emitRate,
-	float a_lifeTimeMin, float a_lifeTimeMax,
-	float a_velocityMin, float a_velocityMax,
-	float a_startSize, float a_endSize,
-	const glm::vec4& a_startColour, const glm::vec4& a_endColour)
+void ParticleEmitter::setStartVelocityRange(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
 {
-	//set up emit timers
-	m_emitTimer = 0;
-	m_emitRate = 1.0f / a_emitRate;
-
-	//store all varibles passed in
-	m_startColour = a_startColour;
-	m_endColour = a_endColour;
-	m_startSize = a_startSize;
-	m_endSize = a_endSize;
-	m_velocityMin = a_velocityMin;
-	m_velocityMax = a_velocityMax;
-	m_lifeSpanMin = a_lifeTimeMin;
-	m_lifeSpanMax = a_lifeTimeMax;
-	m_maxParticles = a_maxParticles;
-
-	//create particles array
-	m_particles = new Particle[m_maxParticles];
-	m_firstDead = 0;
-
-	//create the array of vertices for the particles
-	//4 vertices per particles for a quad
-	//will be filled during update
-	m_vertexData = new ParticleVertex[m_maxParticles * 4];
-
-	//create the index buffer data for the particles
-	//6 indices per quad of 2 triangles
-	//fill it now as it never changes
-	unsigned int* indexData = new unsigned int[m_maxParticles * 6];
-	for (unsigned int i = 0; i < m_maxParticles; ++i)
-	{
-		indexData[i * 6 + 0] = i * 4 + 0;
-		indexData[i * 6 + 1] = i * 4 + 1;
-		indexData[i * 6 + 2] = i * 4 + 2;
-
-		indexData[i * 6 + 3] = i * 4 + 0;
-		indexData[i * 6 + 4] = i * 4 + 2;
-		indexData[i * 6 + 5] = i * 4 + 3;
-	}
-
-	//create openGl Buffers
-	glGenVertexArrays(1, &m_vao);
-	glBindVertexArray(m_vao);
-
-	glGenBuffers(1, &m_vbo);
-	glGenBuffers(1, &m_ibo);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferData(GL_ARRAY_BUFFER, 
-		m_maxParticles * 4 * sizeof(ParticleVertex), 
-		m_vertexData, GL_DYNAMIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-		m_maxParticles * 6 * sizeof(unsigned int),
-		indexData, GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);//pos
-	glEnableVertexAttribArray(1);//colour
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(ParticleVertex), 0);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(ParticleVertex), ((char*)0) + 16);
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	delete[] indexData;
+	m_minVelocity.x = minX;
+	m_minVelocity.y = minY;
+	m_minVelocity.z = minZ;
+	m_maxVelocity.x = maxX;
+	m_maxVelocity.y = maxY;
+	m_maxVelocity.z = maxZ;
 }
 
-void ParticleEmitter::Emit()
+//find the next free particle, mark it as used and return it's index.  If it can't allocate a particle: returns minus one
+int ParticleEmitter::getNextFreeParticle()
 {
-	//only emit if there is room in the array
-	if (m_firstDead >= m_maxParticles)
-		return;
-
-	//resurrect the forst dead particle
-	Particle& particle = m_particles[m_firstDead++];
-
-	//assign its starting pos
-	particle.position = m_position;
-
-	//rand its lifespan
-	particle.lifetime = 0;
-	particle.lifespan = (rand() / (float)RAND_MAX *
-			(m_lifeSpanMax - m_lifeSpanMin) + m_lifeSpanMin);
-
-	//set starting size and colour
-	particle.colour = m_startColour;
-	particle.size = m_startSize;
-
-	//rand velocity dir and strength
-	float velocity = (rand() / (float)RAND_MAX *
-		(m_velocityMax - m_velocityMin) + m_velocityMin);
-	particle.velocity.x = (rand() / (float)RAND_MAX) * 2 - 1;
-	particle.velocity.y = (rand() / (float)RAND_MAX) * 2 - 1;
-	particle.velocity.z = (rand() / (float)RAND_MAX) * 2 - 1;
-	particle.velocity = glm::normalize(particle.velocity) * velocity;
-}
-
-void ParticleEmitter::Update(float dt, const glm::mat4& a_cameraTransform)
-{
-	using glm::vec3;
-	using glm::vec4;
-
-	//spawn particles
-	m_emitTimer += dt;
-	while (m_emitTimer > m_emitRate)
+	//find particle, this is a very inefficient way to do this.  A better way would be to keep a list of free particles so we can quickly find the first free one
+	for(int index=0;index<m_maxParticles;index++)
 	{
-		Emit();
-		m_emitTimer -= m_emitRate;
-	}
-
-	unsigned int quad = 0;
-
-	//update particles and turn live particles into billboard quads
-	for (unsigned int i = 0; i < m_firstDead; ++i)
-	{
-		Particle* particle = &m_particles[i];
-
-		particle->lifetime += dt;
-		if (particle->lifetime >= particle->lifespan)
+		//when we find a particle which is free
+		if(!m_activeParticles[index].active)
 		{
-			*particle = m_particles[m_firstDead - 1];
-			m_firstDead--;
+			m_activeParticles[index].active = true; //mark it as not free
+			m_activeParticles[index].maxTime = m_time+m_particleMaxAge;  //record when the particle was created so we know when to remove it
+			return index;
 		}
-		else
+	}
+	return -1; //returns minus if a particle was not allocated
+}
+
+
+//releast a particle from the system using it's index to ID it
+void ParticleEmitter::releaseParticle(int index)
+{
+	if(index >= 0 && index < m_maxParticles)
+		m_activeParticles[index].active = false;
+}
+
+//returns true if a particle age is greater than it's maximum allowed age
+bool ParticleEmitter::tooOld(int index)
+{
+	if(index >= 0 && index < m_maxParticles && m_time > m_activeParticles[index].maxTime)
+		return true;
+	return false;
+}
+
+//add particle to PhysX System
+bool ParticleEmitter::addPhysXParticle(int particleIndex)
+{
+
+	//set up the data
+	//set up the buffers
+	PxU32 myIndexBuffer[] = {particleIndex};
+	PxVec3 startPos = m_position;
+	PxVec3 startVel(0,0,0);
+	//randomize starting velocity.
+	float fT = (rand() % (RAND_MAX + 1)) / (float)RAND_MAX;
+	startVel.x += m_minVelocity.x + (fT * (m_maxVelocity.x - m_minVelocity.x));
+	fT = (rand() % (RAND_MAX + 1)) / (float)RAND_MAX;
+	startVel.y += m_minVelocity.y + (fT * (m_maxVelocity.y - m_minVelocity.y));
+	fT = (rand() % (RAND_MAX + 1)) / (float)RAND_MAX;
+	startVel.z += m_minVelocity.z + (fT * (m_maxVelocity.z - m_minVelocity.z));
+
+	//we can change starting position tos get different emitter shapes
+	PxVec3 myPositionBuffer[] = {startPos};
+	PxVec3 myVelocityBuffer[] =  {startVel};
+
+	//reserve space for data
+	PxParticleCreationData particleCreationData;
+	particleCreationData.numParticles = 1;  //spawn one particle at a time,  this is inefficient and we could improve this by passing in the list of particles.
+	particleCreationData.indexBuffer = PxStrideIterator<const PxU32>(myIndexBuffer);
+	particleCreationData.positionBuffer = PxStrideIterator<const PxVec3>(myPositionBuffer);
+	particleCreationData.velocityBuffer = PxStrideIterator<const PxVec3>(myVelocityBuffer);
+	// create particles in *PxParticleSystem* ps
+	return m_ps->createParticles(particleCreationData);
+}
+
+//updateParticle
+void ParticleEmitter::update(float delta)
+{
+	//tick the emitter
+	m_time += delta;
+	m_respawnTime+= delta;
+	int numberSpawn = 0;
+	//if respawn time is greater than our release delay then we spawn at least one particle so work out how many to spawn
+	if(m_respawnTime>m_releaseDelay)
+	{
+		numberSpawn = (int)(m_respawnTime/m_releaseDelay);
+		m_respawnTime -= (numberSpawn * m_releaseDelay);
+	}
+	// spawn the required number of particles 
+	for(int count = 0;count < numberSpawn;count++)
+	{
+		//get the next free particle
+		int particleIndex = getNextFreeParticle();
+		if(particleIndex >=0)
 		{
-			//add gravity
-			particle->velocity.y += 0.3f;
+			//if we got a particle ID then spawn it
+			addPhysXParticle(particleIndex);
+		}
+	}
+	//check to see if we need to release particles because they are either too old or have hit the particle sink
+	//lock the particle buffer so we can work on it and get a pointer to read data
+	PxParticleReadData* rd = m_ps->lockParticleReadData();
+	// access particle data from PxParticleReadData was OK
+	if (rd)
+	{
+		vector<PxU32> particlesToRemove; //we need to build a list of particles to remove so we can do it all in one go
+		PxStrideIterator<const PxParticleFlags> flagsIt(rd->flagsBuffer);
 
-			//move particle
-			particle->position += particle->velocity * dt;
-
-			//size particle
-			particle->size = glm::mix(m_startSize, m_endSize, particle->lifetime / particle->lifespan);
-
-			//colour particle
-			particle->colour = glm::mix(m_startColour, m_endColour, particle->lifetime / particle->lifespan);
-
-			//make a quad the correct size and colour
-			float halfSize = particle->size * 0.5f;
-
-			m_vertexData[quad * 4 + 0].position = vec4(halfSize, halfSize, 0, 1);
-			m_vertexData[quad * 4 + 0].colour = particle->colour;
-
-			m_vertexData[quad * 4 + 1].position = vec4(-halfSize, halfSize, 0, 1);
-			m_vertexData[quad * 4 + 1].colour = particle->colour;
-
-			m_vertexData[quad * 4 + 2].position = vec4(-halfSize, -halfSize, 0, 1);
-			m_vertexData[quad * 4 + 2].colour = particle->colour;
-
-			m_vertexData[quad * 4 + 3].position = vec4(halfSize, -halfSize, 0, 1);
-			m_vertexData[quad * 4 + 3].colour = particle->colour;
-
-			//create billboard transform
-			vec3 zAxis = glm::normalize(vec3(a_cameraTransform[3]) - particle->position);
-			vec3 xAxis = glm::cross(vec3(a_cameraTransform[1]), zAxis);
-			vec3 yAxis = glm::cross(zAxis, xAxis);
-			glm::mat4 billboard(vec4(xAxis, 0),
-								vec4(yAxis, 0),
-								vec4(zAxis, 0),
-								vec4(0, 0, 0, 1));
-
-			m_vertexData[quad * 4 + 0].position = billboard *
-						m_vertexData[quad * 4 + 0].position + 
-						vec4(particle->position, 0);
-
-			m_vertexData[quad * 4 + 1].position = billboard *
-						m_vertexData[quad * 4 + 1].position +
-						vec4(particle->position, 0);
-
-			m_vertexData[quad * 4 + 2].position = billboard *
-						m_vertexData[quad * 4 + 2].position +
-						vec4(particle->position, 0);
-
-			m_vertexData[quad * 4 + 3].position = billboard *
-						m_vertexData[quad * 4 + 3].position +
-						vec4(particle->position, 0);
-
-			++quad;
+		for (unsigned i = 0; i < rd->validParticleRange; ++i, ++flagsIt)
+		{
+			if (*flagsIt & PxParticleFlag::eVALID)
+				{
+					//if particle is either too old or has hit the sink then mark it for removal.  We can't remove it here because we buffer is locked
+					if (*flagsIt & PxParticleFlag::eCOLLISION_WITH_DRAIN || tooOld(i))
+					{
+						//mark our local copy of the particle free
+						releaseParticle(i);
+						//add to our list of particles to remove
+						particlesToRemove.push_back(i);
+					}
+				}
+		}
+		// return ownership of the buffers back to the SDK
+		rd->unlock();
+		//if we have particles to release then pass the particles to remove to PhysX so it can release them
+		if(particlesToRemove.size()>0)
+		{
+			//create a buffer of particle indicies which we are going to remove
+			PxStrideIterator<const PxU32> indexBuffer(&particlesToRemove[0]);
+			//free particles from the physics system
+			m_ps->releaseParticles(particlesToRemove.size(), indexBuffer);
 		}
 	}
 }
 
-void ParticleEmitter::Draw()
+//simple routine to render our particles
+void ParticleEmitter::renderParticles()
 {
-	//sync the particle vertex buffer based on how many alive particles there are
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, m_firstDead * 4 * sizeof(ParticleVertex), m_vertexData);
+	// lock SDK buffers of *PxParticleSystem* ps for reading
+	PxParticleReadData* rd = m_ps->lockParticleReadData();
+	// access particle data from PxParticleReadData
+	if (rd)
+	{
+		PxStrideIterator<const PxParticleFlags> flagsIt(rd->flagsBuffer);
+		PxStrideIterator<const PxVec3> positionIt(rd->positionBuffer);
 
-	//draw particles
-	glBindVertexArray(m_vao);
-	glDrawElements(GL_TRIANGLES, m_firstDead * 6, GL_UNSIGNED_INT, 0);
+		for (unsigned i = 0; i < rd->validParticleRange; ++i, ++flagsIt, ++positionIt)
+		{
+				if (*flagsIt & PxParticleFlag::eVALID)
+				{
+						//convert physx vector to a glm vec3
+						glm::vec3 pos(positionIt->x,positionIt->y,positionIt->z);
+						//use a gizmo box to visualize particle.  This would be much better done using a facing quad preferably done using the geometry shader
+						Gizmos::addAABBFilled(pos,glm::vec3(.1,.1,.1),glm::vec4(1,0,1,1));
+				}
+		}
+		// return ownership of the buffers back to the SDK
+		rd->unlock();
+	}
 }

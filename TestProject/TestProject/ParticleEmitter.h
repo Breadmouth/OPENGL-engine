@@ -1,66 +1,49 @@
 #pragma once
+#include <PxPhysicsAPI.h>
+using namespace physx;
+using namespace std;
 
-#include "gl_core_4_4.h"
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
+//simple struct for our particles
 
 struct Particle
 {
-	glm::vec3 position;
-	glm::vec3 velocity;
-	glm::vec4 colour;
-	float size;
-	float lifetime;
-	float lifespan;
+	bool active;
+	float maxTime;
 };
 
-struct ParticleVertex
-{
-	glm::vec4 position;
-	glm::vec4 colour;
-};
 
+//simple class for particle emitter.  For a real system we would make this a base class and derive different emitters from it by making functions virtual and overloading them.
 class ParticleEmitter
 {
 public:
-	ParticleEmitter();
-	virtual ~ParticleEmitter();
+	ParticleEmitter(int _maxParticles,PxVec3 _position,PxParticleSystem* _ps,float _releaseDelay);
+	~ParticleEmitter();
+	
+	void setStartVelocityRange(float minX, float minY, float minZ, float maxX, float maxY, float maxZ);
+	
+	void update(float delta);
+	void releaseParticle(int);
+	bool tooOld(int);
+	void renderParticles();
 
-	void Init(unsigned int a_maxParticles,
-		unsigned int a_emitRate,
-		float a_lifeTimeMin, float a_lifeTimeMax,
-		float a_velocityMin, float a_velocityMax,
-		float a_startSize, float a_endSize,
-		const glm::vec4& a_startColour, const glm::vec4& a_endColour);
+private:
 
-	void Emit();
+	int getNextFreeParticle();
+	bool addPhysXParticle(int particleIndex);
 
-	void Update(float dt, const glm::mat4& a_cameraTransform);
+	int			m_maxParticles;
+	Particle*	m_activeParticles;
+	float		m_releaseDelay;
+	int			m_numberActiveParticles;
 
-	void Draw();
-
-protected:
-	Particle* m_particles;
-	unsigned int m_firstDead;
-	unsigned int m_maxParticles;
-
-	unsigned int m_vao, m_vbo, m_ibo;
-	ParticleVertex* m_vertexData;
-
-	glm::vec3 m_position;
-
-	float m_emitTimer;
-	float m_emitRate;
-
-	float m_lifeSpanMin;
-	float m_lifeSpanMax;
-
-	float m_velocityMin;
-	float m_velocityMax;
-
-	float m_startSize;
-	float m_endSize;
-
-	glm::vec4 m_startColour;
-	glm::vec4 m_endColour;
+	float		m_time;
+	float		m_respawnTime;
+	float		m_particleMaxAge;
+	PxVec3		m_position;
+	
+	PxParticleSystem* m_ps;
+	
+	
+	PxVec3 m_minVelocity;
+	PxVec3 m_maxVelocity;
 };

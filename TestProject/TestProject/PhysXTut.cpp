@@ -12,6 +12,8 @@
 
 #include "myAllocator.h"
 
+#include "Ragdoll.h"
+
 using glm::vec2;
 using glm::vec3;
 using glm::vec4;
@@ -24,7 +26,6 @@ PhysXTut::PhysXTut()
 	light = vec3(0, 1, 0);
 	lightColour = vec3(1, 1, 1);
 	specPow = 1.0f;
-	cameraSpeed = camera.GetSpeed();
 	animate = true;
 	generate = false;
 	height = 30;
@@ -134,6 +135,11 @@ void PhysXTut::Update(float dt)
 	UpdatePlayer(dt);
 	UpdatePhysX(dt);
 
+	if (m_trigger.GetTriggered())
+	{
+		//this is where to continue from
+	}
+
 	mouseClickCooldown -= dt;
 
 	if (generate)
@@ -156,7 +162,7 @@ void PhysXTut::Update(float dt)
 
 	m_renderer.Update(m_timer, dt, &camera.GetWorldTransform());
 
-	camera.SetSpeed(cameraSpeed);
+	//camera.SetSpeed(cameraSpeed);
 	camera.Update(dt);
 }
 
@@ -209,6 +215,8 @@ void PhysXTut::AddPlayerController()
 	//addToActorList(gPlayerController->getActor());
 	g_PhysXActors.push_back(gPlayerController->getActor());
 
+	camera.AttachToPlayerController(gPlayerController, &m_characterRotation);
+
 }
 
 
@@ -218,10 +226,13 @@ void PhysXTut::UpdatePlayer(float dt)
 	float movementSpeed = 10.0f;
 	float rotationSpeed = 1.0f;
 
+	m_yAccel -= movementSpeed * dt;
+
 	if (myHitReport->getPlayerContactNormal().y > 0.3f)
 	{
 		m_characterYVelocity = -0.1f;
 		onGround = true;
+		m_yAccel = 0.f;
 	}
 	else
 	{
@@ -232,29 +243,35 @@ void PhysXTut::UpdatePlayer(float dt)
 	const PxVec3 up(0, 1, 0);
 
 	PxVec3 velocity(0, m_characterYVelocity, 0);
-	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		velocity.x -= movementSpeed * dt;
 	}
-	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		velocity.x += movementSpeed * dt;
 	}
-	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		velocity.z += movementSpeed * dt;
+		m_characterRotation += rotationSpeed * dt;
 	}
-	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		velocity.z -= movementSpeed * dt;
+		m_characterRotation -= rotationSpeed * dt;
 	}
 	//add code for jumping
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && onGround)
+	{
+		m_yAccel = 30.0f;
+	}
+
+	velocity.y += m_yAccel * dt;
 
 	float minDist = 0.001f;
 	PxControllerFilters filter;
-	PxQuat rotatin(m_characterRotation, PxVec3(0, 1, 0));
+	PxQuat rotation(m_characterRotation, PxVec3(0, 1, 0));
 	//move the controller
-	gPlayerController->move(rotatin.rotate(velocity), minDist, dt, filter);
+	gPlayerController->move(rotation.rotate(velocity), minDist, dt, filter);
 }
 
 void PhysXTut::UpdatePhysX(float dt)
@@ -282,6 +299,32 @@ void PhysXTut::UpdatePhysX(float dt)
 			}
 			delete[] shapes;
 		}
+	}
+
+	for (auto art : g_PhysXActorRagdolls)
+	{
+		PxU32 nLinks = art->getNbLinks();
+		PxArticulationLink** links = new PxArticulationLink*[nLinks];
+		art->getLinks(links, nLinks);
+
+		while (nLinks--)
+		{
+			PxArticulationLink* link = links[nLinks];
+			PxU32 nShapes = link->getNbShapes();
+			PxShape** shapes = new PxShape*[nShapes];
+			link->getShapes(shapes, nShapes);
+			while (nShapes--)
+			{
+				AddWidget(shapes[nShapes], link);
+			}
+		}
+		delete[] links;
+	}
+
+	if (m_particleEmitter)
+	{
+		m_particleEmitter->update(dt);
+		m_particleEmitter->renderParticles();
 	}
 }
 
@@ -473,17 +516,23 @@ void PhysXTut::SetupTut1()
 
 	float density = 10;
 	PxBoxGeometry box(2, 2, 2);
-	PxTransform transform(PxVec3(0, 0, 0));
+	PxTransform transform(PxVec3(12, 10, 8));
 	PxRigidDynamic* dynamicActor = PxCreateDynamic(*g_Physics, transform, box, *g_PhysicsMaterial, density);
 	g_PhysicsScene->addActor(*dynamicActor);
 	g_PhysXActors.push_back(dynamicActor);
 
-	transform = PxTransform(0, 10, 0);
-	PxRigidStatic* staticActor1 = PxCreateStatic(*g_Physics, transform, box, *g_PhysicsMaterial);
-	g_PhysicsScene->addActor(*staticActor1);
-	g_PhysXActors.push_back(staticActor1);
+	transform = PxTransform(10, 10, 10);
+	PxRigidDynamic* dynamicActor1 = PxCreateDynamic(*g_Physics, transform, box, *g_PhysicsMaterial, density);
 
-	transform = PxTransform(0, 40, 0);
+	PxShape** pShapes = new PxShape*[dynamicActor1->getNbShapes()];
+	dynamicActor1->getShapes(pShapes, dynamicActor1->getNbShapes());
+	pShapes[0]->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+	pShapes[0]->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+
+	g_PhysicsScene->addActor(*dynamicActor1);
+	g_PhysXActors.push_back(dynamicActor1);
+
+	transform = PxTransform(-6, 40, -9);
 	PxSphereGeometry sphere(2);
 	PxRigidDynamic* dynamicActor2 = PxCreateDynamic(*g_Physics, transform, sphere, *g_PhysicsMaterial, density);
 	g_PhysicsScene->addActor(*dynamicActor2);
@@ -494,7 +543,57 @@ void PhysXTut::SetupTut1()
 	PxRigidDynamic* dynamicActor3 = PxCreateDynamic(*g_Physics, transform, capsule, *g_PhysicsMaterial, density);
 	g_PhysicsScene->addActor(*dynamicActor3);
 	g_PhysXActors.push_back(dynamicActor3);
+
+	PxArticulation* ragdollArt;
+	ragdollArt = Ragdoll::MakeRagdoll(g_Physics, ragdollData, PxTransform(PxVec3(50, 20, 0)), 0.3f, g_PhysicsMaterial);
+	g_PhysicsScene->addArticulation(*ragdollArt);
+	g_PhysXActorRagdolls.push_back(ragdollArt);
+
+	PxBoxGeometry side1(4.5, 1, .5);
+	PxBoxGeometry side2(.5, 1, 4.5);
+
+	transform = PxTransform(PxVec3(-12.0f, 0.5, 4.0f));
+	PxRigidStatic* wall = PxCreateStatic(*g_Physics, transform, side1, *g_PhysicsMaterial);
+	g_PhysicsScene->addActor(*wall);
+	g_PhysXActors.push_back(wall);
+
+	transform = PxTransform(PxVec3(-12.0f, 0.5, -4.0f));
+	wall = PxCreateStatic(*g_Physics, transform, side1, *g_PhysicsMaterial);
+	g_PhysicsScene->addActor(*wall);
+	g_PhysXActors.push_back(wall);
+
+	transform = PxTransform(PxVec3(-16.0f, 0.5, 0));
+	wall = PxCreateStatic(*g_Physics, transform, side2, *g_PhysicsMaterial);
+	g_PhysicsScene->addActor(*wall);
+	g_PhysXActors.push_back(wall);
+
+	transform = PxTransform(PxVec3(-8.0f, 0.5, 0));
+	wall = PxCreateStatic(*g_Physics, transform, side2, *g_PhysicsMaterial);
+	g_PhysicsScene->addActor(*wall);
+	g_PhysXActors.push_back(wall);
 	
+	PxParticleFluid* pf;
+
+	PxU32 maxParticles = 1500;
+	bool perParticleRestOffset = false;
+	pf = g_Physics->createParticleFluid(maxParticles, perParticleRestOffset);
+
+	pf->setRestParticleDistance(.3f);
+	pf->setDynamicFriction(0.1f);
+	pf->setStaticFriction(0.1f);
+	pf->setDamping(0.1f);
+	pf->setParticleMass(.1f);
+	pf->setRestitution(0);
+
+	pf->setParticleBaseFlag(PxParticleBaseFlag::eCOLLISION_TWOWAY, true);
+	pf->setStiffness(100);
+
+	if (pf)
+	{
+		g_PhysicsScene->addActor(*pf);
+		m_particleEmitter = new ParticleFluidEmitter(maxParticles, PxVec3(-12, 10, 0), pf, .05);
+		m_particleEmitter->setStartVelocityRange(-100.f, -250.f, -100.f, 100.f, -250.0f, 100.f);
+	}
 }
 
 void PhysXTut::FireBall()

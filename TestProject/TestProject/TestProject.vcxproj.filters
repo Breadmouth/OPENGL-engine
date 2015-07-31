@@ -72,9 +72,6 @@
     <ClCompile Include="Tutorial7.cpp">
       <Filter>Source Files\Tutorials</Filter>
     </ClCompile>
-    <ClCompile Include="ParticleEmitter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Tutorial8.cpp">
       <Filter>Source Files\Tutorials</Filter>
     </ClCompile>
@@ -123,6 +120,21 @@
     <ClCompile Include="Actors.cpp">
       <Filter>Source Files\PhysGen</Filter>
     </ClCompile>
+    <ClCompile Include="PhysXCamera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ragdoll.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MyParticleEmitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleEmitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleFluidEmitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\gl_core_4_4.h">
@@ -169,9 +181,6 @@
     </ClInclude>
     <ClInclude Include="Tutorial7.h">
       <Filter>Header Files\Tutorials</Filter>
-    </ClInclude>
-    <ClInclude Include="ParticleEmitter.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Tutorial8.h">
       <Filter>Header Files\Tutorials</Filter>
@@ -228,6 +237,24 @@
       <Filter>Header Files\Tutorials</Filter>
     </ClInclude>
     <ClInclude Include="Gizmos.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysXCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ragdoll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyParticleEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleFluidEmitter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TriggerCallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

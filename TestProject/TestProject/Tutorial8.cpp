@@ -34,8 +34,8 @@ void Tutorial8::Create()
 	//m_renderer.LoadShader("../data/shaders/particleShader.glvs", "../data/shaders/particleShader.glfs");
 	LoadShader("../data/shaders/particleShader.glvs", "../data/shaders/particleShader.glfs");
 
-	m_emitter = new ParticleEmitter();
-	m_emitter->Init(1000, 500, 0.5f, 1.0f, 0.6f, 3.0f, 0.7f, 0.0f, glm::vec4(0, 0, 0, 1), glm::vec4(0, 0.4, 0.4, 1));
+	//m_emitter = new ParticleEmitter();
+	//m_emitter->Init(1000, 500, 0.5f, 1.0f, 0.6f, 3.0f, 0.7f, 0.0f, glm::vec4(0, 0, 0, 1), glm::vec4(0, 0.4, 0.4, 1));
 	//m_renderer.CreateParticleEmitter();
 
 }
@@ -51,7 +51,7 @@ void Tutorial8::Update(float dt)
 		m_timer += dt;
 
 	//m_renderer.UpdateParticles(dt, camera.GetWorldTransform());
-	m_emitter->Update(dt, camera.GetWorldTransform());
+	//m_emitter->Update(dt, camera.GetWorldTransform());
 
 	camera.SetSpeed(cameraSpeed);
 
@@ -64,7 +64,7 @@ void Tutorial8::Draw()
 	int projection_view_uniform = glGetUniformLocation(m_programID, "ProjectionView");
 	glUniformMatrix4fv(projection_view_uniform, 1, GL_FALSE, glm::value_ptr(camera.GetProjectionView()));
 
-	m_emitter->Draw();
+	//m_emitter->Draw();
 
 	//m_renderer.DrawParticles(camera.GetProjectionView());
 
