@@ -8,7 +8,7 @@
 
 int main()
 {
-	PhysXTut app;
+	PhysGenTut app;
 
 	app.Run();
 

@@ -60,7 +60,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)dep\glfw\lib-vc2012;$(SolutionDir)dep\anttweakbar\lib;$(SolutionDir)src;$(SolutionDir)dep\opencl\lib\Win32\x86;$(SolutionDir)dep\vc12win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;FBXLoader_d.lib;FBXLoader.lib;PhysX3DEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysX3CommonDEBUG_x86.lib;PhysX3VehicleDEBUG.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3CookingDEBUG_x86.lib;PhysXVisualDebuggerSDKDEBUG.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;FBXLoader_d.lib;PhysX3DEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysX3CommonDEBUG_x86.lib;PhysX3VehicleDEBUG.lib;PhysX3CharacterKinematicDEBUG_x86.lib;PhysX3CookingDEBUG_x86.lib;PhysXVisualDebuggerSDKDEBUG.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
@@ -71,15 +71,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)dep\glm;$(SolutionDir)dep\glfw;$(SolutionDir)dep\aieutilities;$(SolutionDir)src\;$(SolutionDir)dep\stb;$(SolutionDir)dep\anttweakbar\include;$(SolutionDir)dep\opencl\inc</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLM_SWIZZLE;GLM_FORCE_PURE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)dep\glm;$(SolutionDir)dep\glfw;$(SolutionDir)src\;$(SolutionDir)dep\stb;$(SolutionDir)dep\anttweakbar\include;$(SolutionDir)dep\opencl\inc;$(SolutionDir)dep\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)dep\glfw\lib-vc2012;$(SolutionDir)dep\anttweakbar\lib;$(SolutionDir)src;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;FBXLoader.lib;PhysX3_x86.lib;PhysX3Extensions.lib;PhysXCommon_x86.lib;PhysXVehicle.lib;PhysX3CharacterKinematic_x86.lib;PhysX3Cooking_x86.lib;PhysXVisualDebuggerSDK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;AntTweakBar.lib;FBXLoader.lib;PhysX3_x86.lib;PhysX3Extensions.lib;PhysX3Common_x86.lib;PhysX3Vehicle.lib;PhysX3CharacterKinematic_x86.lib;PhysX3Cooking_x86.lib;PhysXVisualDebuggerSDK.lib;OpenCL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)dep\glfw\lib-vc2012;$(SolutionDir)dep\anttweakbar\lib;$(SolutionDir)src;$(SolutionDir)dep\opencl\lib\Win32\x86;$(SolutionDir)dep\vc12win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -148,7 +148,6 @@
     <ClInclude Include="PhysXTut.h" />
     <ClInclude Include="Ragdoll.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="TriggerCallback.h" />
     <ClInclude Include="Tutorial1.h" />
     <ClInclude Include="Tutorial10.h" />
     <ClInclude Include="Tutorial11.h" />

@@ -8,7 +8,6 @@
 #include "FBXFile.h"
 #include "ParticleEmitter.h"
 #include "ParticleFluidEmitter.h"
-#include "TriggerCallback.h"
 
 //physX headers
 #include <PxPhysicsAPI.h>
@@ -41,7 +40,7 @@ public:
 	PxVec3 _playerContactNormal;
 };
 
-class PhysXTut : public Application
+class PhysXTut : public Application, public PxSimulationEventCallback
 {
 public:
 	PhysXTut();
@@ -67,6 +66,16 @@ public:
 
 	void FireBall();
 
+	virtual void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs){};
+
+	virtual void onTrigger(physx::PxTriggerPair *pairs, physx::PxU32 count);
+
+	virtual void onConstraintBreak(physx::PxConstraintInfo *constraints, physx::PxU32 count){};
+	virtual void onWake(physx::PxActor **actors, physx::PxU32 count){};
+	virtual void onSleep(physx::PxActor **actors, physx::PxU32 count){};
+
+	bool m_triggered;
+
 protected:
 	PhysXCamera camera;
 
@@ -90,7 +99,7 @@ protected:
 
 	ParticleFluidEmitter* m_particleEmitter;
 
-	TriggerCallback m_trigger;
+	PxRigidDynamic* triggerShape;
 
 	float m_characterYVelocity;
 	float m_characterRotation;

@@ -130,14 +130,36 @@ void PhysXTut::Destroy()
 	m_renderer.Destroy();
 }
 
+void PhysXTut::onTrigger(physx::PxTriggerPair *pairs, physx::PxU32 count)
+{
+	for (physx::PxU32 i = 0; i < count; i++)
+	{
+		// ignore pairs when shapes have been deleted
+		if (pairs[i].flags & (physx::PxTriggerPairFlag::eDELETED_SHAPE_TRIGGER | physx::PxTriggerPairFlag::eDELETED_SHAPE_OTHER))
+			continue;
+
+		if ((pairs[i].otherShape->getGeometryType() == physx::PxGeometryType::eSPHERE))
+		{
+			m_triggered = true;
+		}
+	}
+};
+
 void PhysXTut::Update(float dt)
 {
 	UpdatePlayer(dt);
 	UpdatePhysX(dt);
 
-	if (m_trigger.GetTriggered())
+	if (m_triggered)
 	{
-		//this is where to continue from
+		PxTransform transform = PxTransform(15, 5, 6);
+		PxSphereGeometry sphere(1);
+		PxReal density = 10;
+		PxRigidDynamic* dynamicActor = PxCreateDynamic(*g_Physics, transform, sphere, *g_PhysicsMaterial, density);
+		g_PhysicsScene->addActor(*dynamicActor);
+		g_PhysXActors.push_back(dynamicActor);
+
+		m_triggered = false;
 	}
 
 	mouseClickCooldown -= dt;
@@ -173,6 +195,28 @@ void PhysXTut::Draw()
 	//m_renderer.Draw(&light, &lightColour, &mat4(), &camera.GetProjectionView(), &camera.GetPosition(), &specPow, &height, &waterHeight, &currentTime);
 }
 
+PxFilterFlags MyFilterShader(
+	PxFilterObjectAttributes attributes0, PxFilterData filterData0,
+	PxFilterObjectAttributes attributes1, PxFilterData filterData1,
+	PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
+{
+	// let triggers through
+	if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+	{
+		pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+		return PxFilterFlag::eDEFAULT;
+	}
+	// generate contacts for all that were not filtered above
+	pairFlags = PxPairFlag::eCONTACT_DEFAULT;
+
+	// trigger the contact callback for pairs (A,B) where 
+	// the filtermask of A contains the ID of B and vice versa.
+	if ((filterData0.word0 & filterData1.word1) && (filterData1.word0 & filterData0.word1))
+		pairFlags |= PxPairFlag::eNOTIFY_TOUCH_FOUND;
+
+	return PxFilterFlag::eDEFAULT;
+}
+
 void PhysXTut::SetUpPhysX()
 {
 	PxAllocatorCallback *myCallback = new myAllocator();
@@ -181,11 +225,11 @@ void PhysXTut::SetUpPhysX()
 	g_Physics = PxCreatePhysics(PX_PHYSICS_VERSION, *g_PhysicsFoundation, 
 		PxTolerancesScale());
 	PxInitExtensions(*g_Physics);
-	//create physics material
 	g_PhysicsMaterial = g_Physics->createMaterial(0.5f, 0.5f, 0.5f);
 	PxSceneDesc sceneDesc(g_Physics->getTolerancesScale());
 	sceneDesc.gravity = PxVec3(0, -10.0f, 0);
-	sceneDesc.filterShader = &physx::PxDefaultSimulationFilterShader;
+	sceneDesc.filterShader = MyFilterShader;
+	sceneDesc.simulationEventCallback = this;
 	sceneDesc.cpuDispatcher = PxDefaultCpuDispatcherCreate(1);
 	g_PhysicsScene = g_Physics->createScene(sceneDesc);
 }
@@ -507,6 +551,7 @@ void PhysXTut::SetUpVisualDebugger()
 
 void PhysXTut::SetupTut1()
 {
+
 	//add a plane
 	PxTransform pose = PxTransform(PxVec3(0.0f, 0, 0.0f), PxQuat(PxHalfPi*1.0f, PxVec3(0.0f, 0.0f, 1.0f)));
 	PxRigidStatic* plane = PxCreateStatic(*g_Physics, pose, PxPlaneGeometry(), *g_PhysicsMaterial);
@@ -516,21 +561,23 @@ void PhysXTut::SetupTut1()
 
 	float density = 10;
 	PxBoxGeometry box(2, 2, 2);
-	PxTransform transform(PxVec3(12, 10, 8));
-	PxRigidDynamic* dynamicActor = PxCreateDynamic(*g_Physics, transform, box, *g_PhysicsMaterial, density);
-	g_PhysicsScene->addActor(*dynamicActor);
-	g_PhysXActors.push_back(dynamicActor);
+	PxTransform transform(PxVec3(15, 2, 15));
+	PxRigidStatic* staticActor = PxCreateStatic(*g_Physics, transform, box, *g_PhysicsMaterial);
 
-	transform = PxTransform(10, 10, 10);
-	PxRigidDynamic* dynamicActor1 = PxCreateDynamic(*g_Physics, transform, box, *g_PhysicsMaterial, density);
+	g_PhysicsScene->addActor(*staticActor);
+	g_PhysXActors.push_back(staticActor);
 
-	PxShape** pShapes = new PxShape*[dynamicActor1->getNbShapes()];
-	dynamicActor1->getShapes(pShapes, dynamicActor1->getNbShapes());
+	PxTransform newtransform(PxVec3(15, 5, 0));
+	triggerShape = PxCreateDynamic(*g_Physics, newtransform, PxBoxGeometry(1, 1, 1), *g_PhysicsMaterial, density);
+	triggerShape->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, true);
+
+	PxShape** pShapes = new PxShape*[triggerShape->getNbShapes()];
+	triggerShape->getShapes(pShapes, triggerShape->getNbShapes());
 	pShapes[0]->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 	pShapes[0]->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 
-	g_PhysicsScene->addActor(*dynamicActor1);
-	g_PhysXActors.push_back(dynamicActor1);
+	g_PhysicsScene->addActor(*triggerShape);
+	g_PhysXActors.push_back(triggerShape);
 
 	transform = PxTransform(-6, 40, -9);
 	PxSphereGeometry sphere(2);
@@ -545,7 +592,7 @@ void PhysXTut::SetupTut1()
 	g_PhysXActors.push_back(dynamicActor3);
 
 	PxArticulation* ragdollArt;
-	ragdollArt = Ragdoll::MakeRagdoll(g_Physics, ragdollData, PxTransform(PxVec3(50, 20, 0)), 0.3f, g_PhysicsMaterial);
+	ragdollArt = Ragdoll::MakeRagdoll(g_Physics, ragdollData, PxTransform(PxVec3(0, 20, -20)), 0.3f, g_PhysicsMaterial);
 	g_PhysicsScene->addArticulation(*ragdollArt);
 	g_PhysXActorRagdolls.push_back(ragdollArt);
 

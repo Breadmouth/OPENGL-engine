@@ -9,30 +9,21 @@
 
 class TriggerCallback : public physx::PxSimulationEventCallback
 {
-private:
-	TriggerCallback();
-	~TriggerCallback();
+public:
+	TriggerCallback(){};
+	~TriggerCallback(){};
 
-	void TriggerCallback::onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs)
-	{
-		for (physx::PxU32 i = 0; i < nbPairs; i++)
-		{
-			const physx::PxContactPair& cp = pairs[i];
+	void onContact(const physx::PxContactPairHeader& pairHeader, const physx::PxContactPair* pairs, physx::PxU32 nbPairs){};
 
-			m_triggered = true;
-		}
+	void onTrigger(physx::PxTriggerPair *pairs, physx::PxU32 count);
 
-	};
-
-	void onConstraintBreak(PxConstraintInfo *constraints, PxU32 count){};
-	void onWake(PxActor **actors, PxU32 count){};
-	void onSleep(PxActor **actors, PxU32 count){};
-	void onTrigger(PxTriggerPair *pairs, PxU32 count){};
+	void onConstraintBreak(physx::PxConstraintInfo *constraints, physx::PxU32 count){};
+	void onWake(physx::PxActor **actors, physx::PxU32 count){};
+	void onSleep(physx::PxActor **actors, physx::PxU32 count){};
 
 	bool m_triggered;
 
-public:
-
 	bool GetTriggered(){ return m_triggered; };
+	void SetTriggered(bool triggered){ m_triggered = triggered; };
 
 };

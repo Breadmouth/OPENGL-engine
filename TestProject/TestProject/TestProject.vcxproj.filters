@@ -254,8 +254,5 @@
     <ClInclude Include="ParticleFluidEmitter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TriggerCallback.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
